@@ -52,11 +52,24 @@ export default class RaceScreen extends React.Component {
         this.props.navigation.replace('NewUser');
     }
 
-
      changeFormel = event => {
         event.preventDefault();
         this.props.navigation.replace('Formel');
     }
+
+    changeNewOrder = event => {
+        event.preventDefault();
+        this.props.navigation.replace('NewOrder');
+    }
+
+
+     changeAstrid = event => {
+        event.preventDefault();
+        this.props.navigation.replace('Astrid');
+    }
+
+
+
 
      async getRaceID(event){
         AsyncStorage.setItem("raceID",event.target.value);
@@ -80,15 +93,38 @@ export default class RaceScreen extends React.Component {
                     onPress={this.changeNewRace}
                 />
 
+                <Text >
+                </Text>
+
                 <Button
                     title="Neues Mitglied anlegen"
                     onPress={this.changeNewUser}
                 />
 
+                <Text >
+                </Text>
+
                 <Button
                     title="Screen Formel"
                     onPress={this.changeFormel}
                 />
+
+                <Text >
+                </Text>
+
+                <Button
+                    title="Neue Reifenbestellung anlegen"
+                    onPress={this.changeNewOrder}
+                />
+
+                <Text >
+                </Text>
+
+                <Button
+                    title="Screen Astrid"
+                    onPress={this.changeAstrid}
+                />
+
 
                 <label>
                 Wähle das gewünschte Rennen aus:

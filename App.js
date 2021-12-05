@@ -13,11 +13,14 @@ import NewHelpScreen from "./HelperScreen";
 import FormelScreen from "./FormelScreen";
 import {NavScreen} from "./NavScreen";
 import LogoutScreen from "./LogoutScreen";
+import NewOrderScreen from "./NewOrder";
+import AstridScreen from "./example_Astrid";
 
 const IngeniuerNav = createStackNavigator({
     NewRace: { screen: NewRaceScreen},
     Race: {screen: RaceScreen},
     Formel:{screen:FormelScreen},
+    Logout: {screen: LogoutScreen},
     /*NewUser: {}*/
     }, {
     initialRouteName: "Race",
@@ -26,7 +29,8 @@ const IngeniuerNav = createStackNavigator({
     });
 
 const HelperNav = createStackNavigator({
-    Helper: {screen:NewHelpScreen }
+    Helper: {screen:NewHelpScreen },
+    Logout: {screen: LogoutScreen},
     }, {
     initialRouteName: "Helper",
     headerMode: 'none',
@@ -36,11 +40,12 @@ const HelperNav = createStackNavigator({
 const ManagerNav = createStackNavigator({
     NewRace: { screen: NewRaceScreen},
     Race: {screen: RaceScreen},
-    NewUser:{screen: NewUserScreen},
-    Formel:{screen:FormelScreen},
-    Logout:{screen:LogoutScreen}
+    NewUser: {screen: NewUserScreen},
+    Formel: {screen: FormelScreen},
+    Logout: {screen: LogoutScreen},
+    NewOrderScreen: {screen: NewOrderScreen},
+    Astrid: {screen: AstridScreen}
 
-    /*NewUser: {}*/
     }, {
     initialRouteName: "Race",
     headerMode: 'none',

@@ -98,21 +98,6 @@ export default class FormelScreen extends React.Component {
          )
       })
    }
-    /*
-   render() {
-      return (
-         <div>
-            <h1 id='title'>React Dynamic Table</h1>
-            <table id='list_formel'>
-               <tbody>
-                  {this.renderTableData()}
-               </tbody>
-            </table>
-         </div>
-      )
-   }
-   */
-
 
     render() {
         return (

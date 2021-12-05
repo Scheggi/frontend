@@ -20,17 +20,22 @@ export default class NewOrderScreen extends React.Component {
         }
     }
 
+    changeRace = event => {
+        event.preventDefault();
+        this.props.navigation.replace('Race');
+    }
+
+
     validateForm() {
         return this.state.raceid.length > 0 ;
     }
 
     handleSubmit = event => {
         event.preventDefault();
-        this.sendNewOrderRequest(this.state.raceid, this.state.tyretype, this.state.tyremix, this.state.term, this.state.variant, this.state.number, this.state.orderdate, this.state.ordertime, this.state.pickuptime);
+        this.sendNewOrderRequest(this.state.raceid, this.state.tyretype, this.state.tyremix, this.state.term,
+            this.state.variant, this.state.number, this.state.orderdate, this.state.ordertime, this.state.pickuptime);
     }
     async sendNewOrderRequest(raceid,tyretype,tyremix,term,variant,number,orderdate,ordertime,pickuptime) {
-
-
        timeoutPromise(2000, fetch(
             'https://api.race24.cloud/order/create', {
                 method: 'POST',
@@ -139,6 +144,11 @@ export default class NewOrderScreen extends React.Component {
                         title="Reifenbestellung aufgeben"
                         onPress={this.handleSubmit}
                     />
+                    <Button
+                        title="zurück"
+                        onPress={this.changeRace}
+                    />
+
                 </View>
 
             </View>

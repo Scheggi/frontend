@@ -1,9 +1,7 @@
-
 import React from "react";
 import {
     View,
     Text,
-    StyleSheet,
     Image,
     TextInput,
     TouchableHighlight,
@@ -14,7 +12,7 @@ import {styles} from "./styles"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Button} from "react-native-web";
 //import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
-import {styles} from "./styles"
+
 import {timeoutPromise,getWeatherTab, refreshToken,getRaceList} from "./tools";
 
 export default class NewHelpScreen extends React.Component {
@@ -78,6 +76,20 @@ export default class NewHelpScreen extends React.Component {
         AsyncStorage.setItem("raceID",event.target.value);
         const id = await AsyncStorage.getItem("raceID");
         console.log(id);
+        await this.getWeatherData(raceID);
+
+    }
+
+    async getWeatherData(raceID){
+       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       //const raceID = await AsyncStorage.getItem('raceID');
+       console.log(raceID)
+       getWeatherTab(accesstoken, raceID).then(DataTabular => {
+                console.log(DataTabular);
+                this.setState({dataWeather: DataTabular});
+            }).catch(function (error) {
+                console.log(error);
+            })
     }
 
     async componentDidMount() {
@@ -89,17 +101,10 @@ export default class NewHelpScreen extends React.Component {
             this.setState({raceList: racelistDropdown});
         }).catch(function (error) {
             console.log(error);
-        })
+        });
+        }
 
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
-        getWeatherTab(accesstoken).then(DataTabular => {
-            console.log(DataTabular);
-            this.setState({dataWeather: DataTabular});
-        }).catch(function (error) {
-            console.log(error);
-        })
 
-    }
 
 
     /*
@@ -145,6 +150,10 @@ export default class NewHelpScreen extends React.Component {
     }
 
      */
+    changeLogout = event => {
+        event.preventDefault();
+        this.props.navigation.replace('Logout');
+    }
 
 
     validateForm() {
@@ -157,7 +166,8 @@ export default class NewHelpScreen extends React.Component {
             this.state.weather_des);
     }
 
-    async sendNewWeatherRequest(id,temp_air,temp_ground,weather_des) {
+    async sendNewWeatherRequest(temp_air,temp_ground,weather_des) {
+        const id = await AsyncStorage.getItem("raceID");
        timeoutPromise(2000, fetch(
             'https://api.race24.cloud/weather/create/', {
                 method: 'POST',
@@ -166,15 +176,15 @@ export default class NewHelpScreen extends React.Component {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    raceID: AsyncStorage.getItem("raceID"),
-                    temp_air:temp_air,
-                    temp_ground:temp_ground,
+                    raceID:id,
+                    temp_air: parseFloat(temp_air),
+                    temp_ground: parseFloat(temp_ground),
                     datetime: this.getTime(),
                     weather_des:weather_des,
                 })
             })
             ).then(response => response.json()).then(
-                //timer von 30 min neu startem
+                console.log("success")
                 ).catch(function (error) {
                 console.log(error);
             })
@@ -182,8 +192,8 @@ export default class NewHelpScreen extends React.Component {
 
 
     render() {
-        let optionTemplate = this.state.dataRace.map(v => (
-            <option value={v.id}>{v.name}</option>
+        let optionTemplate = this.state.raceList.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
     ));
         return (
             <View style={styles.viewStyles}>
@@ -196,9 +206,6 @@ export default class NewHelpScreen extends React.Component {
                   {optionTemplate}
                 </select>
                 </label>
-
-                //tabular weather
-
 
                 <div>
                     <button onClick={this.startTimer}>Start</button>
@@ -231,6 +238,12 @@ export default class NewHelpScreen extends React.Component {
                         title="Neues Datenset anlegen"
                         onPress={this.handleSubmit}
                     />
+
+                    <Button
+                    title="Logout"
+                    onPress={this.changeLogout}
+                    />
+
                 </View>
 
             </View>
