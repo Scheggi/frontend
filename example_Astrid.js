@@ -20,7 +20,6 @@ export default class RaceScreen extends React.Component {
         super(props);
         this.state = {
             dataRace: [],
-            dataWeather:[],
             raceID :0,
             raceList:[]
         }
@@ -34,33 +33,17 @@ export default class RaceScreen extends React.Component {
         }).catch(function (error) {
             console.log(error);
         })
-
     }
 
-    changeLogout = event => {
+    changeMain = event => {
         event.preventDefault();
-        this.props.navigation.replace('Logout');
+        this.props.navigation.replace('Main');
     }
 
-    changeNewRace = event => {
-        event.preventDefault();
-        this.props.navigation.replace('NewRace');
-    }
-
-     changeNewUser = event => {
-        event.preventDefault();
-        this.props.navigation.replace('NewUser');
-    }
-
-
-     changeFormel = event => {
-        event.preventDefault();
-        this.props.navigation.replace('Formel');
-    }
 
      async getRaceID(event){
-        AsyncStorage.setItem("raceID",event.target.value);
-        const id = await AsyncStorage.getItem("raceID");
+        AsyncStorage.setItem("raceID_Example",event.target.value);
+        const id = await AsyncStorage.getItem("raceID_Example");
         console.log(id);
     }
 
@@ -75,32 +58,17 @@ export default class RaceScreen extends React.Component {
                     24 Stunden Rennen
                 </Text>
 
-                <Button
-                    title="Neues Rennen anlegen"
-                    onPress={this.changeNewRace}
-                />
-
-                <Button
-                    title="Neues Mitglied anlegen"
-                    onPress={this.changeNewUser}
-                />
-
-                <Button
-                    title="Screen Formel"
-                    onPress={this.changeFormel}
-                />
-
                 <label>
                 Wähle das gewünschte Rennen aus:
                 <select value={this.state.id} onChange={this.getRaceID}>
                   {optionTemplate}
                 </select>
-
                 </label>
 
+
                 <Button
-                    title="Logout"
-                    onPress={this.changeLogout}
+                    title="Hauptmenue"
+                    onPress={this.changeMain}
                 />
 
 

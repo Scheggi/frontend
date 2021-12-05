@@ -1,0 +1,57 @@
+import React from "react";
+import {TextInput, Button, View} from "react-native";
+import {styles} from "./styles"
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {timeoutPromise} from "./tools"
+import Text from "react-native-web/dist/vendor/react-native/Animated/components/AnimatedText";
+
+
+
+export default class LogoutScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: "",
+        };
+    }
+
+    async sendLogoutRequest() {
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+       timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/user/auth/logout', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+               body: JSON.stringify({
+                   access_token: accesstoken,
+               })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    AsyncStorage.clear()
+                    this.props.navigation.navigate('AppNavigator',{screen: "Splash"});
+
+                }
+                else {
+                    console.log("Logout failed")
+                    //AsyncStorage.clear()
+                    //this.props.navigation.replace("Race")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+    }
+
+    componentDidMount() {
+        this.sendLogoutRequest()
+    }
+
+    render() {
+        return (
+            <View style={styles.viewStyles}>
+            </View>
+        );
+    }
+}

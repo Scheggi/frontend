@@ -8,29 +8,62 @@ import {SplashScreen} from "./SplashScreen";
 import LoginScreen from "./Login";
 import NewRaceScreen from "./NewRace";
 import RaceScreen from "./RaceScreen";
+import NewUserScreen from "./NewUser";
+import NewHelpScreen from "./HelperScreen";
+import FormelScreen from "./FormelScreen";
+import {NavScreen} from "./NavScreen";
+import LogoutScreen from "./LogoutScreen";
 
-
-const MainNavigator = createStackNavigator({
+const IngeniuerNav = createStackNavigator({
     NewRace: { screen: NewRaceScreen},
     Race: {screen: RaceScreen},
-    NewUser: {}
+    Formel:{screen:FormelScreen},
+    /*NewUser: {}*/
     }, {
-    initialRouteName: "TaskList",
+    initialRouteName: "Race",
     headerMode: 'none',
     headerShown: false,
     });
 
+const HelperNav = createStackNavigator({
+    Helper: {screen:NewHelpScreen }
+    }, {
+    initialRouteName: "Helper",
+    headerMode: 'none',
+    headerShown: false,
+    });
+
+const ManagerNav = createStackNavigator({
+    NewRace: { screen: NewRaceScreen},
+    Race: {screen: RaceScreen},
+    NewUser:{screen: NewUserScreen},
+    Formel:{screen:FormelScreen},
+    Logout:{screen:LogoutScreen}
+
+    /*NewUser: {}*/
+    }, {
+    initialRouteName: "Race",
+    headerMode: 'none',
+    headerShown: false,
+    });
+
+const MainNavigator = createStackNavigator({
+    Ingenieur: { screen: IngeniuerNav},
+    Manager: {screen: ManagerNav},
+    Helper: {screen: HelperNav },
+    NavScreen: {screen:NavScreen},
+    }, {
+    initialRouteName: "NavScreen",
+    headerMode: 'none',
+    headerShown: false,
+    });
 
 const AppNavigator = createStackNavigator({
-    Splash: {
-        screen: SplashScreen,
-        },
+    Splash: {screen: SplashScreen},
     Login: {
-        screen: LoginScreen,
-        },
+        screen: LoginScreen},
     MainNav:{
-        screen : MainNavigator,
-        }
+        screen : MainNavigator},
     },
     {
         initialRouteName: "Splash",
