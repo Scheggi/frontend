@@ -72,12 +72,9 @@ export default class NewHelpScreen extends React.Component {
     }
 
 
-    async getRaceID(event){
+    getRaceID = event =>{
         AsyncStorage.setItem("raceID",event.target.value);
-        const id = await AsyncStorage.getItem("raceID");
-        console.log(id);
-        await this.getWeatherData(raceID);
-
+        this.getWeatherData(event.target.value);
     }
 
     async getWeatherData(raceID){
@@ -105,51 +102,6 @@ export default class NewHelpScreen extends React.Component {
         }
 
 
-
-
-    /*
-    async componentDidMountWeather() {
-      const accesstoken = await AsyncStorage.getItem('acesstoken');
-      const raceID = await AsyncStorage.getItem('raceID');
-      timeoutPromise(2000, fetch("https://api.race24.cloud/user/weather/getlast10", {
-          method: 'POST',
-          headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-              access_token: accesstoken,
-              raceID: raceID
-          })
-          })).then(response => response.json()).then(data => {
-              console.log(data);
-              this.setState({dataWeather: data[0].data})
-          })
-    }
-
-
-
-    async componentDidMount() {
-        let timeLeftVar = this.secondsToTime(this.state.seconds);
-        this.setState({ time: timeLeftVar });
-      //Implementiere Get Available Races
-      const accesstoken = await AsyncStorage.getItem('acesstoken');
-      timeoutPromise(2000, fetch("https://api.race24.cloud/user/race/get", {
-          method: 'POST',
-          headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-              access_token: accesstoken,
-          })
-          })).then(response => response.json()).then(data => {
-              console.log(data);
-              this.setState({dataRace: data[0].data})
-          })
-    }
-
-     */
     changeLogout = event => {
         event.preventDefault();
         this.props.navigation.replace('Logout');
@@ -157,7 +109,7 @@ export default class NewHelpScreen extends React.Component {
 
 
     validateForm() {
-        return this.state.id > 0 ;
+        return this.weather_des.length > 0 ;
     }
     handleSubmit = event => {
         event.preventDefault();

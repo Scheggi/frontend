@@ -43,7 +43,7 @@ const ManagerNav = createStackNavigator({
     NewUser: {screen: NewUserScreen},
     Formel: {screen: FormelScreen},
     Logout: {screen: LogoutScreen},
-    NewOrderScreen: {screen: NewOrderScreen},
+    NewOrder: {screen: NewOrderScreen},
     Astrid: {screen: AstridScreen}
 
     }, {
