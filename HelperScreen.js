@@ -118,6 +118,7 @@ export default class NewHelpScreen extends React.Component {
             this.state.weather_des);
     }
 
+
     async sendNewWeatherRequest(temp_air,temp_ground,weather_des) {
         const id = await AsyncStorage.getItem("raceID");
        timeoutPromise(2000, fetch(
