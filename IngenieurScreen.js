@@ -50,8 +50,8 @@ export default class IngenieurScreen extends React.Component {
 
 
     async renderTableHeader() {
-
         let weatherList = await AsyncStorage.getItem("WeatherList")
+        await weatherList!=null;
         if (weatherList !=null){
         console.log(weatherList)
         let header = Object.keys(weatherList)
@@ -63,7 +63,6 @@ export default class IngenieurScreen extends React.Component {
         }
    }
 
-   
     //Tabular Weather Data
     async renderTableData() {
         let weatherList = await AsyncStorage.getItem("WeatherList")
