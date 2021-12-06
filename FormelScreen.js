@@ -16,7 +16,7 @@ export default class FormelScreen extends React.Component {
 
     changeRace = event => {
         event.preventDefault();
-        this.props.navigation.replace('Race');
+        this.props.navigation.goBack();
     }
 
     validateForm() {

@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 async function sendNewRaceRequest(id,temp_air,temp_ground,weather_des) {
    timeoutPromise(2000, fetch(
-        'https://api.race24.cloud/weather/create/', {
+        'https://api.race24.cloud/user/weather/create', {
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -83,7 +83,7 @@ function getRaceList(accesstoken) {
         })
 }
 
-
+///user/weather/getlast10
 //get Weather Tab
 function getWeatherTab(accesstoken,raceID) {
     console.log(raceID)
@@ -190,5 +190,47 @@ async function refreshToken() {
   )
 }
 
-export {getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList}
+function TableNiklas(list) {
+    const colNames = ['Zeitstempel', 'Lufttemperatur', 'Streckentemperatur', 'Streckenverhältnis' ];
+    const number = 920 ;
+    return (
+        <div>
+          {list.length > 0 && (
+            <table
+              cellSpacing='0'
+              style={{
+              	width: width,
+              	height: "auto",
+              	margin: 15,
+              	borderWidth: 1,
+
+              }}>
+
+                <thead >
+                  <tr>
+                    {colNames.map((headerItem, index) => (
+                      <th style={{borderStyle: 'solid',  borderWidth: 1}} key={index}>{headerItem}</th>
+                    ))}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {Object.values(list).map((obj, index) => (
+                    <tr key={index}>
+                      {Object.values(obj).map((value, index2) => (
+                        <td style={{borderStyle: 'solid',  borderWidth: 1}} key={index2}>{value}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+            </table>
+          )}
+        </div>
+        )
+    }
+
+
+
+
+export {getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas}
 

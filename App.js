@@ -15,15 +15,17 @@ import {NavScreen} from "./NavScreen";
 import LogoutScreen from "./LogoutScreen";
 import NewOrderScreen from "./NewOrder";
 import AstridScreen from "./example_Astrid";
+import IngenieurScreen from "./IngenieurScreen";
+import IngenieurNav from "./IngenieurNav";
 
 const IngeniuerNav = createStackNavigator({
-    NewRace: { screen: NewRaceScreen},
-    Race: {screen: RaceScreen},
+    Ingenieur:{screen: IngenieurScreen},
     Formel:{screen:FormelScreen},
     Logout: {screen: LogoutScreen},
+    Nav: {screen: IngenieurNav},
     /*NewUser: {}*/
     }, {
-    initialRouteName: "Race",
+    initialRouteName: "Nav",
     headerMode: 'none',
     headerShown: false,
     });

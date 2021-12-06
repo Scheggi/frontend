@@ -16,6 +16,7 @@ export default class LogoutScreen extends React.Component {
     }
 
     async sendLogoutRequest() {
+        console.log("Logout")
         const accesstoken = await AsyncStorage.getItem('acesstoken');
        timeoutPromise(2000, fetch(
             'https://api.race24.cloud/user/auth/logout', {

@@ -15,14 +15,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
 
-export default class RaceScreen extends React.Component {
+export default class IngenieurNav extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             dataRace: [],
             dataWeather:[],
-            raceID :0,
-            raceList:[]
+            raceID : 0,
+            raceList:[],
         }
     }
 
@@ -39,42 +39,36 @@ export default class RaceScreen extends React.Component {
 
     changeLogout = event => {
         event.preventDefault();
-        this.props.navigation.replace('Logout');
+        this.props.navigation.push('Logout');
     }
 
-    changeNewRace = event => {
-        event.preventDefault();
-        this.props.navigation.replace('NewRace');
-    }
-
-     changeNewUser = event => {
-        event.preventDefault();
-        this.props.navigation.replace('NewUser');
-    }
 
      changeFormel = event => {
         event.preventDefault();
         this.props.navigation.push('Formel');
     }
 
-    changeNewOrder = event => {
+    changeIngenieur = event => {
         event.preventDefault();
-        this.props.navigation.push('NewOrder');
+        this.props.navigation.push('Ingenieur');
     }
 
 
-     changeAstrid = event => {
-        event.preventDefault();
-        this.props.navigation.push('Astrid');
+    validateForm(){
+        return this.state.raceID != 0;
     }
 
 
+    async saveRaceIDinState(){
+        const id = await AsyncStorage.getItem("raceIDIngenieur");
+        this.setState({raceID : id} );
+        console.log(this.state.raceID);
+    }
 
-
-     async getRaceID(event){
-        AsyncStorage.setItem("raceID",event.target.value);
-        const id = await AsyncStorage.getItem("raceID");
-        console.log(id);
+     getRaceID = event =>{
+        const id = event.target.value;
+        AsyncStorage.setItem("raceIDIngenieur",event.target.value);
+        this.saveRaceIDinState();
     }
 
 
@@ -88,44 +82,6 @@ export default class RaceScreen extends React.Component {
                     24 Stunden Rennen
                 </Text>
 
-                <Button
-                    title="Neues Rennen anlegen"
-                    onPress={this.changeNewRace}
-                />
-
-                <Text >
-                </Text>
-
-                <Button
-                    title="Neues Mitglied anlegen"
-                    onPress={this.changeNewUser}
-                />
-
-                <Text >
-                </Text>
-
-                <Button
-                    title="Screen Formel"
-                    onPress={this.changeFormel}
-                />
-
-                <Text >
-                </Text>
-
-                <Button
-                    title="Neue Reifenbestellung anlegen"
-                    onPress={this.changeNewOrder}
-                />
-
-                <Text >
-                </Text>
-
-                <Button
-                    title="Screen Astrid"
-                    onPress={this.changeAstrid}
-                />
-
-
                 <label>
                 Wähle das gewünschte Rennen aus:
                 <select value={this.state.id} onChange={this.getRaceID}>
@@ -134,12 +90,32 @@ export default class RaceScreen extends React.Component {
 
                 </label>
 
+
+                <Text >
+
+                </Text>
+
+
+
+                <Button
+                    title="Screen Formel"
+                    onPress={this.changeFormel}
+                />
+
+                <Text >
+
+                </Text>
+
+                <Button
+                    disabled={!this.validateForm()}
+                    title="Screen Übersicht"
+                    onPress={this.changeIngenieur}
+                />
+
                 <Button
                     title="Logout"
                     onPress={this.changeLogout}
                 />
-
-
 
             </View>
         );

@@ -27,6 +27,7 @@ export default class NewHelpScreen extends React.Component {
             dataWeather: [],
             time: {},
             seconds: 1800,
+            raceid:0,
         }
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
@@ -64,23 +65,26 @@ export default class NewHelpScreen extends React.Component {
           }
       }
 
-    getTime(){
-        var today = new Date();
-        var h = today.getHours();
-        var m = today.getMinutes() ;
-        return h+":"+m;
+
+
+    async saveRaceIDinState(){
+        const id = await AsyncStorage.getItem("raceIDHelper");
+        this.setState({raceid : id} );
+        console.log(this.state.raceid);
+        this.getWeatherData(id);
     }
 
-
-    getRaceID = event =>{
-        AsyncStorage.setItem("raceID",event.target.value);
-        this.getWeatherData(event.target.value);
+     getRaceID = event =>{
+        const id = event.target.value;
+        AsyncStorage.setItem("raceIDHelper",event.target.value);
+        this.saveRaceIDinState();
     }
 
     async getWeatherData(raceID){
        const accesstoken = await AsyncStorage.getItem('acesstoken');
        //const raceID = await AsyncStorage.getItem('raceID');
-       console.log(raceID)
+       console.log(raceID);
+       console.log(accesstoken);
        getWeatherTab(accesstoken, raceID).then(DataTabular => {
                 console.log(DataTabular);
                 this.setState({dataWeather: DataTabular});
@@ -109,20 +113,20 @@ export default class NewHelpScreen extends React.Component {
 
 
     validateForm() {
-        return this.weather_des.length > 0 ;
+        return this.state.weather_des.length > 0 && this.state.raceid != 0 ;
     }
     handleSubmit = event => {
         event.preventDefault();
-        const id = AsyncStorage.getItem("raceID")
-        this.sendNewWeatherRequest(id, this.state.temp_air,this.state.temp_ground,
+        this.sendNewWeatherRequest(this.state.temp_air,this.state.temp_ground,
             this.state.weather_des);
     }
 
 
     async sendNewWeatherRequest(temp_air,temp_ground,weather_des) {
-        const id = await AsyncStorage.getItem("raceID");
+        console.log(temp_air)
+        const id = await AsyncStorage.getItem("raceIDHelper");
        timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/weather/create/', {
+            'https://api.race24.cloud/user/weather/create', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -132,8 +136,7 @@ export default class NewHelpScreen extends React.Component {
                     raceID:id,
                     temp_air: parseFloat(temp_air),
                     temp_ground: parseFloat(temp_ground),
-                    datetime: this.getTime(),
-                    weather_des:weather_des,
+                    weather_des: weather_des,
                 })
             })
             ).then(response => response.json()).then(
