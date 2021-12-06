@@ -68,7 +68,7 @@ export default class NewHelpScreen extends React.Component {
 
 
     async saveRaceIDinState(){
-        const id = await AsyncStorage.getItem("raceIDHelper");
+        const id = await AsyncStorage.getItem("raceID");
         this.setState({raceid : id} );
         console.log(this.state.raceid);
         this.getWeatherData(id);
@@ -76,7 +76,7 @@ export default class NewHelpScreen extends React.Component {
 
      getRaceID = event =>{
         const id = event.target.value;
-        AsyncStorage.setItem("raceIDHelper",event.target.value);
+        AsyncStorage.setItem("raceID",event.target.value);
         this.saveRaceIDinState();
     }
 
@@ -124,7 +124,7 @@ export default class NewHelpScreen extends React.Component {
 
     async sendNewWeatherRequest(temp_air,temp_ground,weather_des) {
         console.log(temp_air)
-        const id = await AsyncStorage.getItem("raceIDHelper");
+        const id = await AsyncStorage.getItem("raceID");
        timeoutPromise(2000, fetch(
             'https://api.race24.cloud/user/weather/create', {
                 method: 'POST',
