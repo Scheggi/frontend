@@ -13,7 +13,6 @@ async function sendNewRaceRequest(id,temp_air,temp_ground,weather_des) {
                 raceID: AsyncStorage.getItem("raceID"),
                 temp_air:temp_air,
                 temp_ground:temp_ground,
-                datetime: this.getTime(),
                 weather_des:weather_des,
             })
         })
@@ -83,6 +82,49 @@ function getRaceList(accesstoken) {
         })
 }
 
+// get RaceDetails od RaceID
+function getRaceDetails_by_ID(accesstoken,raceid) {
+  //const accesstoken = AsyncStorage.getItem('acesstoken');
+  return timeoutPromise(2000, fetch("https://api.race24.cloud/user/raceDetails/get", {
+      method: 'POST',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          access_token: accesstoken,
+          raceID:raceid,
+      })
+      })).then(response => response.json()).then(data => {
+              console.log(data);
+              if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                        getRaceDetails_by_ID(token,raceid);
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  console.log("Return Data");
+                  console.log(data[0].data);
+                  return data[0].data;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
+
+
 ///user/weather/getlast10
 //get Weather Tab
 function getWeatherTab(accesstoken,raceID) {
@@ -123,6 +165,49 @@ function getWeatherTab(accesstoken,raceID) {
             return [];
         })
 }
+
+
+//get Wheels
+function getWheelsList(accesstoken,raceid) {
+  //const accesstoken = AsyncStorage.getItem('acesstoken');
+  return timeoutPromise(2000, fetch("https://api.race24.cloud/wheels_start/get", {
+      method: 'POST',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          access_token: accesstoken,
+          racID:raceid
+      })
+      })).then(response => response.json()).then(data => {
+              console.log(data);
+              if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                        getWheelsList(token,raceid);
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  console.log("Return Data");
+                  console.log(data[0].data);
+                  return data[0].data;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
 
 
 
@@ -232,5 +317,5 @@ function TableNiklas(list) {
 
 
 
-export {getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas}
+export {getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID}
 
