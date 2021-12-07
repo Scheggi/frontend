@@ -19,87 +19,113 @@ export default class AstridScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataRace: [],
-            raceID :0,
-            raceList:[],
-            dataWeather: [],
-            listWheelStart:[],
-            RaceDetails:[],
+            raceList: [],
+            raceID: 1,
+            identifierSlicksCold: '',
+            identifierSlicksMedium: '',
+            identifierSlicksHot: '',
+            identifierIntersIntermediate: '',
+            identifierRainDryWet: '',
+            identifierRainHeavyWet: '',
+            contingentSlicksCold: -1,
+            contingentSlicksMedium: -1,
+            contingentSlicksHot: -1,
+            contingentIntersIntermediate: -1,
+            contingentRainDryWet: -1,
+            contingentRainHeavyWet: -1,
         }
+        this.getRaceID=this.getRaceID.bind(this);
     }
 
-    // navigate to Main Menue
-    changeMain = event => {
+    validateForm() {
+        return (this.state.raceID != -1 && this.state.identifierSlicksCold != "" && this.state.contingentSlicksCold != -1 && this.state.identifierSlicksMedium != "" && this.state.contingentSlicksMedium != -1 && this.state.identifierSlicksHot != "" && this.state.contingentSlicksHot != -1 && this.state.identifierIntersIntermediate != "" && this.state.contingentIntersIntermediate != "" && this.state.identifierRainDryWet != "" && this.state.contingentRainDryWet != -1 && this.state.identifierRainHeavyWet != "" && this.state.contingentRainHeavyWet != -1)
+    }
+
+    handleSubmit = event => {
         event.preventDefault();
-        this.props.navigation.goBack();
+        this.sendNewContigentRequest(this.state.raceID, 1, "Slicks", "Cold", this.state.identifierSlicksCold, this.state.contingentSlicksCold);
+        this.sendNewContigentRequest(this.state.raceID, 2, "Slicks", "Medium", this.state.identifierSlicksMedium, parseInt(this.state.contingentSlicksMedium));
+        this.sendNewContigentRequest(this.state.raceID, 3, "Slicks", "Hot", this.state.identifierSlicksHot, parseInt(this.state.contingentSlicksHot));
+        this.sendNewContigentRequest(this.state.raceID, 4, "Inters", "Intermediate", this.state.identifierIntersIntermediate, parseInt(this.state.contingentIntersIntermediate));
+        this.sendNewContigentRequest(this.state.raceID, 5, "Rain", "DryWet", this.state.identifierRainDryWet, parseInt(this.state.contingentRainDryWet));
+        this.sendNewContigentRequest(this.state.raceID, 6, "Rain", "HeavyWet", this.state.identifierRainHeavyWet, parseInt(this.state.contingentRainHeavyWet));
     }
 
-    // save RaceID to AsyncStorage, with AsyncStorage.getItem("raceID_Example") you get this ID
-    // afterwards get WeatherData of this Race and
-    //WeatherData is now in this.state.dataWeather
-     getRaceID = event =>{
-        console.log(event.target)
-        AsyncStorage.setItem("raceID",event.target.value);
-        //const id = await AsyncStorage.getItem("raceID_Example");
-        console.log(event.target.value);
-        this.getWeatherData(event.target.value);
-    }
-
-
-    //get RaceDetails by RaceID
-    async getRaceDetails(){
+    async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('acesstoken');
-        const raceID = await AsyncStorage.getItem('raceID');
-        getRaceDetails_by_ID(accesstoken,raceID).then(liste => {
-            console.log(liste);
-            this.setState({RaceDetails: liste});
+        getRaceList(accesstoken).then(racelistDropdown => {
+            console.log(racelistDropdown);
+            this.setState({raceList: racelistDropdown});
         }).catch(function (error) {
             console.log(error);
         })
     }
 
-    //get ReifenData
-    async getWheelsStart(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
-        const raceID = await AsyncStorage.getItem('raceID');
-        getWheelsList(accesstoken,raceID).then(liste => {
-            console.log(liste);
-            this.setState({listWheelStart: liste});
-        }).catch(function (error) {
-            console.log(error);
-        })
-    }
-
-
-    //get Weather Data, it will be used in getRaceID
-    async getWeatherData(raceID){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
-       //const raceID = await AsyncStorage.getItem('raceID');
-       console.log(raceID)
-       getWeatherTab(accesstoken, raceID).then(DataTabular => {
-                console.log(DataTabular);
-                this.setState({dataWeather: DataTabular});
+    async sendNewContigentRequest(raceID, set, cat, subcat, identifier, numberOfSets) {
+       timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheels_start/create', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    raceID: raceID,
+                    set: set,
+                    cat: cat,
+                    subcat: subcat,
+                    identifier: identifier,
+                    numberOfSets: numberOfSets,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log(data[0])
+                }
+                else {
+                    console.log("failed")
+                }
             }).catch(function (error) {
                 console.log(error);
             })
     }
 
 
-    //Tabular Weather Data
-    renderTableData() {
-        console.log(this.state.dataWeather)
-        return this.state.dataWeather.map((dataWeather, index) => {
-            const { temp_ground,temp_air,datetime,weather_des } =dataWeather //destructuring
-            return (
-            <tr key={datetime}>
-               <td>{datetime}</td>
-               <td>{temp_ground}</td>
-                <td>{temp_air}</td>
-                <td>{weather_des}</td>
-            </tr>
-         )
-      })
-   }
+    async sendNewRaceRequest(raceID, set, cat, subcat, identifier, numberOfSets) {
+        console.log([raceID, set, cat, subcat, identifier, numberOfSets])
+        timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheels_start/create', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    raceID: raceID,
+                    set: set,
+                    cat: cat,
+                    subcat: subcat,
+                    identifier: identifier,
+                    numberOfSets: numberOfSets,
+
+                })
+            })
+        ).then(response => response.json()).then(data => {
+            if (data[1] == 200) {
+                this.props.navigation.replace('MainNav');
+            } else {
+                console.log("failed")
+            }
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    async getRaceID(event) {
+        AsyncStorage.setItem("raceID", event.target.value);
+        const id = await AsyncStorage.getItem("raceID");
+        this.setState({raceID: id});
+    }
 
 
     render() {
@@ -107,34 +133,179 @@ export default class AstridScreen extends React.Component {
             <option value={v.id} key={v.id}>{v.name}</option>
         ));
         return (
-            <View style={styles.viewStyles}>
-                <Text style={styles.textStyles}>
-                    24 Stunden Rennen
-                </Text>
-
-                <label>
-                Wähle das gewünschte Rennen aus:
-                <select value={this.state.id} onChange={this.getRaceID}>
-                  {optionTemplate}
-                </select>
-                </label>
-
-                <div>
-                <h1 id='title'>Tabelle Wetter</h1>
-                <table id='dataWeather'>
-                   <tbody>
-                      {this.renderTableData()}
-                   </tbody>
-                </table>
+            <View style={this.order}>
+                <div style={this.container}>
+                    <Text>{this.state.raceID}</Text>
+                    <label >
+                        <h2 >Rennen auswählen:</h2>
+                        <select value={this.state.id} onChange={this.getRaceID}>
+                            {optionTemplate}
+                        </select>
+                    </label>
                 </div>
+                <View style={styles.viewStyles}>
+                    <Text style={styles.textStyles}>
+                        Kontingent Anlegen
+                    </Text>
+                    <br></br>
+                    <div>
+                        <table style={this.tableStyle}>
+                            <tr style={{backgroundColor: '#B0C4DE'}}>
+                                <th style={this.thStyle}></th>
+                                <th style={this.thStyle}>Mischung</th>
+                                <th style={this.thStyle}>Bezeichnung</th>
+                                <th style={this.thStyle}>Kontingent</th>
+                            </tr>
 
-                <Button
-                    title="zurück"
-                    onPress={this.changeMain}
-                />
+                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                                <th style={this.thStyle}>Slicks</th>
+                                <td style={this.tdStyle}></td>
+                                <td style={this.tdStyle}></td>
+                                <td style={this.tdStyle}></td>
+                            </tr>
+                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                                <td style={this.tdStyle}></td>
+                                <td style={this.tdStyle}>Cold (H/E)</td>
+                                < td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({identifierSlicksCold: x})}
+                                />
+                                </td>
+                                <td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({contingentSlicksCold: x})}
+                                />
+                                </td>
+                            </tr>
 
+                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                                <td style={this.tdStyle}></td>
+                                <td style={this.tdStyle}>Medium (G/D)</td>
+                                < td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({identifierSlicksMedium: x})}
+                                />
+                                </td>
+                                <td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({contingentSlicksMedium: x})}
+                                />
+                                </td>
+                            </tr>
+
+                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                                <td style={this.tdStyle}></td>
+                                <td style={this.tdStyle}>Hot (I/F)</td>
+                                < td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({identifierSlicksHot: x})}
+                                />
+                                </td>
+                                <td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({contingentSlicksHot: x})}
+                                />
+                                </td>
+                            </tr>
+
+                            <tr style={{backgroundColor: '#B0C4DE'}}>
+                                <th style={this.tdStyle}>Inters</th>
+                                <td style={this.tdStyle}>Intermediate (H+/E+)</td>
+                                < td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({identifierIntersIntermediate: x})}
+                                />
+                                </td>
+                                <td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({contingentIntersIntermediate: x})}
+                                />
+                                </td>
+                            </tr>
+                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                                <th style={this.tdStyle}>Rain</th>
+                                <td style={this.tdStyle}></td>
+                                < td style={this.tdStyle}></td>
+                                <td style={this.tdStyle}></td>
+                            </tr>
+                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                                <td style={this.tdStyle}></td>
+                                <td style={this.tdStyle}>Dry wet (T/T)</td>
+                                < td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({identifierRainDryWet: x})}
+                                />
+                                </td>
+                                <td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({contingentRainDryWet: x})}
+                                />
+                                </td>
+                            </tr>
+                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                                <td style={this.tdStyle}></td>
+                                <td style={this.tdStyle}>Heavy wet (A/A)</td>
+                                < td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({identifierRainHeavyWet: x})}
+                                />
+                                </td>
+                                <td style={this.tdStyle}><TextInput
+                                    style={{height: 20}}
+                                    onChangeText={(x) => this.setState({contingentRainHeavyWet: x})}
+                                />
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+                    <Button
+                        disabled={!this.validateForm()}
+                        title="Daten speichern"
+                        onPress={this.handleSubmit}
+                    />
+
+                </View>
             </View>
         );
-    }
-}
 
+    }
+     tableStyle = {
+    textAlign: 'center',
+     fontFamily:'arial, sans-serif',
+        borderCollapse:'collapse',
+        width:'50%',
+        marginLeft:'auto',
+        marginRight:'auto',
+    border: '2px solid #dddddd',
+    }
+    tdStyle={
+        border:'2px solid #dddddd',
+        textAlign:'left',
+        padding:'8px'
+    }
+    thStyle={
+        border:'2px solid #dddddd',
+        textAlign:'left',
+        padding:'8px'
+    }
+    order={
+        border: '1px solid #dddddd',
+        justifyContent: 'space-around',
+        flexDirection: 'row',
+        padding: '0',
+        backgroundColor: 'white',
+        height: '90%'
+
+    }
+    container={
+        width:"20%",
+        padding: '100px',
+        border: '1px solid #B0C4DE',
+        backgroundColor: '#F5FFFA'
+    }
+
+
+
+}
