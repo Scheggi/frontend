@@ -41,7 +41,7 @@ export default class AstridScreen extends React.Component {
         event.preventDefault();
         this.props.navigation.goBack();
     }
-    
+
 
     validateForm() {
         return (this.state.raceID != -1 && this.state.identifierSlicksCold != "" && this.state.contingentSlicksCold != -1 && this.state.identifierSlicksMedium != "" && this.state.contingentSlicksMedium != -1 && this.state.identifierSlicksHot != "" && this.state.contingentSlicksHot != -1 && this.state.identifierIntersIntermediate != "" && this.state.contingentIntersIntermediate != "" && this.state.identifierRainDryWet != "" && this.state.contingentRainDryWet != -1 && this.state.identifierRainHeavyWet != "" && this.state.contingentRainHeavyWet != -1)
@@ -94,37 +94,6 @@ export default class AstridScreen extends React.Component {
             }).catch(function (error) {
                 console.log(error);
             })
-    }
-
-
-    async sendNewRaceRequest(raceID, set, cat, subcat, identifier, numberOfSets) {
-        console.log([raceID, set, cat, subcat, identifier, numberOfSets])
-        timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheels_start_astrid/create', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    raceID: raceID,
-                    set: set,
-                    cat: cat,
-                    subcat: subcat,
-                    identifier: identifier,
-                    numberOfSets: numberOfSets,
-
-                })
-            })
-        ).then(response => response.json()).then(data => {
-            if (data[1] == 200) {
-                this.props.navigation.replace('MainNav');
-            } else {
-                console.log("failed")
-            }
-        }).catch(function (error) {
-            console.log(error);
-        })
     }
 
     async getRaceID(event) {
