@@ -37,6 +37,12 @@ export default class AstridScreen extends React.Component {
         this.getRaceID=this.getRaceID.bind(this);
     }
 
+    changeRace = event => {
+        event.preventDefault();
+        this.props.navigation.goBack();
+    }
+    
+
     validateForm() {
         return (this.state.raceID != -1 && this.state.identifierSlicksCold != "" && this.state.contingentSlicksCold != -1 && this.state.identifierSlicksMedium != "" && this.state.contingentSlicksMedium != -1 && this.state.identifierSlicksHot != "" && this.state.contingentSlicksHot != -1 && this.state.identifierIntersIntermediate != "" && this.state.contingentIntersIntermediate != "" && this.state.identifierRainDryWet != "" && this.state.contingentRainDryWet != -1 && this.state.identifierRainHeavyWet != "" && this.state.contingentRainHeavyWet != -1)
     }
@@ -63,7 +69,7 @@ export default class AstridScreen extends React.Component {
 
     async sendNewContigentRequest(raceID, set, cat, subcat, identifier, numberOfSets) {
        timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheels_start/create', {
+            'https://api.race24.cloud/wheels_start_astrid/create', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -94,7 +100,7 @@ export default class AstridScreen extends React.Component {
     async sendNewRaceRequest(raceID, set, cat, subcat, identifier, numberOfSets) {
         console.log([raceID, set, cat, subcat, identifier, numberOfSets])
         timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheels_start/create', {
+            'https://api.race24.cloud/wheels_start_astrid/create', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -265,6 +271,12 @@ export default class AstridScreen extends React.Component {
                         title="Daten speichern"
                         onPress={this.handleSubmit}
                     />
+
+                    <Button
+                        title="zurück"
+                        onPress={this.changeRace}
+                    />
+
 
                 </View>
             </View>

@@ -68,6 +68,11 @@ export default class RaceScreen extends React.Component {
         this.props.navigation.push('Astrid');
     }
 
+    changeShowRace = event => {
+        event.preventDefault();
+        this.props.navigation.push('ShowRace');
+    }
+
 
 
 
@@ -123,6 +128,11 @@ export default class RaceScreen extends React.Component {
                 <Button
                     title="Screen Astrid"
                     onPress={this.changeAstrid}
+                />
+
+                <Button
+                    title="Screen Showrace"
+                    onPress={this.changeShowRace}
                 />
 
 

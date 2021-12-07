@@ -101,6 +101,7 @@ function getRaceDetails_by_ID(accesstoken,raceid) {
                             if (data["msg"] === "Token has expired"){
                                 refreshToken().then( token => {
                                         getRaceDetails_by_ID(token,raceid);
+                                        console.log([token,raceid])
                                     }
                                 ).catch( function (error) {
                                         console.log("Refresh failed");
@@ -168,8 +169,9 @@ function getWeatherTab(accesstoken,raceID) {
 
 
 //get Wheels
-function getWheelsList(accesstoken,raceid) {
+function getWheelsList(accesstoken,raceID) {
   //const accesstoken = AsyncStorage.getItem('acesstoken');
+    console.log([raceID])
   return timeoutPromise(2000, fetch("https://api.race24.cloud/wheels_start/get", {
       method: 'POST',
       headers: {
@@ -178,14 +180,14 @@ function getWheelsList(accesstoken,raceid) {
       },
       body: JSON.stringify({
           access_token: accesstoken,
-          racID:raceid
+          raceID: parseInt(raceID)
       })
       })).then(response => response.json()).then(data => {
               console.log(data);
               if ("msg" in data){
                             if (data["msg"] === "Token has expired"){
                                 refreshToken().then( token => {
-                                        getWheelsList(token,raceid);
+                                        getWheelsList(token,raceID);
                                     }
                                 ).catch( function (error) {
                                         console.log("Refresh failed");
@@ -227,7 +229,7 @@ function getFormelList(accesstoken) {
               if ("msg" in data){
                             if (data["msg"] === "Token has expired"){
                                 refreshToken().then( token => {
-                                        getRaceList(token);
+                                        getFormelList(token);
                                     }
                                 ).catch( function (error) {
                                         console.log("Refresh failed");
