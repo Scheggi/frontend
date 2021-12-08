@@ -35,9 +35,6 @@ async function generateNewWheelSet(raceID,setNr,cat,subcat){
 }
 
 
-
-
-
 async function sendWheelRequest(accestoken,air_press = 0,id_scan='',id = '' ) {
    return await timeoutPromise(2000, fetch(
         'https://api.race24.cloud/wheel_cont/createWheel', {
