@@ -1,5 +1,46 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// create new race and return raceID
+async function createNewRaceRequest(accestoken,type,place,date) {
+    return await timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/race/create', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    accestoken:accestoken,
+                    type:type,
+                    place:place,
+                    date:date,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                    screateNewRaceRequest(token,type,place,date);
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  return data[0].id;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
 
 async function sendNewRaceRequest(id,temp_air,temp_ground,weather_des) {
    timeoutPromise(2000, fetch(
@@ -319,5 +360,5 @@ function TableNiklas(list) {
 
 
 
-export {getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID}
+export {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID}
 

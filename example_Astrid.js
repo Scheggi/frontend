@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import {styles} from "./styles"
 import {getRaceList, getWeatherTab, timeoutPromise,getWheelsList,getRaceDetails_by_ID} from "./tools"
-import { sendNewSetRequest, sendWheelRequest, sendWheelsRequest} from "./tools_wheel"
+import {generateAllSets, sendNewSetRequest, sendWheelRequest, sendWheelsRequest} from "./tools_wheel"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
@@ -51,7 +51,7 @@ export default class AstridScreen extends React.Component {
 
 
 
-    // generate DataSet--------------------------------------------------
+    // generate DataSet------------------------------------------------------------------------
     //raceID, set, cat, subcat, identifier, numberOfSets
     generateAllSets(raceID,set,cat,subcat,numberOfSets){
         for(let i =1; i < parseInt(numberOfSets)+1;i++){
@@ -62,26 +62,34 @@ export default class AstridScreen extends React.Component {
 
 
     async generateNewWheelSet(raceID,setNr,cat,subcat){
+
         let cols = [];
         for (let i =0; i < 4; i++) {
-            sendWheelRequest(0,'', '').then(Data => {
+            const accesstoken = await AsyncStorage.getItem('acesstoken');
+            await sendWheelRequest(accesstoken,0,'', '').then(Data => {
                 console.log(Data);
-                this.setState({helpwheelid: Data.id});
+                cols.push(Data);
             }).catch(function (error) {
                 console.log(error);
             })
             //const idwheel = await AsyncStorage.getItem('WheelID')
-            console.log(this.state.helpwheelid);
-            cols.push(this.state.helpwheelid);
+
         }
         console.log(cols)
-       const wheelsid = await sendWheelsRequest(cols[0], cols[1], cols[2], cols[3], '');
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+      await sendWheelsRequest(accesstoken, parseInt( cols[0]), parseInt(cols[1]), parseInt(cols[2]), parseInt(cols[3]), '').then(Data => {
+                console.log(Data);
+                cols.push(Data);
+            }).catch(function (error) {
+                console.log(error);
+            });
+        console.debug(cols[4])
         // sendNewSetRequest(raceID,setNr,cat,subcat,wheels)
-        sendNewSetRequest(raceID,setNr,cat, subcat,wheelsid );
+        sendNewSetRequest(raceID,setNr,cat, subcat,cols[4] );
     }
 
 
-    // end generate-------------------------
+    // end generate---------------------------------------------------------------------------
 
 
     handleSubmit = event => {
@@ -112,6 +120,7 @@ export default class AstridScreen extends React.Component {
     }
 
     async sendNewContigentRequest(raceID, set, cat, subcat, identifier, numberOfSets) {
+        console.log("in send")
        timeoutPromise(2000, fetch(
             'https://api.race24.cloud/wheels_start_astrid/create', {
                 method: 'POST',
@@ -129,14 +138,19 @@ export default class AstridScreen extends React.Component {
                 })
             })
             ).then(response => response.json()).then(data => {
+                console.log(data)
                 if (data[1]==200) {
-                    console.log(data[0])
+                    console.log(data[0]);
+                    return data[0].id
                 }
                 else {
-                    console.log("failed")
+                    console.log("failed");
+                    return data[0].id;
                 }
+                return data[0].id;
             }).catch(function (error) {
                 console.log(error);
+                return 0;
             })
     }
 

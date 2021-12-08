@@ -1,61 +1,93 @@
-async function sendWheelRequest(air_press = 0,id_scan='',id = '') {
-   return timeoutPromise(2000, fetch(
-        'https://api.race24.cloud/wheel_cont/createWheel', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                air_press:air_press,
-                id_scan:id_scan,
-                id:id,
-            })
-        })
-        ).then(response => response.json()).then(
-            data => {
-                if (data[1]==200){
-              console.log(data);
-              //AsyncStorage.setItem('WheelID',data[0].id);
-              return data[0].id;
-              }else{
-                    return [];
-                }
-                return []
-      }).catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
+import React from "react";
+import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
+import {styles} from "./styles"
+//import { AsyncStorage } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {timeoutPromise, refreshToken, syncData} from "./tools";
 
-
-// möchte data[0].id wieder haben
-// das habe ich vor:
-async function generateNewWheelSet(raceID,setNr,cat,subcat) {
-    let cols = [];
-    for (let i = 0; i < 4; i++) {
-        const idwheel = await sendWheelRequest(0, '', '');
-        //const idwheel = await AsyncStorage.getItem('WheelID')
-        console.log(idwheel);
-        cols.push(idwheel);
+export default class NewRaceScreen extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            type: '',
+            place: '',
+            date: '',
+        }
     }
-}
 
 
-function timeoutPromise(ms, promise) {
-  return new Promise((resolve, reject) => {
-    const timeoutId = setTimeout(() => {
-      reject(new Error('promise timeout'))
-    }, ms);
-    promise.then(
-      (res) => {
-        clearTimeout(timeoutId);
-        resolve(res);
-      },
-      (err) => {
-        clearTimeout(timeoutId);
-        reject(err);
-      }
-    );
-  })
+    validateForm() {
+        return this.state.date.length > 0 && this.state.place.length >0;
+    }
+    handleSubmit = event => {
+        event.preventDefault();
+        this.sendNewRaceRequest(this.state.type,this.state.place,this.state.date);
+    }
+    async sendNewRaceRequest(type,place,date) {
+       timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/race/create', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    type:type,
+                    place:place,
+                    date:date,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    AsyncStorage.setItem("raceIDNewRace",data[0].id)
+                    console.log("changeNav")
+                    this.props.navigation.replace("Race");//replace('Race');
+                    return parseInt(data[0].id)
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+    }
+
+    render() {
+        return (
+            <View style={styles.viewStyles}>
+                <Text style={styles.textStyles}>
+                    24 Stunden Rennen
+                </Text>
+                 <Text style={{height:60}}>
+                    Neues Rennen anlegen
+                </Text>
+                <View >
+                    <Text >Ersten Tag des Rennen angeben im Format DD.MM.YYYY: </Text>
+                    <TextInput
+                        style={{height:50 }}
+                        placeholder=" DD.MM.YYYY"
+                        onChangeText={(text) => this.setState({date:text,})}
+                    />
+                    <Text>Ort angeben: </Text>
+                    <TextInput
+                        style={{height: 50}}
+                        placeholder=" Ort"
+                        onChangeText={(place) => this.setState({place:place})}
+                    />
+                    <Text> Art des Rennens angeben: </Text>
+                    <TextInput
+                        style={{height: 50}}
+                        placeholder=" 24 Stunden Rennen"
+                        onChangeText={(type) => this.setState({type:type})}
+                    />
+                    <Button
+                        disabled={!this.validateForm()}
+                        title="Rennen anlegen"
+                        onPress={this.handleSubmit}
+                    />
+                </View>
+
+            </View>
+        );
+    }
 }

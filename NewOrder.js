@@ -40,32 +40,30 @@ export default class NewOrderScreen extends React.Component {
     }
      handleSubmit = event => {
         event.preventDefault();
-        this.sendNewOrderRequest(this.state.raceid, this.state.tyretype, this.state.tyremix, this.state.term,
+        this.sendNewRaceRequest(this.state.raceid, this.state.tyretype, this.state.tyremix, this.state.term,
             this.state.variant, this.state.number, this.state.orderdate, this.state.ordertime, this.state.pickuptime);
     }
-    async sendNewOrderRequest(raceid,tyretype,tyremix,term,variant,number,orderdate,ordertime,pickuptime) {
+
+     async sendNewRaceRequest(type,place,date) {
        timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/order/create', {
+            'https://api.race24.cloud/race/create', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    raceid:raceid,
-                    tyretype:tyretype,
-                    tyremix:tyremix,
-                    term:term,
-                    variant:variant,
-                    number:number,
-                    orderdate:orderdate,
-                    ordertime:ordertime,
-                    pickuptime:pickuptime
+                    type:type,
+                    place:place,
+                    date:date,
                 })
             })
             ).then(response => response.json()).then(data => {
                 if (data[1]==200) {
-                    this.props.navigation.replace('Race');
+                    AsyncStorage.setItem("raceIDNewRace",data[0].id)
+                    console.log("changeNav")
+                    this.props.navigation.replace("Race");//replace('Race');
+                    return parseInt(data[0].id)
                 }
                 else {
                     console.log("failed")
@@ -74,6 +72,7 @@ export default class NewOrderScreen extends React.Component {
                 console.log(error);
             })
     }
+
 
 
 

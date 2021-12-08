@@ -1,32 +1,45 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createKeyboardAwareNavigator} from "react-navigation";
 
-//raceID, set, cat, subcat, identifier, numberOfSets
 function generateAllSets(raceID,set,cat,subcat,numberOfSets){
-    for(let i =1; i < parseInt(numberOfSets)+1;i++){
-        generateNewWheelSet(raceID,i,cat,subcat)
+        for(let i =1; i < parseInt(numberOfSets)+1;i++){
+            console.log(i);
+            generateNewWheelSet(raceID,i,cat,subcat);
+        }
     }
-}
+
 
 
 async function generateNewWheelSet(raceID,setNr,cat,subcat){
     let cols = [];
     for (let i =0; i < 4; i++) {
-        const idwheel = await sendWheelRequest(0,'', '');
+        await sendWheelRequest(0,'', '').then(Data => {
+            console.log(Data);
+            cols.push(Data);
+        }).catch(function (error) {
+            console.log(error);
+        })
         //const idwheel = await AsyncStorage.getItem('WheelID')
-        console.log(idwheel);
-        cols.push(idwheel);
+
     }
-   const wheelsid = await sendWheelsRequest(cols[0], cols[1], cols[2], cols[3], '');
+    console.log(cols)
+  await sendWheelsRequest(parseInt( cols[0]), parseInt(cols[1]), parseInt(cols[2]), parseInt(cols[3]), '').then(Data => {
+            console.log(Data);
+            cols.push(Data);
+        }).catch(function (error) {
+            console.log(error);
+        });
+    console.debug(cols[4])
     // sendNewSetRequest(raceID,setNr,cat,subcat,wheels)
-    sendNewSetRequest(raceID,setNr,cat, subcat,wheelsid );
+    sendNewSetRequest(raceID,setNr,cat, subcat,cols[4] );
 }
 
-/*
-//generate one wheel and return id
-//generate one wheel and return id
-async function sendWheelRequest(air_press = 0,id_scan='',id = '',save=0) {
-    await timeoutPromise(2000, fetch(
+
+
+
+
+async function sendWheelRequest(accestoken,air_press = 0,id_scan='',id = '' ) {
+   return await timeoutPromise(2000, fetch(
         'https://api.race24.cloud/wheel_cont/createWheel', {
             method: 'POST',
             headers: {
@@ -34,55 +47,32 @@ async function sendWheelRequest(air_press = 0,id_scan='',id = '',save=0) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                aceess_tolen:accestoken,
                 air_press:air_press,
                 id_scan:id_scan,
                 id:id,
             })
         })
-        );
-    console.log(response)
-    if(!response.ok){
-        throw new Error(`HTTP error! status: ${response.status}`);
-    }else{
-    if(type === 'blob') {
-      content = await response.blob();
-    } else if(type === 'text') {
-      content = await response.text();
-    }
-    }
-    return content;
-}
-
-
-
- */
-
-
-
-async function sendWheelRequest(air_press = 0,id_scan='',id = '') {
-   return timeoutPromise(2000, fetch(
-        'https://api.race24.cloud/wheel_cont/createWheel', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                air_press:air_press,
-                id_scan:id_scan,
-                id:id,
-            })
-        })
-        ).then(response => response.json()).then(
-            data => {
-                if (data[1]==200){
-              console.log(data);
-              //AsyncStorage.setItem('WheelID',data[0].id);
-              return data[0].id;
-              }else{
-                    return [];
-                }
-                return []
+        ).then(response => response.json()).then(data => {
+                if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                    sendWheelRequest(accestoken,air_press,id_scan,id  );
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  console.log("Return Data");
+                  console.log(data[0].id);
+                  return data[0].id;
+              }
+              return [];
       }).catch(function (error) {
             console.log(error);
             return [];
@@ -92,9 +82,9 @@ async function sendWheelRequest(air_press = 0,id_scan='',id = '') {
 
 
 //generate one wheelS and return id
-async function sendWheelsRequest(id_FL,id_FR,id_BL,id_BR,id = '') {
+async function sendWheelsRequest(accestoken,id_FL,id_FR,id_BL,id_BR,id = '') {
     console.log([id_FL,id_FR,id_BL,id_BR]);
-   timeoutPromise(2000, fetch(
+   return await timeoutPromise(2000, fetch(
         'https://api.race24.cloud/wheel_cont/createWheels', {
             method: 'POST',
             headers: {
@@ -102,6 +92,7 @@ async function sendWheelsRequest(id_FL,id_FR,id_BL,id_BR,id = '') {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+                acces_token:accestoken,
                 id_FL:id_FL,
                 id_FR:id_FR,
                 id_BL:id_BL,
@@ -109,15 +100,29 @@ async function sendWheelsRequest(id_FL,id_FR,id_BL,id_BR,id = '') {
                 id:id,
             })
         })
-        ).then(response => response.json()).then(response => response.json()).then(
-            data => {
-                if (data[1]==200){
-              console.log(data);
-              return data[0].id;
+        ).then(response => response.json()).then(data => {
+                if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                    sendWheelsRequest(accestoken,id_FL,id_FR,id_BL,id_BR,id );
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  console.log("Return Data");
+                  console.log(data[0].id);
+                  return data[0].id;
               }
+              return [];
       }).catch(function (error) {
             console.log(error);
-            return 0;
+            return [];
         })
 }
 
@@ -156,6 +161,7 @@ async function sendWheelSetRequest(id_FL,id_FR,id_BL,id_BR,id = '') {
 
 //create new Set request
 async function sendNewSetRequest(raceID,setNr,cat,subcat,wheels) {
+    console.log([raceID,setNr,cat,subcat,wheels])
    timeoutPromise(2000, fetch(
         'https://api.race24.cloud/wheel_cont/createSet', {
             method: 'POST',
