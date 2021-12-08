@@ -14,7 +14,7 @@ import FormelScreen from "./FormelScreen";
 import {NavScreen} from "./NavScreen";
 import LogoutScreen from "./LogoutScreen";
 import NewOrderScreen from "./NewOrder";
-import AstridScreen from "./example_Astrid";
+import WeatherScreen from "./WeatherScreen";
 import IngenieurScreen from "./IngenieurScreen";
 import IngenieurNav from "./IngenieurNav";
 import ShowRaceScreen from "./ShowRace";
@@ -47,7 +47,7 @@ const ManagerNav = createStackNavigator({
     Formel: {screen: FormelScreen},
     Logout: {screen: LogoutScreen},
     NewOrder: {screen: NewOrderScreen},
-    Astrid: {screen: AstridScreen},
+    Weather: {screen: WeatherScreen},
     ShowRace : {screen :ShowRaceScreen}
 
     }, {

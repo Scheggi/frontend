@@ -63,9 +63,9 @@ export default class RaceScreen extends React.Component {
     }
 
 
-     changeAstrid = event => {
+     changeWeather = event => {
         event.preventDefault();
-        this.props.navigation.push('Astrid');
+        this.props.navigation.push('Weather');
     }
 
     changeShowRace = event => {
@@ -126,8 +126,8 @@ export default class RaceScreen extends React.Component {
                 </Text>
 
                 <Button
-                    title="Screen Astrid"
-                    onPress={this.changeAstrid}
+                    title="Screen Weather"
+                    onPress={this.changeWeather}
                 />
 
                 <Button
