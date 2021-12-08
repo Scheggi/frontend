@@ -38,6 +38,12 @@ export default class NewRaceScreen extends React.Component {
         }
     }
 
+    changeMain(){
+        this.props.navigation.goBack();
+    }
+
+
+
     validateForm() {
         return (this.state.date.length > 0 && this.state.place.length >0 && this.state.identifierSlicksCold != "" && this.state.contingentSlicksCold != -1 && this.state.identifierSlicksMedium != "" && this.state.contingentSlicksMedium != -1 && this.state.identifierSlicksHot != "" && this.state.contingentSlicksHot != -1 && this.state.identifierIntersIntermediate != "" && this.state.contingentIntersIntermediate != "" && this.state.identifierRainDryWet != "" && this.state.contingentRainDryWet != -1 && this.state.identifierRainHeavyWet != "" && this.state.contingentRainHeavyWet != -1)
     }
@@ -87,9 +93,6 @@ export default class NewRaceScreen extends React.Component {
 
     // end generate---------------------------------------------------------------------------
 
-
-
-
      async generateNewRace(type,place,date){
       let id  = '';
         const accesstoken = await AsyncStorage.getItem('acesstoken');
@@ -115,7 +118,9 @@ export default class NewRaceScreen extends React.Component {
         this.generateAllSets(this.state.raceID, 5, "Rain", "DryWet", parseInt(this.state.contingentRainDryWet));
         this.sendNewContigentRequest(this.state.raceID, 6, "Rain", "HeavyWet", this.state.identifierRainHeavyWet, parseInt(this.state.contingentRainHeavyWet));
         this.generateAllSets(this.state.raceID, 6, "Rain", "HeavyWet", parseInt(this.state.contingentRainHeavyWet));
-        }
+        this.changeMain();
+
+  }
 
 
       async sendNewContigentRequest(raceID, set, cat, subcat, identifier, numberOfSets) {
