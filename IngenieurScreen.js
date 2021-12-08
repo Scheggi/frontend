@@ -7,13 +7,15 @@ import {
     TextInput,
     TouchableHighlight,
     SectionList,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView,
 } from 'react-native';
 import {styles} from "./styles"
-import {getRaceList, getWeatherTab, timeoutPromise,TableNiklas} from "./tools"
+import {getRaceList, getWeatherTab, timeoutPromise,getWheelsList,getRaceDetails_by_ID} from "./tools"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
+import Table from "./Table";
 
 export default class IngenieurScreen extends React.Component {
     constructor(props) {
@@ -23,23 +25,9 @@ export default class IngenieurScreen extends React.Component {
             raceID :0,
             raceList:[],
             dataWeather: [],
-            list_formel:[],
-            formel:"",
-
+            listWheelStart:[],
+            RaceDetails:[],
         }
-    }
-
-    //get RaceList
-    async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
-        const raceID = await AsyncStorage.getItem("raceID");
-        getWeatherTab(accesstoken, raceID).then(DataTabular => {
-                console.log(DataTabular);
-                this.setState({dataWeather: DataTabular});
-                AsyncStorage.setItem("WeatherList",DataTabular);
-            }).catch(function (error) {
-                console.log(error);
-            })
     }
 
     // navigate to Main Menue
@@ -47,27 +35,57 @@ export default class IngenieurScreen extends React.Component {
         event.preventDefault();
         this.props.navigation.goBack();
     }
-    
-    async renderTableHeader() {
-        let weatherList = await AsyncStorage.getItem("WeatherList")
-        await weatherList!=null;
-        if (weatherList !=null){
-        console.log(weatherList)
-        let header = Object.keys(weatherList)
-        return header.map((key, index) => {
-            return <th key={index}>{key.toUpperCase()}</th>
-      })}
-        else{
-            return [];
-        }
-   }
+
+    async componentDidMount(){
+        this.getWeatherData();
+    }
+
+
+    //get RaceDetails by RaceID
+    async getRaceDetails(){
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const raceID = await AsyncStorage.getItem('raceID');
+        getRaceDetails_by_ID(accesstoken,raceID).then(liste => {
+            console.log(liste);
+            this.setState({RaceDetails: liste});
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+    //get ReifenData
+    async getWheelsStart(){
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const raceID = await AsyncStorage.getItem('raceID');
+        getWheelsList(accesstoken,raceID).then(liste => {
+            console.log(liste);
+            this.setState({listWheelStart: liste});
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
+
+
+    //get Weather Data, it will be used in getRaceID
+    async getWeatherData(){
+       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const raceID = await AsyncStorage.getItem('raceID');
+       //const raceID = await AsyncStorage.getItem('raceID');
+       console.log(raceID)
+       getWeatherTab(accesstoken, raceID).then(DataTabular => {
+                console.log(DataTabular);
+                this.setState({dataWeather: DataTabular});
+            }).catch(function (error) {
+                console.log(error);
+            })
+    }
+
 
     //Tabular Weather Data
-    async renderTableData() {
-        let weatherList = await AsyncStorage.getItem("WeatherList")
-        if (weatherList != null){
-        return weatherList.map((dataWeather, index) => {
-            const {datetime,temp_ground,temp_air,weather_des} = singledata
+    renderTableData() {
+        console.log(this.state.dataWeather)
+        return this.state.dataWeather.map((dataWeather, index) => {
+            const { temp_ground,temp_air,datetime,weather_des } =dataWeather //destructuring
             return (
             <tr key={datetime}>
                <td>{datetime}</td>
@@ -76,8 +94,7 @@ export default class IngenieurScreen extends React.Component {
                 <td>{weather_des}</td>
             </tr>
          )
-      })}
-
+      })
    }
 
 
@@ -88,27 +105,14 @@ export default class IngenieurScreen extends React.Component {
                     24 Stunden Rennen
                 </Text>
 
-
-                <Text>
-                    Test
-                </Text>
-
-
-                <div>
-                <h1 id='title'>Tabelle Wetter</h1>
-                <table id='dataWeather'>
-                   <tbody>
-                       <tr>{this.renderTableHeader()}</tr>
-                  {this.renderTableData()}
-                   </tbody>
-                </table>
-                </div>
+                <ScrollView style={styles.containerChild2}>
+                     <Table list={this.state.dataWeather}/>
+                </ScrollView>
 
                 <Button
                     title="zurück"
                     onPress={this.changeMain}
                 />
-
             </View>
         );
     }

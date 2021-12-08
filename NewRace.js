@@ -39,8 +39,10 @@ export default class NewRaceScreen extends React.Component {
             })
             ).then(response => response.json()).then(data => {
                 if (data[1]==200) {
+                    AsyncStorage.setItem("raceIDNewRace",data[0].id)
                     console.log("changeNav")
                     this.props.navigation.replace("Race");//replace('Race');
+                    return parseInt(data[0].id)
                 }
                 else {
                     console.log("failed")

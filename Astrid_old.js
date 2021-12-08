@@ -132,7 +132,6 @@ export default class AstridScreen extends React.Component {
                     title="zurück"
                     onPress={this.changeMain}
                 />
-
             </View>
         );
     }

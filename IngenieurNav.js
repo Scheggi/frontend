@@ -67,7 +67,7 @@ export default class IngenieurNav extends React.Component {
 
      getRaceID = event =>{
         const id = event.target.value;
-        AsyncStorage.setItem("raceID",event.target.value);
+        AsyncStorage.setItem("raceID",id);
         this.saveRaceIDinState();
     }
 

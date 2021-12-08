@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {styles} from "./styles"
 import {getRaceList, getWeatherTab, timeoutPromise,getWheelsList,getRaceDetails_by_ID} from "./tools"
+import { sendNewSetRequest, sendWheelRequest, sendWheelsRequest} from "./tools_wheel"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
@@ -33,6 +34,7 @@ export default class AstridScreen extends React.Component {
             contingentIntersIntermediate: -1,
             contingentRainDryWet: -1,
             contingentRainHeavyWet: -1,
+            helpwheelid:0,
         }
         this.getRaceID=this.getRaceID.bind(this);
     }
@@ -47,14 +49,56 @@ export default class AstridScreen extends React.Component {
         return (this.state.raceID != -1 && this.state.identifierSlicksCold != "" && this.state.contingentSlicksCold != -1 && this.state.identifierSlicksMedium != "" && this.state.contingentSlicksMedium != -1 && this.state.identifierSlicksHot != "" && this.state.contingentSlicksHot != -1 && this.state.identifierIntersIntermediate != "" && this.state.contingentIntersIntermediate != "" && this.state.identifierRainDryWet != "" && this.state.contingentRainDryWet != -1 && this.state.identifierRainHeavyWet != "" && this.state.contingentRainHeavyWet != -1)
     }
 
+
+
+    // generate DataSet--------------------------------------------------
+    //raceID, set, cat, subcat, identifier, numberOfSets
+    generateAllSets(raceID,set,cat,subcat,numberOfSets){
+        for(let i =1; i < parseInt(numberOfSets)+1;i++){
+            console.log(i);
+            this.generateNewWheelSet(raceID,i,cat,subcat);
+        }
+    }
+
+
+    async generateNewWheelSet(raceID,setNr,cat,subcat){
+        let cols = [];
+        for (let i =0; i < 4; i++) {
+            sendWheelRequest(0,'', '').then(Data => {
+                console.log(Data);
+                this.setState({helpwheelid: Data.id});
+            }).catch(function (error) {
+                console.log(error);
+            })
+            //const idwheel = await AsyncStorage.getItem('WheelID')
+            console.log(this.state.helpwheelid);
+            cols.push(this.state.helpwheelid);
+        }
+        console.log(cols)
+       const wheelsid = await sendWheelsRequest(cols[0], cols[1], cols[2], cols[3], '');
+        // sendNewSetRequest(raceID,setNr,cat,subcat,wheels)
+        sendNewSetRequest(raceID,setNr,cat, subcat,wheelsid );
+    }
+
+
+    // end generate-------------------------
+
+
     handleSubmit = event => {
         event.preventDefault();
         this.sendNewContigentRequest(this.state.raceID, 1, "Slicks", "Cold", this.state.identifierSlicksCold, this.state.contingentSlicksCold);
+        // raceID,set,cat,subcat,numberOfSets
+        this.generateAllSets(this.state.raceID,"Slicks", "Cold", this.state.contingentSlicksCold)
         this.sendNewContigentRequest(this.state.raceID, 2, "Slicks", "Medium", this.state.identifierSlicksMedium, parseInt(this.state.contingentSlicksMedium));
+        this.generateAllSets(this.state.raceID, 2, "Slicks", "Medium", parseInt(this.state.contingentSlicksMedium))
         this.sendNewContigentRequest(this.state.raceID, 3, "Slicks", "Hot", this.state.identifierSlicksHot, parseInt(this.state.contingentSlicksHot));
+        this.generateAllSets(this.state.raceID, 3, "Slicks", "Hot", parseInt(this.state.contingentSlicksHot))
         this.sendNewContigentRequest(this.state.raceID, 4, "Inters", "Intermediate", this.state.identifierIntersIntermediate, parseInt(this.state.contingentIntersIntermediate));
+        this.generateAllSets(this.state.raceID, 4, "Inters", "Intermediate", parseInt(this.state.contingentIntersIntermediate))
         this.sendNewContigentRequest(this.state.raceID, 5, "Rain", "DryWet", this.state.identifierRainDryWet, parseInt(this.state.contingentRainDryWet));
+        this.generateAllSets(this.state.raceID, 5, "Rain", "DryWet", parseInt(this.state.contingentRainDryWet))
         this.sendNewContigentRequest(this.state.raceID, 6, "Rain", "HeavyWet", this.state.identifierRainHeavyWet, parseInt(this.state.contingentRainHeavyWet));
+        this.generateAllSets(this.state.raceID, 6, "Rain", "HeavyWet", parseInt(this.state.contingentRainHeavyWet))
     }
 
     async componentDidMount() {
@@ -77,11 +121,11 @@ export default class AstridScreen extends React.Component {
                 },
                 body: JSON.stringify({
                     raceID: raceID,
-                    set: set,
-                    cat: cat,
-                    subcat: subcat,
-                    identifier: identifier,
-                    numberOfSets: numberOfSets,
+                    set: set, //Zeilennummer der
+                    cat: cat, // String Slick Inters, Rain
+                    subcat: subcat,  // String Mischung
+                    identifier: identifier, // Bezeichnung Str
+                    numberOfSets: numberOfSets, // Kontigent Int
                 })
             })
             ).then(response => response.json()).then(data => {
