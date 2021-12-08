@@ -36,6 +36,11 @@ export default class NewUserScreen extends React.Component {
     }
     */
 
+        changeRace = event => {
+        event.preventDefault();
+        this.props.navigation.replace('Race');
+    }
+
     validateForm() {
         return this.state.username.length > 0 && this.state.password.length > 0  ;
     }
@@ -83,34 +88,10 @@ export default class NewUserScreen extends React.Component {
                 </Text>
 
                 <View >
-                    <Text >Vorname </Text>
-                    <TextInput
-                        style={{height:60 }}
-                        placeholder="Vorname"
-                        onChangeText={(text) => this.setState({firstname:text.trim()})}
-                    />
-                    <Text>Nachname: </Text>
-                    <TextInput
-                        style={{height: 60}}
-                        placeholder=" Nachname"
-                        onChangeText={(text) => this.setState({lastname:text.trim()})}
-                    />
-                    <Text> Username : </Text>
-                    <TextInput
-                        style={{height: 60}}
-                        placeholder=" username"
-                        onChangeText={(text) => this.setState({username:text.trim()})}
-                    />
-                    <Text> Passwort : </Text>
-                    <TextInput
-                        style={{height: 60}}
-                        secureTextEntry={true}
-                        placeholder=" Passwort"
-                        onChangeText={(text) => this.setState({password:text})}
-                    />
+                    <Text style={{height: 30}}> </Text>
                     <form >
-                        <label>
-                          Ordne dem Mitglied eine Gruppe zu:
+                        <label style={{fontSize: 16}}>
+                          Gruppe:
                           <select group={this.state.group} onChange={(text) => this.setState({group:text.target.value})}>
                             <option group="Helfer">Helfer</option>
                             <option group="Manager">Manager</option>
@@ -118,17 +99,49 @@ export default class NewUserScreen extends React.Component {
                           </select>
                         </label>
                     </form>
-
+                    <Text style={{height: 20}}> </Text>
+                    <table>
+                    <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white'}}><label> Vorname: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.type}
+                                   placeholder="Vorname" onChangeText={(text) => this.setState({firstname:text.trim()})}/></td>
+                    </tr>
+                     <tr style={{height: 20}}> </tr>
+                    <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white'}}><label> Nachname: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.place}
+                                    placeholder=" Nachname" onChangeText={(text) => this.setState({lastname:text.trim()})}/>
+                        </td>
+                    </tr>
+                           <tr style={{height: 20}}> </tr>
+                         <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white'}}><label> Username: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.type}
+                                   placeholder="Username" onChangeText={(text) => this.setState({username:text.trim()})}/></td>
+                    </tr>
+                     <tr style={{height: 20}}> </tr>
+                    <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white'}}><label> Passwort: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.place}
+                                    secureTextEntry={true} placeholder="Passwort" onChangeText={(text) => this.setState({password:text})}/>
+                        </td>
+                    </tr>
+                    </table>
+                    <Text style={{height: 40}}> </Text>
                     <Button
                         disabled={!this.validateForm()}
                         title="neues Mitglied anlegen"
                         onPress={this.handleSubmit}
                     />
-                    
-                    
+                    <Text> </Text>
+                        <Button
+                            title="zurück"
+                            onPress={this.changeRace}
+                            />
                 </View>
 
             </View>
         );
     }
+
 }

@@ -52,6 +52,7 @@ export default class LogoutScreen extends React.Component {
     render() {
         return (
             <View style={styles.viewStyles}>
+                <Text style={styles.textStyles}> Sie wurden erfolgreich ausgeloggt!</Text>
             </View>
         );
     }

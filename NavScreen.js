@@ -40,9 +40,9 @@ export class NavScreen extends React.Component {
 
     render() {
         return (
-            <View style={styles.viewStyles}>
-                <Text style={styles.textStyles}>
-                    24 Stunden Rennen
+            <View style={{flex: 0.9, alignItems: 'center', justifyContent: 'center'}}>
+                <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
+                    Reifenmanagement
                 </Text>
             </View>
         );

@@ -8,15 +8,15 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     viewStyles: {
-        flex: 0.9,
+        flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'white'
+        fontFamily: 'arial',
     },
     textStyles: {
-        color: 'blue',
         fontSize: 30,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontFamily: 'arial',
     },
     listcontainer: {
     flex: 1,
@@ -33,5 +33,4 @@ export const styles = StyleSheet.create({
     width: 40,
     borderRadius: 10,
   },
-
 });

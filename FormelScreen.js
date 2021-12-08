@@ -91,9 +91,9 @@ export default class FormelScreen extends React.Component {
         return this.state.list_formel.map((list_formel, index) => {
             const { n, formel } =list_formel //destructuring
             return (
-            <tr key={n}>
-               <td>{n}</td>
-               <td>{formel}</td>
+            <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}} key={n}>
+               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >{n}</td>
+               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{formel}</td>
             </tr>
          )
       })
@@ -103,38 +103,39 @@ export default class FormelScreen extends React.Component {
         return (
             <View style={styles.viewStyles}>
                 <Text style={styles.textStyles}>
-                    24 Stunden Rennen
+                    Formel Reifendruck anlegen
                 </Text>
-                 <Text style={{height:60}}>
-                    Neue Formel anlegen
+                 <Text style={{height:30}}>
                 </Text>
-                <View >
+                <View>
                     <TextInput
-                        style={{height:50 }}
-                        placeholder=" hier eingeben"
+                        style={{fontfamily: 'arial', height: 30, width: 500, textAlign: 'center', backgroundColor: '#d3d3d3'}}
+                        placeholder="Formel hier eingeben"
                         onChangeText={(text) => this.setState({formel:text})}
                     />
+                    <Text style={{height: 20}}></Text>
+                </View>
+                <View>
                     <Button
                         disabled={!this.validateForm()}
-                        title="neue Formel anlegen"
+                        title="Formel anlegen"
                         onPress={this.handleSubmit}
                     />
+                    <Text style={{height: 20}}></Text>
                 </View>
                 <div>
-                <h1 id='title'>Formeln</h1>
-                <table id='list_formel'>
+                <h1 id='title'>Angelegte Formeln</h1>
+                <table  id='list_formel'>
                    <tbody>
                       {this.renderTableData()}
                    </tbody>
                 </table>
                 </div>
-
-
+                <Text style={{height: 20}}></Text>
                 <Button
                         title="zurück"
                         onPress={this.changeRace}
                 />
-
             </View>
         );
     }
