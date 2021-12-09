@@ -69,6 +69,8 @@ export default class NewOrderScreen extends React.Component {
         await this.getWheelDict();
         await this.getDropdownList();
         if (this.state.dictButtons.length==6){
+            console.log(this.state.dictButtons)
+            console.log([this.state.dictButtons[0][0],this.state.dictButtons[1][0],this.state.dictButtons[5][0]])
             this.setState({ButtonSlicks_Cold: 'Slicks Cold  '+this.state.dictButtons[0][0].toString()});
             this.setState({ButtonSlicks_Medium: 'Slicks Medium  '+this.state.dictButtons[1][0].toString()});
             this.setState({ButtonSlicks_Hot: 'Slicks Hot  '+this.state.dictButtons[2][0].toString()});

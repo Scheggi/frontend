@@ -40,7 +40,7 @@ export class SplashScreen extends React.Component {
         return (
             <View style={styles.viewStyles}>
                 <Text style={styles.textStyles}>
-                    24 Stunden Rennen
+                    Reifenmanagement
                 </Text>
             </View>
         );

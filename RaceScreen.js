@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
 
+
 export default class RaceScreen extends React.Component {
     constructor(props) {
         super(props);
@@ -63,7 +64,7 @@ export default class RaceScreen extends React.Component {
     }
 
 
-     changeWeather = event => {
+    changeWeather = event => {
         event.preventDefault();
         this.props.navigation.push('Weather');
     }
@@ -73,13 +74,10 @@ export default class RaceScreen extends React.Component {
         this.props.navigation.push('ShowRace');
     }
 
-    changeWheel = event => {
+     changeWheel = event => {
         event.preventDefault();
         this.props.navigation.push('Wheel');
     }
-
-
-
 
      async getRaceID(event){
         AsyncStorage.setItem("raceID",event.target.value);
@@ -95,76 +93,58 @@ export default class RaceScreen extends React.Component {
         return (
             <View style={styles.viewStyles}>
                 <Text style={styles.textStyles}>
-                    24 Stunden Rennen
+                    Reifenmanagement
                 </Text>
-
+                <Text style={{height: 30}}> </Text>
+                <label style={{fontSize: 16}}> Rennen auswählen: <select value={this.state.id} onChange={this.getRaceID}>
+                  {optionTemplate}
+                </select>
+                </label>
+                <View style={{width: 300}}>
+                  <Text style={{height: 20}}> </Text>
                 <Button
-                    title="Neues Rennen anlegen"
+                    title="Neue Renndaten anlegen"
                     onPress={this.changeNewRace}
                 />
-
-                <Text >
-                </Text>
-
+                <Text style={{height: 10}}> </Text>
+                <Button
+                  title="Renndaten anzeigen"
+                    onPress={this.changeShowRace}
+                />
+                <Text style={{height: 10}}> </Text>
+                <Button
+                    title="Reifenbestellungen verwalten"
+                    onPress={this.changeNewOrder}
+                />
+                <Text style={{height: 10}}> </Text>
+                <Button
+                    title="Reifendetails anzeigen"
+                    onPress={this.changeWheel}
+                />
+                <Text style={{height: 10}}> </Text>
+                <Button
+                    title="Wetterdaten anzeigen"
+                    onPress={this.changeWeather}
+                />
+                 <Text style={{height: 10}}> </Text>
+                <Button
+                    title="Formel Reifendruck anlegen"
+                    onPress={this.changeFormel}
+                />
+                <Text style={{height: 10}}> </Text>
                 <Button
                     title="Neues Mitglied anlegen"
                     onPress={this.changeNewUser}
                 />
-
-                <Text >
-                </Text>
-
-                <Button
-                    title="Screen Formel"
-                    onPress={this.changeFormel}
-                />
-
-                <Text >
-                </Text>
-
-                <Button
-                    title="Neue Reifenbestellung anlegen"
-                    onPress={this.changeNewOrder}
-                />
-
-                <Text >
-                </Text>
-
-                <Button
-                    title="Wetter"
-                    onPress={this.changeWeather}
-                />
-
-                <Button
-                    title="Übersicht Reifen"
-                    onPress={this.changeWheel}
-                />
-
-
-
-                <Button
-                    title="Screen Showrace"
-                    onPress={this.changeShowRace}
-                />
-
-
-                <label>
-                Wähle das gewünschte Rennen aus:
-                <select value={this.state.id} onChange={this.getRaceID}>
-                  {optionTemplate}
-                </select>
-
-                </label>
-
+                </View>
+                <View style={{width: 200}}>
+                <Text style={{height: 40}}> </Text>
                 <Button
                     title="Logout"
                     onPress={this.changeLogout}
                 />
-
-
-
+                </View>
             </View>
         );
     }
 }
-
