@@ -111,7 +111,7 @@ export default class NewOrderScreen extends React.Component {
         const setid = await AsyncStorage.getItem("SetID");
         console.log(setid);
     }
-    
+
 
     getRaceID = event => {
         const id = event.target.value;
@@ -142,10 +142,8 @@ export default class NewOrderScreen extends React.Component {
         changeWheelSet(this.state.setID,this.state.variant,this.state.orderduration,this.state.term);
         AsyncStorage.setItem('orderSetID',this.state.setID);
         this.refresh_Buttons();
-
     }
 
-    set_setIT
 
     handleSubmitButton1 = event => {
         event.preventDefault();
@@ -164,8 +162,6 @@ export default class NewOrderScreen extends React.Component {
         helper[1][0]= helper[1][0]-1;
         this.setState({setID: helper[1][1][helper[1][0]]});
         this.setState({dictButtons: helper});
-
-
 
 
     }
@@ -373,7 +369,6 @@ export default class NewOrderScreen extends React.Component {
                 console.log(error);
             })
         }
-
 
 
         renderWheelTable(){
