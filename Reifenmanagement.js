@@ -78,25 +78,6 @@ export default class WheelScreen extends React.Component {
         this.setState({raceID: raceid});
     }
 
-    /*
-    async componentDidMount() {
-      const accesstoken = await AsyncStorage.getItem('acesstoken');
-      timeoutPromise(2000, fetch("https://api.race24.cloud/formel/get", {
-          method: 'POST',
-          headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-              access_token: accesstoken,
-          })
-          })).then(response => response.json()).then(data => {
-              console.log(data);
-              this.setState({list_formel: data[0].data})
-          })
-    }
-
-     */
 
     renderTableData() {
         console.log(this.state.list_formel)
@@ -117,7 +98,6 @@ export default class WheelScreen extends React.Component {
                  <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >{list_formel.fr_wheel_id}</td>
                <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{list_formel.bl_wheel_id}</td>
                 <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{list_formel.br_wheel_id}</td>
-
             </tr>
          )
       })
