@@ -327,6 +327,48 @@ function get_WheelSet_raceID_status(accesstoken,raceID) {
         })
 }
 
+
+// start Order Wheel
+//wheel_Set by id
+function get_Dict_WheelOrder(accesstoken,raceID) {
+  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/OrderWheelDict', {
+      method: 'POST',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          access_token: accesstoken,
+          raceID:raceID,
+      })
+      })).then(response => response.json()).then(data => {
+              console.log(data);
+              if ('msg' in data){
+                            if (data['msg'] === 'Token has expired'){
+                                refreshToken().then( token => {
+                                        get_Dict_WheelOrder(token,raceID);
+                                    }
+                                ).catch( function (error) {
+                                        console.log('Refresh failed');
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  console.log('Return Data');
+                  console.log(data[0].data);
+                  return data[0].data;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
 // 
 //wheel_Set by raceID_cat_subcat
 function get_raceID_cat_subcat(accesstoken,raceID,cat,subcat) {
@@ -418,5 +460,5 @@ async function refreshToken() {
 
 
 
-export {getDropdown}
+export {getDropdown,get_Dict_WheelOrder}
 

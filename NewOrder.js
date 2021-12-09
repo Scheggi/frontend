@@ -2,7 +2,9 @@ import React from "react";
 import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
 import {styles} from "./styles"
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {timeoutPromise, refreshToken,getRaceList} from "./tools";
+import {timeoutPromise, refreshToken, getRaceList, getRaceDetails_by_ID, getWheelsList, getWeatherTab} from "./tools";
+import {get_Dict_WheelOrder,getDropdown} from "./tools_get_wheels";
+import Table from "./TableWheels";
 
 export default class NewOrderScreen extends React.Component {
    constructor(props) {
@@ -22,15 +24,75 @@ export default class NewOrderScreen extends React.Component {
             ordertime1: '',
             pickuptime: '',
             raceList: [],
-
+            listDropdown1:[],
+            listDropdown2:[],
+            listDropdown3:[],
+            dictButtons:[],
             time: {},
             seconds: 1800,
             timervalue: "",
+            setID:0,
         }
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
         this.countDown = this.countDown.bind(this);
     }
+
+    // get Data
+    async componentDidMount(){
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const raceID = await AsyncStorage.getItem('raceID');
+        getDropdown(accesstoken,raceID).then(racelistDropdown => {
+            console.log(racelistDropdown);
+            this.setState({listDropdown1: racelistDropdown[0]});
+            this.setState({listDropdown2: racelistDropdown[1]});
+            this.setState({listDropdown3: racelistDropdown[2]});
+        }).catch(function (error) {
+            console.log(error);
+        })
+
+       console.log(2)
+        this.getWheelDict();
+        this.getDropdownList();
+    }
+
+    //get Wheel Data
+    async getWheelDict(){
+       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const raceID = await AsyncStorage.getItem('raceID');
+       //const raceID = await AsyncStorage.getItem('raceID');
+       console.log(raceID)
+       await get_Dict_WheelOrder(accesstoken, raceID).then(DataTabular => {
+                console.log(DataTabular);
+                this.setState({dictButtons: DataTabular});
+            }).catch(function (error) {
+                console.log(error);
+            })
+        console.log(this.state.dictButtons)
+    }
+    // get Dropdown list free,order,used
+    async getDropdownList(){
+       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const raceID = await AsyncStorage.getItem('raceID');
+       //const raceID = await AsyncStorage.getItem('raceID');
+       console.log(raceID)
+       await getDropdown(accesstoken, raceID).then(DataTabular => {
+                console.log(DataTabular);
+                this.setState({listDropdown: DataTabular});
+            }).catch(function (error) {
+                console.log(error);
+            })
+        console.log(this.state.listDropdown)
+    }
+
+    async getSetID(event){
+        AsyncStorage.setItem("SetID",event.target.value);
+        const setid = await AsyncStorage.getItem("SetID");
+        console.log(setid);
+    }
+
+
+
 
     getRaceID = event => {
         const id = event.target.value;
@@ -191,6 +253,20 @@ export default class NewOrderScreen extends React.Component {
             let optionTemplate = this.state.raceList.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
             ));
+            // dropdown list free
+            console.log(this.state.listDropdown1)
+            let optionfree = this.state.listDropdown1.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
+        ));
+            // dropdown list order
+            let optionorder = this.state.listDropdown2.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
+        ));
+            // dropdown list used
+            let optionused = this.state.listDropdown3.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
+        ));
+
 
             return (
                 <View style={container2}>
@@ -326,6 +402,16 @@ export default class NewOrderScreen extends React.Component {
                             Stunden: {this.state.time.h} Minuten: {this.state.time.m} Sekunden: {this.state.time.s} </Text>
                     </View>
             </View>
+                    <View>
+                         <label>
+                Bearbeite ein freies Set:
+                <select value={this.state.id} onChange={this.getSetID}>
+                  {optionfree}
+                </select>
+                </label>
+
+                    </View>
+
         </View>
             );
         }
