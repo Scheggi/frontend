@@ -89,11 +89,11 @@ export default class FormelScreen extends React.Component {
     renderTableData() {
         console.log(this.state.list_formel)
         return this.state.list_formel.map((list_formel, index) => {
-            //const { n, formel } =list_formel //destructuring
+            const { n, formel } =list_formel //destructuring
             return (
-            <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}} key={list_formel.n}>
-               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >{list_formel.n}</td>
-               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{list_formel.formel}</td>
+            <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}} key={n}>
+               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >{n}</td>
+               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{formel}</td>
             </tr>
          )
       })
@@ -101,7 +101,7 @@ export default class FormelScreen extends React.Component {
 
     render() {
         return (
-            <View style={styles.viewStyles}>
+            <View style={viewStyles1}>
                 <Text style={styles.textStyles}>
                     Formel Reifendruck anlegen
                 </Text>
@@ -124,19 +124,29 @@ export default class FormelScreen extends React.Component {
                     <Text style={{height: 20}}></Text>
                 </View>
                 <div>
-                <h1 id='title'>Angelegte Formeln</h1>
+                <h1 style={{fontsize: 30, fontFamily: 'arial'}} id='title'>Angelegte Formeln</h1>
                 <table  id='list_formel'>
                    <tbody>
                       {this.renderTableData()}
                    </tbody>
                 </table>
                 </div>
-                <Text style={{height: 20}}></Text>
+                <View  style={{width: 200}}>
+                 <Text style={{height: 20}}></Text>
                 <Button
                         title="zurück"
                         onPress={this.changeRace}
                 />
+                </View>
             </View>
         );
     }
 }
+
+const viewStyles1= {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'arial',
+        overflowY: 'scroll',
+    };

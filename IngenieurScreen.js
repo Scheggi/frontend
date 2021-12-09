@@ -17,7 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
 import Table from "./Table";
 
-export default class IngenieurScreen extends React.Component {
+export default class WeatherScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -31,7 +31,7 @@ export default class IngenieurScreen extends React.Component {
     }
 
     // navigate to Main Menue
-    changeMain = event => {
+     changeRace = event => {
         event.preventDefault();
         this.props.navigation.goBack();
     }
@@ -81,7 +81,7 @@ export default class IngenieurScreen extends React.Component {
     }
 
 
-    //Tabular Weather Data
+    /*
     renderTableData() {
         console.log(this.state.dataWeather)
         return this.state.dataWeather.map((dataWeather, index) => {
@@ -96,25 +96,56 @@ export default class IngenieurScreen extends React.Component {
          )
       })
    }
+     */
 
+    //Tabular Weather Data
+    renderTableData() {
+        console.log(this.state.dataWeather)
+        return this.state.dataWeather.map((dataWeather, index) => {
+            const { temp_ground,temp_air,datetime,weather_des } =dataWeather //destructuring
+            return (
+            <tr bgcolor='#d3d3d3' style={{textAlign: "left", padding: '8px', fontFamily: 'arial'}} key={temp_ground}>
+               <td style={{border: "solid", borderColor: 'grey', height: 15, width: 150, padding: '8px'}} >{datetime}</td>
+               <td style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}} >{temp_air}</td>
+                <td style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}} >{temp_ground}</td>
+                <td style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}} >{weather_des}</td>
+            </tr>
+         )
+      })
+   }
 
     render() {
         return (
-            <View style={styles.viewStyles}>
-                <Text style={styles.textStyles}>
-                    24 Stunden Rennen
-                </Text>
-
-                <ScrollView style={styles.containerChild2}>
-                     <Table list={this.state.dataWeather}/>
-                </ScrollView>
-
+            <View style={viewStyles1}>
+                <div >
+                <h1 style={{fontSize: 30, marginRight: 'auto', marginLeft: 'auto', textAlign: 'center'}} id='title'>Wetterdaten</h1>
+                <table style={{overflowY: 'scroll'}} id='list_formel'>
+                    <tr bgcolor='#808080' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}} >
+                    <th style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}} >Zeitstempel</th>
+                    <th style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}} >Lufttemperatur</th>
+                    <th style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}} >Streckentemperatur</th>
+                    <th style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}} >Streckenverhältnis</th>
+                    </tr>
+                   <tbody>
+                      {this.renderTableData()}
+                   </tbody>
+                </table>
+                </div>
+                <View  style={{width: 200}}>
+                <Text style={{height: 20}}></Text>
                 <Button
-                    title="zurück"
-                    onPress={this.changeMain}
+                        title="zurück"
+                        onPress={this.changeRace}
                 />
+                    </View>
             </View>
         );
     }
 }
-
+const viewStyles1= {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'arial',
+        overflowY: 'scroll',
+    };

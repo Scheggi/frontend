@@ -14,14 +14,13 @@ function Table({list, width=920, height='auto'}) {
               	width: width,
               	height: height,
               	margin: 15,
-              	borderWidth: 1,
 
               }}>
 
                 <thead >
-                  <tr>
+                  <tr bgcolor='#696969' style={{height: 40, textAlign: "center", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}>
                     {colNames.map((headerItem, index) => (
-                      <th style={{borderStyle: 'solid',  borderWidth: 1}} key={index}>{headerItem}</th>
+                      <th style={{borderStyle: 'solid',  borderWidth: 'thin'}} key={index}>{headerItem}</th>
                     ))}
                   </tr>
                 </thead>
@@ -30,7 +29,7 @@ function Table({list, width=920, height='auto'}) {
                   {Object.values(list).map((obj, index) => (
                     <tr key={index}>
                       {Object.values(obj).map((value, index2) => (
-                        <td style={{borderStyle: 'solid',  borderWidth: 1}} key={index2}>{value}</td>
+                        <td style={{backgroundColor: 'lightgrey', borderStyle: 'solid', borderWidth: 'thin', borderColor: 'white', height: 20, padding: '8px', fontFamily: 'arial'}} key={index2}>{value}</td>
                       ))}
                     </tr>
                   ))}

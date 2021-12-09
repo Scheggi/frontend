@@ -11,7 +11,9 @@ import {
     TouchableOpacity
 } from 'react-native';
 import {getRaceList, getWeatherTab, timeoutPromise,getWheelsList,getRaceDetails_by_ID} from "./tools"
+import { Logs } from 'expo'
 
+Logs.enableExpoCliLogging()
 
 export default class ShowRaceScreen extends React.Component {
     constructor(props) {
@@ -44,16 +46,10 @@ export default class ShowRaceScreen extends React.Component {
         this.getWheelsStart=this.getWheelsStart.bind(this);
     }
 
-    validateForm() {
-        return (this.state.raceID != -1)
-    }
-
-     changeMain = event => {
+     changeRace = event => {
         event.preventDefault();
         this.props.navigation.goBack();
     }
-
-
 
     async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('acesstoken');
@@ -90,10 +86,11 @@ export default class ShowRaceScreen extends React.Component {
 
     }
      //get ReifenData
-   async getWheelsStart(){
+    async getWheelsStart(){
         const accesstoken = await AsyncStorage.getItem('acesstoken');
         AsyncStorage.setItem('raceID', this.state.raceID);
         const raceID = await AsyncStorage.getItem('raceID');
+        console.log(raceID)
         getWheelsList(accesstoken,raceID).then(liste => {
             console.log(liste);
             this.setState({listWheelStart: liste});
@@ -125,8 +122,6 @@ export default class ShowRaceScreen extends React.Component {
         this.getRaceDetails();
     }
 
-
-
     render() {
         let optionTemplate = this.state.raceList.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
@@ -134,58 +129,83 @@ export default class ShowRaceScreen extends React.Component {
         return (
             <View style={this.order}>
                 <div style={this.container}>
-                    <label >
-                        <h1 >Rennen auswählen:</h1>
-                        <select value={this.state.id} onChange={this.getRaceID}>
-                            {optionTemplate}
-                        </select>
+                        <h2 style={{fontSize: 30, fontWeight: 'bold',color: 'black', textAlign: 'center', fontFamily: 'arial', marginLeft: 'auto', marginRight:'auto'}}> Rennen anzeigen</h2>
+                    <View  style={{marginLeft: 'auto', marginRight:'auto'}}>
+                    <label style={{fontSize: 16, fontFamily: 'arial', textAlign: 'center'}}> Rennen auswählen: <select value={this.state.id} onChange={this.getRaceID}>
+                        {optionTemplate}
+                    </select>
                     </label>
-                    <br></br>
-                    <Text style={{fontSize:'20px'}}><Text style={{fontWeight: "bold"}}>Datum:{"  "}</Text>{this.state.date}</Text>
-                    <br></br>
-                    <Text style={{fontSize:'20px'}}><Text style={{fontWeight: "bold"}}>Ort:{"  "}</Text>{this.state.place}</Text>
-                    <br></br>
-                    <Text style={{fontSize:'20px'}}><Text style={{fontWeight: "bold"}}>Rennart:{"  "}</Text>{this.state.type}</Text>
-                    <br></br>
+                    </View>
+                    <tr style={{height: 20}}> </tr>
+                    <View>
+                     <table style={{textAlign: 'center', fontFamily:'arial, sans-serif', width:'70%', marginLeft:'auto', marginRight:'auto'}}>
+                          <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Renn-ID: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 250, padding: '8px', textAlign: 'left'}}>
+                            <Text style={{textAlign: 'left', height: 20, fontFamily: 'arial'}}>
+                                {" "}{this.state.raceID} </Text> </td>
+                    </tr>
+                         <tr style={{height: 20}}> </tr>
+                         <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Rennart: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 250, padding: '8px', textAlign: 'left'}}>
+                            <Text style={{textAlign: 'left', height: 20, fontFamily: 'arial'}}>
+                                {" "}{this.state.type} </Text> </td>
+                    </tr>
+                       <tr style={{height: 20}}> </tr>
+                    <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Rennstrecke: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 250, padding: '8px', textAlign: 'left'}}>
+                            <Text style={{textAlign: 'left', height: 20, fontFamily: 'arial'}}>
+                                {" "}{this.state.place} </Text> </td>
+                    </tr>
+                       <tr style={{height: 20}}> </tr>
+                    <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Startdatum: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 250, padding: '8px', textAlign: 'left'}}>
+                            <Text style={{textAlign: 'left', height: 20, fontFamily: 'arial'}}>
+                                {" "}{this.state.date} </Text> </td>
+                    </tr>
+                     </table>
+                </View>
+                    <View style={{width: 200, textAlign: 'center', marginLeft: 'auto', marginRight:'auto'}}>
+                     <Text style={{height: 20}}> </Text>
                     <Button
-                        disabled= {!this.validateForm()}
-                        title="DATEN ANZEIGEN"
+                        title="Daten anzeigen"
                         onPress={this.Action}
                     />
-                    <br></br>
-                     <Button
-                    title="zurück"
-                    onPress={this.changeMain}
-                    />
+                        </View>
                 </div>
                 <View style={styles.viewStyles}>
-                    <Text style={styles.textStyles}>
-                        Zur Verfügung stehendes Kontingent:
+                    <View>
+                    <Text style={this.textStyles1}>
+                        Verfügbares Kontingent
                     </Text>
+                    </View>
                     <br></br>
                     <div>
                         <table style={this.tableStyle}>
-                            <tr style={{backgroundColor: '#B0C4DE'}}>
+                            <tr style={{backgroundColor: 'dimgrey'}}>
                                 <th style={this.thStyle}></th>
                                 <th style={this.thStyle}>Mischung</th>
-                                <th style={this.thStyle}>Bezeichnung</th>
-                                <th style={this.thStyle}>Kontingent</th>
+                                <th style={this.thbigStyle}>Bezeichnung</th>
+                                <th style={this.thbigStyle}>Kontingent</th>
                             </tr>
 
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
-                                <th style={this.thStyle}>Slicks</th>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
+                                <th style={this.tdStyle}>Slicks</th>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}></td>
                             </tr>
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}>Cold (H/E)</td>
                                 < td style={this.tdStyle}>{this.state.i_11}</td>
                                 < td style={this.tdStyle}>{this.state.i_12}</td>
                             </tr>
 
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}>Medium (G/D)</td>
                                 < td style={this.tdStyle}>{this.state.i_21}</td>
@@ -193,32 +213,32 @@ export default class ShowRaceScreen extends React.Component {
 
                             </tr>
 
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}>Hot (I/F)</td>
                                 < td style={this.tdStyle}>{this.state.i_31}</td>
                                 < td style={this.tdStyle}>{this.state.i_32}</td>
                             </tr>
 
-                            <tr style={{backgroundColor: '#B0C4DE'}}>
+                            <tr style={{backgroundColor: 'grey'}}>
                                 <th style={this.tdStyle}>Inters</th>
                                 <td style={this.tdStyle}>Intermediate (H+/E+)</td>
                                 < td style={this.tdStyle}>{this.state.i_41}</td>
                                 < td style={this.tdStyle}>{this.state.i_42}</td>
                             </tr>
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <th style={this.tdStyle}>Rain</th>
                                 <td style={this.tdStyle}></td>
                                 < td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}></td>
                             </tr>
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}>Dry wet (T/T)</td>
                                 < td style={this.tdStyle}>{this.state.i_51}</td>
                                 < td style={this.tdStyle}>{this.state.i_52}</td>
                             </tr>
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}>Heavy wet (A/A)</td>
                                 < td style={this.tdStyle}>{this.state.i_61}</td>
@@ -227,9 +247,15 @@ export default class ShowRaceScreen extends React.Component {
 
                         </table>
                     </div>
+                    <View style={{width: 200, textAlign: 'center', marginLeft: 'auto', marginRight:'39.4%'}}>
+                    <Text style={{height: 20}}> </Text>
+                    <Button
+                        title="zurück"
+                        onPress={this.changeRace}
+                    />
+                    </View>
+                    </View>
 
-
-                </View>
             </View>
         );
 
@@ -237,38 +263,44 @@ export default class ShowRaceScreen extends React.Component {
      tableStyle = {
     textAlign: 'center',
      fontFamily:'arial, sans-serif',
-        borderCollapse:'collapse',
         width:'50%',
         marginLeft:'auto',
-        marginRight:'auto',
-    border: '2px solid #dddddd',
+        marginRight:'23%',
     }
     tdStyle={
-        border:'2px solid #dddddd',
         textAlign:'left',
         padding:'8px'
     }
     thStyle={
-        border:'2px solid #dddddd',
         textAlign:'left',
-        padding:'8px'
+        padding:'8px',
+        color: 'white'
+    }
+    thbigStyle={
+        textAlign: 'left',
+        padding: '8px',
+        color: 'white',
+        width: 400
     }
     order={
-        border: '1px solid #dddddd',
+
         justifyContent: 'space-around',
         flexDirection: 'row',
         padding: '0',
-        backgroundColor: 'white',
-        height: '90%'
+        height: '100%'
 
     }
     container={
-        width:"20%",
-        padding: '100px',
-        border: '1px solid #B0C4DE',
-        backgroundColor: '#F5FFFA'
+        width:"30%",
+        padding: '50px',
     }
-
-
+    textStyles1={
+         color: 'black',
+        fontSize: 30,
+        fontWeight: 'bold',
+        fontFamily: 'arial',
+        marginRight: 'auto',
+        marginLeft: 'auto'
+    }
 
 }

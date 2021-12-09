@@ -76,12 +76,14 @@ export default class LoginScreen extends React.Component {
                         </td>
                     </tr>
                     </table>
-                    <text style={{height: 60}}></text>
+                    <View style={{marginLeft: 'auto', marginRight: 'auto', width: 200}}>
+                         <text style={{height: 40}}></text>
                     <Button
                         disabled={!this.validateForm()}
                         title="Login"
                         onPress={this.handleSubmit}
                     />
+                    </View>
                 </View>
             </View>
         );

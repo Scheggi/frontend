@@ -78,58 +78,47 @@ export default class IngenieurNav extends React.Component {
     }
 
 
+
+
     render() {
         let optionTemplate = this.state.raceList.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
         ));
         return (
-            <View style={styles.viewStyles}>
+             <View style={styles.viewStyles}>
                 <Text style={styles.textStyles}>
-                    24 Stunden Rennen
+                    Reifenmanagement
                 </Text>
-
-                <label>
-                Wähle das gewünschte Rennen aus:
-                <select value={this.state.id} onChange={this.getRaceID}>
+                <Text style={{height: 30}}> </Text>
+                <label style={{fontSize: 16}}> Rennen auswählen: <select value={this.state.id} onChange={this.getRaceID}>
                   {optionTemplate}
                 </select>
-
                 </label>
-
-
-                <Text >
-
-                </Text>
-
-
-
-                <Button
-                    title="Screen Formel"
+                <View style={{width: 300}}>
+                  <Text style={{height: 20}}> </Text>
+                 <Button
+                    title="Formel Reifendruck anlegen"
                     onPress={this.changeFormel}
                 />
-
-                <Text >
-
-                </Text>
-
+                <Text style={{height: 10}}> </Text>
                 <Button
-                    disabled={!this.validateForm()}
-                    title="Wetter"
+                    title="Wetterdaten anzeigen"
                     onPress={this.changeIngenieur}
                 />
-
+                <Text style={{height: 10}}> </Text>
                 <Button
-                    title="Übersicht Reifen"
+                    title="Reifendetails anzeigen"
                     onPress={this.changeWheel}
                 />
-
+                </View>
+                <View style={{width: 200}}>
+                <Text style={{height: 40}}> </Text>
                 <Button
                     title="Logout"
                     onPress={this.changeLogout}
                 />
-
+                </View>
             </View>
         );
     }
 }
-

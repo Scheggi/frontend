@@ -6,14 +6,16 @@ import {
     TextInput,
     TouchableHighlight,
     SectionList,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView,
 } from 'react-native';
-import {styles} from "./styles"
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Button} from "react-native-web";
 //import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
 
 import {timeoutPromise,getWeatherTab, refreshToken,getRaceList} from "./tools";
+import Table from "./Table";
 
 export default class NewHelpScreen extends React.Component {
     constructor(props) {
@@ -29,9 +31,11 @@ export default class NewHelpScreen extends React.Component {
             seconds: 1800,
             raceid:0,
         }
+
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
         this.countDown = this.countDown.bind(this);
+
     }
 
     secondsToTime(secs){
@@ -68,7 +72,7 @@ export default class NewHelpScreen extends React.Component {
 
 
     async saveRaceIDinState(){
-        const id = await AsyncStorage.getItem("raceID");
+        const id = await AsyncStorage.getItem("raceIDHelper");
         this.setState({raceid : id} );
         console.log(this.state.raceid);
         this.getWeatherData(id);
@@ -76,9 +80,10 @@ export default class NewHelpScreen extends React.Component {
 
      getRaceID = event =>{
         const id = event.target.value;
-        AsyncStorage.setItem("raceID",event.target.value);
+        AsyncStorage.setItem("raceIDHelper",event.target.value);
         this.saveRaceIDinState();
     }
+
 
     async getWeatherData(raceID){
        const accesstoken = await AsyncStorage.getItem('acesstoken');
@@ -124,7 +129,7 @@ export default class NewHelpScreen extends React.Component {
 
     async sendNewWeatherRequest(temp_air,temp_ground,weather_des) {
         console.log(temp_air)
-        const id = await AsyncStorage.getItem("raceID");
+        const id = await AsyncStorage.getItem("raceIDHelper");
        timeoutPromise(2000, fetch(
             'https://api.race24.cloud/user/weather/create', {
                 method: 'POST',
@@ -150,59 +155,100 @@ export default class NewHelpScreen extends React.Component {
     render() {
         let optionTemplate = this.state.raceList.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
+
     ));
+
+
+    window.addEventListener('load', function() {
+        setTimeout(function()
+        {
+            let select = document.getElementById('option');
+            select.options.selectedIndex = 0;
+            select.dispatchEvent(new Event('change', {bubbles: true}));
+        }, 1000); // TODO - MÖGLICHST AUF DIESE UMSETZUNGSWEISE VERZICHTEN
+    })
+
+    const styles = {
+
+        container: {
+        flex: 1,
+        flexDirection: 'row',
+            justifyContent: 'space-around'
+        },
+
+        containerChild1: {
+        alignItems: 'center',
+        backgroundColor: 'grey',
+        width: 350,
+        },
+
+        containerChild2: {
+        textAlign: 'center',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            overflowY: 'scroll',
+        },
+    };
+
         return (
-            <View style={styles.viewStyles}>
-                <Text style={styles.textStyles}>
-                    24 Stunden Rennen
-                </Text>
-                <label>
-                Wähle das gewünschte Rennen aus:
-                <select value={this.state.id} onChange={this.getRaceID}>
-                  {optionTemplate}
-                </select>
-                </label>
+          <View style={styles.container}>
 
-                <div>
-                    <button onClick={this.startTimer}>Start</button>
-                    m: {this.state.time.m} s: {this.state.time.s}
-                 </div>
+            <View style={styles.containerChild1}>
 
+              <Text style={{fontSize: 30, color:'white', fontWeight: 'bold', marginBottom: 30, marginTop: 30, fontfamily: 'arial'}}>Wetterdaten</Text>
 
+              <label style={{textAlign: 'center', fontFamily: 'arial', color: 'white'}}>Rennen:
+              <select id='option' style={{margin: 10, fontFamily: 'arial'}} value={this.state.id} onChange={this.getRaceID}>{optionTemplate}</select>
+              </label>
 
-                <View >
-                    <Text >Temperatur des Bodens angeben: </Text>
-                    <TextInput
-                        style={{height:60 }}
-                        placeholder=" xx.xxxx"
-                        onChangeText={(text) => this.setState({ temp_ground:parseFloat(text.trim())})}
-                    />
-                    <Text>Temperatur der Luft angeben: </Text>
-                    <TextInput
-                        style={{height: 60}}
-                        placeholder=" xx.xxxx"
-                        onChangeText={(text) => this.setState({temp_air:parseFloat(text.trim())})}
-                    />
-                    <Text> Wetter Beschreibung angeben: </Text>
-                    <TextInput
-                        style={{height: 60}}
-                        placeholder=" bewoelkt"
-                        onChangeText={(text) => this.setState({weather_des:text})}
-                    />
-                    <Button
-                        disabled={!this.validateForm()}
-                        title="Neues Datenset anlegen"
-                        onPress={this.handleSubmit}
-                    />
+              <div className='test'>
+              <button onClick={this.startTimer} style={{borderRadius: 10, margin: 10, marginBottom: 30, fontFamily: 'arial'}}>Start</button>
+                  <Text style={{fontfamily: 'arial', color: 'white'}}> {this.state.time.m} Minuten : {this.state.time.s} Sekunden </Text>
+              </div>
 
-                    <Button
-                    title="Logout"
-                    onPress={this.changeLogout}
-                    />
-
+              <label style={{color: 'white',  fontFamily: 'arial'}}>Lufttemperatur</label>
+              <TextInput
+              style = {{backgroundColor: 'white', borderRadius: 10, width: 200, height: 40, margin: 15, textAlign: 'center'}}
+              placeholder="xx.xx"
+              onChangeText={(text) => this.setState({temp_air:parseFloat(text.trim())})}
+              />
+                 <Text> </Text>
+              <label style={{color: 'white',  fontFamily: 'arial'}}>Streckentemperatur</label>
+              <TextInput
+              style = {{backgroundColor: 'white', borderRadius: 10, width: 200, height: 40, margin: 15, textAlign: 'center'}}
+              placeholder="xx.xx"
+              onChangeText={(text) => this.setState( {temp_ground:parseFloat(text.trim())})}
+              />
+                <Text> </Text>
+              <label style={{color: 'white',  fontFamily: 'arial'}}>Streckenverhältnis</label>
+              <TextInput
+              style = {{backgroundColor: 'white', borderRadius: 10, width: 200, height: 40, marginBottom: 35, margin: 15, textAlign: 'center'}}
+              placeholder="nass/trocken/bewölkt"
+              onChangeText={(text) => this.setState({weather_des:text})}
+              />
+                <View style={{width: 200}}>
+                    <Text> </Text>
+              <Button
+              title="Daten abspeichern"
+              disabled={!this.validateForm()}
+              onPress={this.handleSubmit}
+              />
+                <Text> </Text>
+                 <Text> </Text>
+             <Button
+                title='Logout'
+                onPress={this.changeLogout}
+                />
                 </View>
-
             </View>
+
+            <ScrollView style={styles.containerChild2}>
+
+              <Table list={this.state.dataWeather}/>
+
+            </ScrollView>
+
+          </View>
         );
     }
 }
