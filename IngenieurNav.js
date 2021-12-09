@@ -50,8 +50,14 @@ export default class IngenieurNav extends React.Component {
 
     changeIngenieur = event => {
         event.preventDefault();
-        this.props.navigation.push('Ingenieur');
+        this.props.navigation.push('Wetter');
     }
+
+    changeWheel = event => {
+        event.preventDefault();
+        this.props.navigation.push('Wheel');
+    }
+
 
 
     validateForm(){
@@ -108,8 +114,13 @@ export default class IngenieurNav extends React.Component {
 
                 <Button
                     disabled={!this.validateForm()}
-                    title="Screen Übersicht"
+                    title="Wetter"
                     onPress={this.changeIngenieur}
+                />
+
+                <Button
+                    title="Übersicht Reifen"
+                    onPress={this.changeWheel}
                 />
 
                 <Button

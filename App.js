@@ -15,16 +15,17 @@ import {NavScreen} from "./NavScreen";
 import LogoutScreen from "./LogoutScreen";
 import NewOrderScreen from "./NewOrder";
 import WeatherScreen from "./WeatherScreen";
-import IngenieurScreen from "./IngenieurScreen";
 import IngenieurNav from "./IngenieurNav";
 import ShowRaceScreen from "./ShowRace";
 import WheelScreen from "./Reifenmanagement";
 
+
 const IngeniuerNav = createStackNavigator({
-    Ingenieur:{screen: WeatherScreen},
+    Wetter:{screen: WeatherScreen},
     Formel:{screen:FormelScreen},
     Logout: {screen: LogoutScreen},
     Nav: {screen: IngenieurNav},
+    Wheel: {screen: WheelScreen},
     /*NewUser: {}*/
     }, {
     initialRouteName: "Nav",
@@ -50,7 +51,7 @@ const ManagerNav = createStackNavigator({
     NewOrder: {screen: NewOrderScreen},
     Weather: {screen: WeatherScreen},
     ShowRace : {screen :ShowRaceScreen},
-    Wheels: {screen:WheelScreen },
+    Wheel: {screen: WheelScreen},
 
     }, {
     initialRouteName: "Race",

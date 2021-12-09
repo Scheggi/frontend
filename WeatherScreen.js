@@ -33,7 +33,7 @@ export default class WeatherScreen extends React.Component {
     // navigate to Main Menue
     changeMain = event => {
         event.preventDefault();
-        this.props.navigation.replace("Race");
+        this.props.navigation.goBack();
     }
 
     async componentDidMount(){

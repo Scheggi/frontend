@@ -73,6 +73,11 @@ export default class RaceScreen extends React.Component {
         this.props.navigation.push('ShowRace');
     }
 
+    changeWheel = event => {
+        event.preventDefault();
+        this.props.navigation.push('Wheel');
+    }
+
 
 
 
@@ -126,9 +131,16 @@ export default class RaceScreen extends React.Component {
                 </Text>
 
                 <Button
-                    title="Screen Weather"
+                    title="Wetter"
                     onPress={this.changeWeather}
                 />
+
+                <Button
+                    title="Übersicht Reifen"
+                    onPress={this.changeWheel}
+                />
+
+
 
                 <Button
                     title="Screen Showrace"

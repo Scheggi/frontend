@@ -35,58 +35,18 @@ export default class WheelScreen extends React.Component {
     }
 
     
-    //get RaceDetails by RaceID
-    async getRaceDetails(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
-        const raceID = await AsyncStorage.getItem('raceID');
-        getRaceDetails_by_ID(accesstoken,raceID).then(liste => {
-            console.log(liste);
-            this.setState({RaceDetails: liste});
-        }).catch(function (error) {
-            console.log(error);
-        })
-    }
-
-    //get ReifenData
-    async getWheelsStart(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
-        const raceID = await AsyncStorage.getItem('raceID');
-        getWheelsList(accesstoken,raceID).then(liste => {
-            console.log(liste);
-            this.setState({listWheelStart: liste});
-        }).catch(function (error) {
-            console.log(error);
-        })
-    }
-
 
     
 
     render() {
-        let optionTemplate = this.state.raceList.map(v => (
-            <option value={v.id} key={v.id}>{v.name}</option>
-        ));
+
         return (
             <View style={styles.viewStyles}>
                 <Text style={styles.textStyles}>
                     24 Stunden Rennen
                 </Text>
 
-                
 
-                <div>
-                <h1 id='title'>Tabelle Wetter</h1>
-                <table id='dataWeather'>
-                   <tbody>
-                      {this.renderTableData()}
-                   </tbody>
-                </table>
-                </div>
-
-                <Button
-                    title="zurück"
-                    onPress={this.changeMain}
-                />
 
             </View>
         );
