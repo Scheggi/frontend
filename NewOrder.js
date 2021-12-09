@@ -113,6 +113,7 @@ export default class NewOrderScreen extends React.Component {
     async openTabular(){
        await this.getSetInformation();
        this.getWheelData();
+       this.renderWheelTable();
     }
 
     // get Set Information

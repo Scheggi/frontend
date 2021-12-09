@@ -121,10 +121,52 @@ function getDropdown(accesstoken,raceID) {
 }
 
 
+//get all info
+///wheel_cont/getWheels_withWheel
+// geht set informarion
+function getWheelInformations(accesstoken,raceID) {
+    return timeoutPromise(2000, fetch('https:/api.race24.cloud/wheel_cont/getgreatList', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            access_token: accesstoken,
+            raceID:parseInt(raceID),
+        })
+    })).then(response => response.json()).then(data => {
+        console.log(data);
+        if ('msg' in data){
+            if (data['msg'] === 'Token has expired'){
+                refreshToken().then( token => {
+                    getWheelInformations(token,raceID);
+                    }
+                ).catch( function (error) {
+                        console.log('Refresh failed');
+                        console.log(error);
+                    }
+                );
+                return [];
+            }
+        }
+        else{
+            console.log('Return Data');
+            console.log(data[0].data);
+            return data[0].data;
+        }
+        return [];
+    }).catch(function (error) {
+        console.log('fr');
+        return [];
+    })
+}
+
+
 ///wheel_cont/getWheels_withWheel
 // geht set informarion
 function getWheelSetInformation(accesstoken,id) {
-    return timeoutPromise(2000, fetch('https:/api.race24.cloud//wheel_cont/getIdsWheelSet', {
+    return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getIdsWheelSet', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -500,5 +542,5 @@ async function refreshToken() {
 
 
 
-export {getDropdown,get_Dict_WheelOrder,getWheelSetInformation}
+export {getDropdown,get_Dict_WheelOrder,getWheelSetInformation,getWheelInformations}
 
