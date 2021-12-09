@@ -155,65 +155,61 @@ export default class NewRaceScreen extends React.Component {
             })
     }
 
-    render() {
+  render() {
         return (
             <View style={this.order}>
                 <div style={this.container}>
-                    <h1 style={{fontSize: 45, fontWeight: 'bold',color: 'black'}}>
+                    <View>
+                        <text style={{height: 75}}> </text>
+                    </View>
+                    <h1 style={{fontSize: 30, fontWeight: 'bold',color: 'black', textAlign: 'center', fontFamily: 'arial', marginLeft: 'auto', marginRight:'auto'}}>
                     Neues Rennen anlegen
                 </h1>
                 <View >
-                    <Text >Ersten Tag des Rennen angeben im Format DD.MM.YYYY: </Text>
-                    <TextInput
-                        style={{height:50 }}
-                        placeholder=" DD.MM.YYYY"
-                        onChangeText={(text) => this.setState({date:text})}
-                    />
-                    <Text>Ort angeben: </Text>
-                    <TextInput
-                        style={{height: 50}}
-                        placeholder=" Ort"
-                        onChangeText={(place) => this.setState({place:place})}
-                    />
-                    <Text> Art des Rennens angeben: </Text>
-                    <TextInput
-                        style={{height: 50}}
-                        placeholder=" 24 Stunden Rennen"
-                        onChangeText={(type) => this.setState({type:type})}
-                    />
-                    <Button
-                        disabled={!this.validateForm()}
-                        title="Rennen anlegen"
-                        onPress={this.handleSubmit}
-                    />
-                    <Button
-                        title="zurück"
-                        onPress={this.changeRace}
-                    />
+                     <table style={{textAlign: 'center', fontFamily:'arial, sans-serif', width:'70%', marginLeft:'auto', marginRight:'auto'}}>
+                    <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Rennart: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, padding: '8px', textAlign: 'center'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.type}
+                                   onChangeText={(type) => this.setState({type:type})} placeholder='24h-Rennen'/></td>
+                    </tr>
+                       <tr style={{height: 20}}> </tr>
+                    <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Rennstrecke: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, padding: '8px', textAlign: 'center'}}> <TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.place}
+                                    onChangeText={(place) => this.setState({place: place})} placeholder='Rennstrecke'/>
+                        </td>
+                    </tr>
+                       <tr style={{height: 20}}> </tr>
+                    <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Startdatum: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, padding: '8px', textAlign: 'center'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.date}
+                                   onChangeText={(text) => this.setState({date: text})} placeholder='TT.MM.JJJJ'/></td>
+                    </tr>
+                     </table>
                 </View>
 
                 </div>
                 <View style={styles.viewStyles}>
                     <Text style={this.textStyles1}>
-                        Kontingent für das Rennen festlegen :
+                        Reifenkontingent festlegen
                     </Text>
                     <br></br>
                     <div>
                         <table style={this.tableStyle}>
-                            <tr style={{backgroundColor: '#B0C4DE'}}>
+                            <tr style={{backgroundColor: 'dimgrey'}}>
                                 <th style={this.thStyle}></th>
                                 <th style={this.thStyle}>Mischung</th>
                                 <th style={this.thStyle}>Bezeichnung</th>
                                 <th style={this.thStyle}>Kontingent</th>
                             </tr>
 
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
-                                <th style={this.thStyle}>Slicks</th>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
+                                <th style={this.tdStyle}>Slicks</th>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}></td>
                             </tr>
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}>Cold (H/E)</td>
                                 < td style={this.tdStyle}><TextInput
@@ -228,7 +224,7 @@ export default class NewRaceScreen extends React.Component {
                                 </td>
                             </tr>
 
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}>Medium (G/D)</td>
                                 < td style={this.tdStyle}><TextInput
@@ -243,7 +239,7 @@ export default class NewRaceScreen extends React.Component {
                                 </td>
                             </tr>
 
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}>Hot (I/F)</td>
                                 < td style={this.tdStyle}><TextInput
@@ -258,27 +254,27 @@ export default class NewRaceScreen extends React.Component {
                                 </td>
                             </tr>
 
-                            <tr style={{backgroundColor: '#B0C4DE'}}>
+                            <tr style={{backgroundColor: 'gray'}}>
                                 <th style={this.tdStyle}>Inters</th>
                                 <td style={this.tdStyle}>Intermediate (H+/E+)</td>
                                 < td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
+                                    style={{height: 20, color: 'white'}}
                                     onChangeText={(x) => this.setState({identifierIntersIntermediate: x})}
                                 />
                                 </td>
                                 <td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
+                                    style={{height: 20,  color: 'white'}}
                                     onChangeText={(x) => this.setState({contingentIntersIntermediate: x})}
                                 />
                                 </td>
                             </tr>
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <th style={this.tdStyle}>Rain</th>
                                 <td style={this.tdStyle}></td>
                                 < td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}></td>
                             </tr>
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}>Dry wet (T/T)</td>
                                 < td style={this.tdStyle}><TextInput
@@ -292,7 +288,7 @@ export default class NewRaceScreen extends React.Component {
                                 />
                                 </td>
                             </tr>
-                            <tr style={{backgroundColor: '#F5FFFA'}}>
+                            <tr style={{backgroundColor: 'lightgrey'}}>
                                 <td style={this.tdStyle}></td>
                                 <td style={this.tdStyle}>Heavy wet (A/A)</td>
                                 < td style={this.tdStyle}><TextInput
@@ -308,8 +304,21 @@ export default class NewRaceScreen extends React.Component {
                             </tr>
 
                         </table>
+                         <Text style={{height: 20}}> </Text>
                     </div>
-
+                <view style={{marginLeft: 'auto', marginRight: 'auto', width: 200}}>
+                     <Text style={{height: 20}}> </Text>
+                    <Button
+                        disabled={!this.validateForm()}
+                        title="Renndaten anlegen"
+                        onPress={this.handleSubmit}
+                    />
+                     <Text style={{height: 20}}> </Text>
+                    <Button
+                        title="zurück"
+                        onPress={this.changeRace}
+                    />
+                </view>
 
                 </View>
             </View>
@@ -319,41 +328,38 @@ export default class NewRaceScreen extends React.Component {
      tableStyle = {
     textAlign: 'center',
      fontFamily:'arial, sans-serif',
-        borderCollapse:'collapse',
         width:'50%',
         marginLeft:'auto',
-        marginRight:'auto',
-    border: '2px solid #dddddd',
+        marginRight:'30%',
     }
     tdStyle={
-        border:'2px solid #dddddd',
         textAlign:'left',
         padding:'8px'
     }
     thStyle={
-        border:'2px solid #dddddd',
         textAlign:'left',
-        padding:'8px'
+        padding:'8px',
+        color: 'white'
+
     }
     order={
-        border: '1px solid #dddddd',
         justifyContent: 'space-around',
         flexDirection: 'row',
         padding: '0',
-        backgroundColor: 'white',
-        height: '90%'
+        height: '100%'
 
     }
     container={
         width:"35%",
         padding: '50px',
-        border: '1px solid #B0C4DE',
-        backgroundColor: '#F5FFFA',
     }
     textStyles1={
          color: 'black',
         fontSize: 30,
         fontWeight: 'bold',
+        fontFamily: 'arial',
+        marginRight: '35%',
+        marginLeft: 'auto'
     }
 
 
