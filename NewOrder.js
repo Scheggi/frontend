@@ -39,6 +39,9 @@ export default class NewOrderScreen extends React.Component {
             ButtonRainHeavy: 'Rain HeavyWet',
             setID :0,
             SetInformation:{},
+            test_setid:0,
+            test_list :[],
+
         }
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
@@ -110,7 +113,6 @@ export default class NewOrderScreen extends React.Component {
     async openTabular(){
        await this.getSetInformation();
        this.getWheelData();
-       this.renderWheelTable();
     }
 
     // get Set Information
@@ -377,10 +379,11 @@ export default class NewOrderScreen extends React.Component {
 
 
         renderWheelTable(){
-            return this.state.wheels.map((wheel) => {
+            return this.state.wheels.map((wheel,) => {
                 console.log(wheel);
+                console.log(wheel.setid)
                 return (
-                    <tr>
+                    <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}} key={wheel.setid}>
                         <td>{wheel.setid}</td>
                         <td>{wheel.status}</td>
                         <td>{wheel.cat}</td>
@@ -539,15 +542,6 @@ export default class NewOrderScreen extends React.Component {
                 <h1 id='title'>Reifen bearbeiten</h1>
                 <table  id='list_formel'>
                    <tbody>
-                        <tr>
-                            <td>Setnumber</td>
-                            <td>Status</td>
-                            <td>Cat</td>
-                            <td>SubCat</td>
-                            <td>Temp</td>
-                            <td>Air Pressure</td>
-                            <td>Wheel ID</td>
-                        </tr>
                         {this.renderWheelTable()}
                     </tbody>
                 </table>
