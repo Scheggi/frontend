@@ -1,7 +1,37 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // create new race and return raceID
+//wheel_cont/changeSet
+async function changeWheelSet(id,variant,order_duration){
+    timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/changeSet', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id:id,
+                    variant:variant,
+                    order_duration:order_duration,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("order Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+}
+
+
 async function createNewRaceRequest(accestoken,type,place,date) {
+    console.log([accestoken,type,place,date]);
     return await timeoutPromise(2000, fetch(
             'https://api.race24.cloud/race/create', {
                 method: 'POST',
@@ -10,17 +40,18 @@ async function createNewRaceRequest(accestoken,type,place,date) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    accestoken:accestoken,
+                    acces_token:accestoken,
                     type:type,
                     place:place,
                     date:date,
                 })
             })
             ).then(response => response.json()).then(data => {
+                console.log(data)
                 if ("msg" in data){
                             if (data["msg"] === "Token has expired"){
                                 refreshToken().then( token => {
-                                    screateNewRaceRequest(token,type,place,date);
+                                    createNewRaceRequest(token,type,place,date);
                                     }
                                 ).catch( function (error) {
                                         console.log("Refresh failed");
@@ -42,7 +73,7 @@ async function createNewRaceRequest(accestoken,type,place,date) {
 
 
 
-async function sendNewRaceRequest(id,temp_air,temp_ground,weather_des) {
+async function sendNewWeatherRequest(id,temp_air,temp_ground,weather_des) {
    timeoutPromise(2000, fetch(
         'https://api.race24.cloud/user/weather/create', {
             method: 'POST',
@@ -360,5 +391,5 @@ function TableNiklas(list) {
 
 
 
-export {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID}
+export {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID,changeWheelSet}
 

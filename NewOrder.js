@@ -2,9 +2,9 @@ import React from "react";
 import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
 import {styles} from "./styles"
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {timeoutPromise, refreshToken, getRaceList, getRaceDetails_by_ID, getWheelsList, getWeatherTab} from "./tools";
-import {get_Dict_WheelOrder,getDropdown} from "./tools_get_wheels";
-import Table from "./TableWheels";
+import {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from "./tools";
+import {get_Dict_WheelOrder, getDropdown} from "./tools_get_wheels";
+
 
 export default class NewOrderScreen extends React.Component {
    constructor(props) {
@@ -24,19 +24,20 @@ export default class NewOrderScreen extends React.Component {
             ordertime1: '',
             pickuptime: '',
             raceList: [],
+            time: {},
+            seconds: 1800,
+            timervalue: "",
+            wheels: [],
             listDropdown1:[],
             listDropdown2:[],
             listDropdown3:[],
             dictButtons:[],
-            time: {},
-            seconds: 1800,
-            timervalue: "",
-            setID:0,
         }
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
         this.countDown = this.countDown.bind(this);
     }
+
 
     // get Data
     async componentDidMount(){
@@ -100,14 +101,21 @@ export default class NewOrderScreen extends React.Component {
         this.saveRaceIDinState();
     }
 
+    async saveOrderWheel(){
+       const IdWheel = await AsyncStorage.getItem('OrderWheelID');
+       changeWheelSet(IdWheel,this.state.ordertime,this.state.variant);
+    }
+
     changeRace = event => {
         event.preventDefault();
         this.props.navigation.replace('Race');
     }
      handleSubmit = event => {
         event.preventDefault();
-        this.sendNewRaceRequest(this.state.raceid, this.state.tyretype, this.state.tyremix, this.state.term,
-            this.state.variant, this.state.number, this.state.orderdate, this.state.ordertime, this.state.pickuptime);
+        changeWheelSet()
+        this.saveOrderWheel();
+         //this.sendNewRaceRequest(this.state.raceid, this.state.tyretype, this.state.tyremix, this.state.term,
+        //    this.state.variant, this.state.number, this.state.orderdate, this.state.ordertime, this.state.pickuptime);
     }
      handleSubmitButton1 = event => {
         event.preventDefault();
@@ -173,12 +181,6 @@ export default class NewOrderScreen extends React.Component {
                 console.log(error);
             })
     }
-
-
-
-
-
-
         secondsToTime(secs)
         {
             let hours = Math.floor(secs / (60 * 60));
@@ -248,25 +250,132 @@ export default class NewOrderScreen extends React.Component {
             return this.state.timervalue.length > 0;
         }
 
+        async getWheelData(){
+            this.setState({wheels: []});
+            //TODO: Datenabruf implementieren
+            this.state.wheels.push({
+                setid: setid,
+                status: status,
+                cat: cat,
+                subcat: subcat,
+                fl_id: fl_id,
+                fl_pressure,
+                fl_wheel_id,
+                fl_wheel_edit,
+                fr_id: fr_id,
+                fr_pressure,
+                fr_wheel_id,
+                fr_wheel_edit,
+                bl_id: bl_id,
+                bl_pressure,
+                bl_wheel_id,
+                bl_wheel_edit,
+                br_id: br_id,
+                br_pressure,
+                br_wheel_id,
+                br_wheel_edit,
+            })
+        }
+
+        handleAirPressureChange = event => {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: event.target.id,
+                    air_press: event.target.value,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+        handleWheelIDChange = event => {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel/set_id_tag', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    wheel_id: event.target.id,
+                    wheel_id_tag: event.target.value,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("ID Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+        handleWheelEditChange = event => {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel/set_edit', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    wheel_id: event.target.id,
+                    wheel_edit: event.target.value,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Edit Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+        renderWheelTable(){
+            return this.state.wheels.map((wheel) => {
+                return (
+                    <tr>
+                        <td>{wheel.setid}</td>
+                        <td>{wheel.status}</td>
+                        <td>{wheel.cat}</td>
+                        <td>{wheel.subcat}</td>
+                        <td><input id={wheel.fl_id} onChange={this.handleAirPressureChange}>{this.wheel.fl_pressure}</input><input id={wheel.fr_id} onChange={this.handleAirPressureChange}>{this.wheel.fr_pressure}</input><input id={wheel.bl_id} onChange={this.handleAirPressureChange}>{this.wheel.bl_pressure}</input><input id={wheel.br_id} onChange={this.handleAirPressureChange}>{this.wheel.br_pressure}</input></td>
+                        <td><input id={wheel.fl_id} onChange={this.handleWheelIDChange}>{this.wheel.fl_wheel_id}</input><input id={wheel.fr_id} onChange={this.handleWheelIDChange}>{this.wheel.fr_wheel_id}</input><input id={wheel.bl_id} onChange={this.handleWheelIDChange}>{this.wheel.bl_wheel_id}</input><input id={wheel.br_id} onChange={this.handleWheelIDChange}>{this.wheel.br_wheel_id}</input></td>
+                        <td><input id={wheel.fl_id} onChange={this.handleWheelEditChange}>{this.wheel.fl_wheel_edit}</input><input id={wheel.fr_id} onChange={this.handleWheelEditChange}>{this.wheel.fr_wheel_edit}</input><input id={wheel.bl_id} onChange={this.handleWheelEditChange}>{this.wheel.bl_wheel_edit}</input><input id={wheel.br_id} onChange={this.handleWheelEditChange}>{this.wheel.br_wheel_edit}</input></td>
+                    </tr>
+                )
+            })
+        }
+
         render()
         {
             let optionTemplate = this.state.raceList.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
             ));
-            // dropdown list free
-            console.log(this.state.listDropdown1)
-            let optionfree = this.state.listDropdown1.map(v => (
-            <option value={v.id} key={v.id}>{v.name}</option>
-        ));
-            // dropdown list order
-            let optionorder = this.state.listDropdown2.map(v => (
-            <option value={v.id} key={v.id}>{v.name}</option>
-        ));
-            // dropdown list used
-            let optionused = this.state.listDropdown3.map(v => (
-            <option value={v.id} key={v.id}>{v.name}</option>
-        ));
-
 
             return (
                 <View style={container2}>
@@ -402,16 +511,22 @@ export default class NewOrderScreen extends React.Component {
                             Stunden: {this.state.time.h} Minuten: {this.state.time.m} Sekunden: {this.state.time.s} </Text>
                     </View>
             </View>
-                    <View>
-                         <label>
-                Bearbeite ein freies Set:
-                <select value={this.state.id} onChange={this.getSetID}>
-                  {optionfree}
-                </select>
-                </label>
-
-                    </View>
-
+            <View>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>Setnumber</td>
+                            <td>Status</td>
+                            <td>Cat</td>
+                            <td>SubCat</td>
+                            <td>Air Pressure</td>
+                            <td>Wheel ID</td>
+                            <td>Wheel Edit</td>
+                        </tr>
+                        {this.renderWheelTable()}
+                    </tbody>
+                </table>
+            </View>
         </View>
             );
         }
