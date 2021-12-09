@@ -18,8 +18,7 @@ export default class NewOrderScreen extends React.Component {
             tyretype1: '',
             tyremix1: '',
             variant1: '',
-            number: '',
-            orderdate: '',
+            orderduration: 0,
             ordertime: '',
             ordertime1: '',
             pickuptime: '',
@@ -32,12 +31,22 @@ export default class NewOrderScreen extends React.Component {
             listDropdown2:[],
             listDropdown3:[],
             dictButtons:[],
+            ButtonSlicks_Cold: 'Slicks Cold',
+            ButtonSlicks_Medium: 'Slicks Medium',
+            ButtonSlicks_Hot: 'Slicks Hot',
+            ButtonInter: 'Inters Intermediate',
+            ButtonRainDryWet: 'Rain DryWet',
+            ButtonRainHeavy: 'Rain HeavyWet',
+            setID :0,
         }
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
         this.countDown = this.countDown.bind(this);
     }
 
+    changeMain(){
+        this.props.navigation.goBack();
+    }
 
     // get Data
     async componentDidMount(){
@@ -53,8 +62,19 @@ export default class NewOrderScreen extends React.Component {
         })
 
        console.log(2)
-        this.getWheelDict();
-        this.getDropdownList();
+        await this.getWheelDict();
+        await this.getDropdownList();
+        if (this.state.dictButtons.length==6){
+            this.setState({ButtonSlicks_Cold: 'Slicks Cold  '+this.state.dictButtons[0][0].toString()});
+            this.setState({ButtonSlicks_Medium: 'Slicks Medium  '+this.state.dictButtons[1][0].toString()});
+            this.setState({ButtonSlicks_Hot: 'Slicks Hot  '+this.state.dictButtons[2][0].toString()});
+            this.setState({ButtonInter: 'Inters Intermediate  '+this.state.dictButtons[3][0].toString()});
+            this.setState({ButtonRainDryWet: 'Rain DryWet  '+this.state.dictButtons[4][0].toString()});
+            this.setState({ButtonRainHeavy: 'Rain HeavyWet  '+this.state.dictButtons[5][0].toString()});
+
+            console.log(this.state.ButtonSlicks_Cold)
+
+        }
     }
 
     //get Wheel Data
@@ -87,13 +107,11 @@ export default class NewOrderScreen extends React.Component {
     }
 
     async getSetID(event){
-        AsyncStorage.setItem("SetID",event.target.value);
+        AsyncStorage.setItem("SetIDDropdown",event.target.value);
         const setid = await AsyncStorage.getItem("SetID");
         console.log(setid);
     }
-
-
-
+    
 
     getRaceID = event => {
         const id = event.target.value;
@@ -101,10 +119,19 @@ export default class NewOrderScreen extends React.Component {
         this.saveRaceIDinState();
     }
 
-    async saveOrderWheel(){
-       const IdWheel = await AsyncStorage.getItem('OrderWheelID');
-       changeWheelSet(IdWheel,this.state.ordertime,this.state.variant);
-    }
+
+
+    refresh_Buttons(){
+        if (this.state.dictButtons.length==6) {
+            this.setState({ButtonSlicks_Cold: 'Slicks Cold  ' + this.state.dictButtons[0][0].toString()});
+            this.setState({ButtonSlicks_Medium: 'Slicks Medium  ' + this.state.dictButtons[1][0].toString()});
+            this.setState({ButtonSlicks_Hot: 'Slicks Hot  ' + this.state.dictButtons[2][0].toString()});
+            this.setState({ButtonInter: 'Inters Intermediate  ' + this.state.dictButtons[3][0].toString()});
+            this.setState({ButtonRainDryWet: 'Rain DryWet  ' + this.state.dictButtons[4][0].toString()});
+            this.setState({ButtonRainHeavy: 'Rain HeavyWet  ' + this.state.dictButtons[5][0].toString()});
+        }
+        }
+
 
     changeRace = event => {
         event.preventDefault();
@@ -112,75 +139,78 @@ export default class NewOrderScreen extends React.Component {
     }
      handleSubmit = event => {
         event.preventDefault();
-        changeWheelSet()
-        this.saveOrderWheel();
-         //this.sendNewRaceRequest(this.state.raceid, this.state.tyretype, this.state.tyremix, this.state.term,
-        //    this.state.variant, this.state.number, this.state.orderdate, this.state.ordertime, this.state.pickuptime);
+        changeWheelSet(this.state.setID,this.state.variant,this.state.orderduration,this.state.term);
+        AsyncStorage.setItem('orderSetID',this.state.setID);
+        this.refresh_Buttons();
+
     }
-     handleSubmitButton1 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Slicks"});
-        this.setState({tyremix: "Cold"});
-    }
+
+    set_setIT
+
     handleSubmitButton1 = event => {
         event.preventDefault();
         this.setState({tyretype: "Slicks"});
         this.setState({tyremix: "Cold"});
+        let helper = this.state.dictButtons;
+        helper[0][0]= helper[0][0]-1;
+        this.setState({setID:helper[0][0]});
+        this.setState({dictButtons:helper});
     }
     handleSubmitButton2 = event => {
         event.preventDefault();
         this.setState({tyretype: "Slicks"});
         this.setState({tyremix: "Medium"});
+        let helper = this.state.dictButtons;
+        helper[1][0]= helper[1][0]-1;
+        this.setState({setID: helper[1][1][helper[1][0]]});
+        this.setState({dictButtons: helper});
+
+
+
+
     }
     handleSubmitButton3 = event => {
         event.preventDefault();
         this.setState({tyretype: "Slicks"});
         this.setState({tyremix: "Hot"});
+        let helper = this.state.dictButtons;
+        helper[2][0]= helper[2][0]-1;
+        const index = helper[2][0]
+        this.setState({setID:helper[2][1][index]});
+        this.setState({dictButtons:helper});
     }
     handleSubmitButton4 = event => {
         event.preventDefault();
         this.setState({tyretype: "Inters"});
         this.setState({tyremix: "Intermediate"});
+        let helper = this.state.dictButtons;
+        helper[3][0]= helper[3][0]-1;
+        const index = helper[3][0]
+        this.setState({setID:helper[3][1][index]});
+        this.setState({dictButtons:helper});
     }
     handleSubmitButton5 = event => {
         event.preventDefault();
         this.setState({tyretype: "Rain"});
         this.setState({tyremix: "Dry Wet"});
+        let helper = this.state.dictButtons;
+        helper[4][0]= helper[4][0]-1;
+        const index = helper[4][0]
+        this.setState({setID:helper[4][1][index]});
+        this.setState({dictButtons:helper});
     }
     handleSubmitButton6 = event => {
         event.preventDefault();
         this.setState({tyretype: "Rain"});
         this.setState({tyremix: "Heavy Wet"});
+        let helper = this.state.dictButtons;
+        helper[5][0]= helper[5][0]-1;
+        const index = helper[5][0]
+        this.setState({setID:helper[5][1][index]});
+        this.setState({dictButtons:helper});
     }
 
-     async sendNewRaceRequest(type,place,date) {
-       timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/race/create', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    type:type,
-                    place:place,
-                    date:date,
-                })
-            })
-            ).then(response => response.json()).then(data => {
-                if (data[1]==200) {
-                    AsyncStorage.setItem("raceIDNewRace",data[0].id)
-                    console.log("changeNav")
-                    this.props.navigation.replace("Race");//replace('Race');
-                    return parseInt(data[0].id)
-                }
-                else {
-                    console.log("failed")
-                }
-            }).catch(function (error) {
-                console.log(error);
-            })
-    }
+
         secondsToTime(secs)
         {
             let hours = Math.floor(secs / (60 * 60));
@@ -241,8 +271,26 @@ export default class NewOrderScreen extends React.Component {
 
         validateForm()
         {
-            return this.state.tyretype.length > 0 && this.state.tyremix.length > 0 && this.state.number.length > 0 && this.state.orderdate.length > 0 && this.state.ordertime.length > 0 && this.state.pickuptime.length > 0;
+            return this.state.orderduration.length > 0 && this.state.variant.length > 0 ;
         }
+
+        validateFormButton1(){
+       return this.state.dictButtons.length==6 && this.state.dictButtons[0][0]>0;
+        }
+        validateFormButton2(){
+       return this.state.dictButtons.length==6 &&this.state.dictButtons[1][0]>0;
+        }
+        validateFormButton3(){
+       return this.state.dictButtons.length==6 && this.state.dictButtons[2][0]>0;
+        }
+        validateFormButton4(){
+       return this.state.dictButtons.length==6 && this.state.dictButtons[3][0]>0;
+        }validateFormButton5(){
+       return this.state.dictButtons.length==6 && this.state.dictButtons[4][0]>0;
+        }validateFormButton6(){
+       return this.state.dictButtons.length==6 && this.state.dictButtons[5][0]>0;
+        }
+
 
 
         validateForm1()
@@ -258,22 +306,19 @@ export default class NewOrderScreen extends React.Component {
                 status: status,
                 cat: cat,
                 subcat: subcat,
+                temp:0,
                 fl_id: fl_id,
                 fl_pressure,
                 fl_wheel_id,
-                fl_wheel_edit,
                 fr_id: fr_id,
                 fr_pressure,
                 fr_wheel_id,
-                fr_wheel_edit,
                 bl_id: bl_id,
                 bl_pressure,
                 bl_wheel_id,
-                bl_wheel_edit,
                 br_id: br_id,
                 br_pressure,
                 br_wheel_id,
-                br_wheel_edit,
             })
         }
 
@@ -329,31 +374,7 @@ export default class NewOrderScreen extends React.Component {
             })
         }
 
-        handleWheelEditChange = event => {
-            timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheel/set_edit', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    wheel_id: event.target.id,
-                    wheel_edit: event.target.value,
-                })
-            })
-            ).then(response => response.json()).then(data => {
-                if (data[1]==200) {
-                    console.log("Edit Changed")
-                    this.getWheelData().then(() => {return})
-                }
-                else {
-                    console.log("failed")
-                }
-            }).catch(function (error) {
-                console.log(error);
-            })
-        }
+
 
         renderWheelTable(){
             return this.state.wheels.map((wheel) => {
@@ -363,6 +384,7 @@ export default class NewOrderScreen extends React.Component {
                         <td>{wheel.status}</td>
                         <td>{wheel.cat}</td>
                         <td>{wheel.subcat}</td>
+                        <td>{wheel.temp}</td>
                         <td><input id={wheel.fl_id} onChange={this.handleAirPressureChange}>{this.wheel.fl_pressure}</input><input id={wheel.fr_id} onChange={this.handleAirPressureChange}>{this.wheel.fr_pressure}</input><input id={wheel.bl_id} onChange={this.handleAirPressureChange}>{this.wheel.bl_pressure}</input><input id={wheel.br_id} onChange={this.handleAirPressureChange}>{this.wheel.br_pressure}</input></td>
                         <td><input id={wheel.fl_id} onChange={this.handleWheelIDChange}>{this.wheel.fl_wheel_id}</input><input id={wheel.fr_id} onChange={this.handleWheelIDChange}>{this.wheel.fr_wheel_id}</input><input id={wheel.bl_id} onChange={this.handleWheelIDChange}>{this.wheel.bl_wheel_id}</input><input id={wheel.br_id} onChange={this.handleWheelIDChange}>{this.wheel.br_wheel_id}</input></td>
                         <td><input id={wheel.fl_id} onChange={this.handleWheelEditChange}>{this.wheel.fl_wheel_edit}</input><input id={wheel.fr_id} onChange={this.handleWheelEditChange}>{this.wheel.fr_wheel_edit}</input><input id={wheel.bl_id} onChange={this.handleWheelEditChange}>{this.wheel.bl_wheel_edit}</input><input id={wheel.br_id} onChange={this.handleWheelEditChange}>{this.wheel.br_wheel_edit}</input></td>
@@ -387,33 +409,33 @@ export default class NewOrderScreen extends React.Component {
                         </View>
                         <View style={container4}>
                             <Button
-                            //disabled={!this.validateFormButton1()}
-                            title="Slicks Cold"
+                            disabled={!this.validateFormButton1()}
+                            title= {this.state.ButtonSlicks_Cold}
                             onPress={this.handleSubmitButton1}
                         />
                         <Button
-                            //disabled={!this.validateFormButton2()}
-                            title="Slicks Medium"
+                            disabled={!this.validateFormButton2()}
+                            title= {this.state.ButtonSlicks_Medium}
                             onPress={this.handleSubmitButton2}
                         />
                         <Button
-                            //disabled={!this.validateFormButton3()}
-                            title="Slicks Hot"
+                            disabled={!this.validateFormButton3()}
+                            title= {this.state.ButtonSlicks_Hot}
                             onPress={this.handleSubmitButton3}
                         />
                         <Button
-                            //disabled={!this.validateFormButton4()}
-                            title="Inters Intermediate"
+                            disabled={!this.validateFormButton4()}
+                            title={this.state.ButtonInter}
                             onPress={this.handleSubmitButton4}
                         />
                         <Button
-                            //disabled={!this.validateFormButton5()}
-                            title="Rain Dry Wet"
+                            disabled={!this.validateFormButton5()}
+                            title= {this.state.ButtonRainDryWet}
                             onPress={this.handleSubmitButton5}
                         />
                         <Button
-                            //disabled={!this.validateFormButton6()}
-                            title="Rain Heavy Wet"
+                            disabled={!this.validateFormButton6()}
+                            title={this.state.ButtonRainHeavy}
                             onPress={this.handleSubmitButton6}
                         />
 
@@ -446,9 +468,9 @@ export default class NewOrderScreen extends React.Component {
                         </td>
                     </tr>
                     <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestelldatum: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.orderdate}
-                                   placeholder='TT.MM.JJJJ' onChangeText={(date) => this.setState({orderdate: date})}/></td>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestelldauer: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.orderduration}
+                                   placeholder='TT.MM.JJJJ' onChangeText={(date) => this.setState({orderduration: date})}/></td>
                     </tr>
                    <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>

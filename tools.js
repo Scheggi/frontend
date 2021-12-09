@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // create new race and return raceID
 //wheel_cont/changeSet
-async function changeWheelSet(id,variant,order_duration){
+async function changeWheelSet(id,variant,order_duration,description){
     timeoutPromise(2000, fetch(
             'https://api.race24.cloud/wheel_cont/changeSet', {
                 method: 'POST',
@@ -14,6 +14,7 @@ async function changeWheelSet(id,variant,order_duration){
                     id:id,
                     variant:variant,
                     order_duration:order_duration,
+                    description:description,
                 })
             })
             ).then(response => response.json()).then(data => {

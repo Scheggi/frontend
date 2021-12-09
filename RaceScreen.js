@@ -44,12 +44,12 @@ export default class RaceScreen extends React.Component {
 
     changeNewRace = event => {
         event.preventDefault();
-        this.props.navigation.replace('NewRace');
+        this.props.navigation.push('NewRace');
     }
 
      changeNewUser = event => {
         event.preventDefault();
-        this.props.navigation.replace('NewUser');
+        this.props.navigation.push('NewUser');
     }
 
      changeFormel = event => {

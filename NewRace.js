@@ -38,7 +38,8 @@ export default class NewRaceScreen extends React.Component {
         }
     }
 
-    changeMain(){
+    changeRace = event => {
+        event.preventDefault();
         this.props.navigation.goBack();
     }
 
@@ -116,7 +117,6 @@ export default class NewRaceScreen extends React.Component {
         this.generateAllSets(this.state.raceID, 5, "Rain", "DryWet", parseInt(this.state.contingentRainDryWet));
         this.sendNewContigentRequest(this.state.raceID, 6, "Rain", "HeavyWet", this.state.identifierRainHeavyWet, parseInt(this.state.contingentRainHeavyWet));
         this.generateAllSets(this.state.raceID, 6, "Rain", "HeavyWet", parseInt(this.state.contingentRainHeavyWet));
-        this.changeMain();
 
   }
 
@@ -185,6 +185,10 @@ export default class NewRaceScreen extends React.Component {
                         disabled={!this.validateForm()}
                         title="Rennen anlegen"
                         onPress={this.handleSubmit}
+                    />
+                    <Button
+                        title="zurück"
+                        onPress={this.changeRace}
                     />
                 </View>
 
