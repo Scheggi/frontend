@@ -21,7 +21,7 @@ import ShowRaceScreen from "./ShowRace";
 import WheelScreen from "./Reifenmanagement";
 
 const IngeniuerNav = createStackNavigator({
-    Ingenieur:{screen: IngenieurScreen},
+    Ingenieur:{screen: WeatherScreen},
     Formel:{screen:FormelScreen},
     Logout: {screen: LogoutScreen},
     Nav: {screen: IngenieurNav},

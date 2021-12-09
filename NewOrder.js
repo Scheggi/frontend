@@ -3,7 +3,7 @@ import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
 import {styles} from "./styles"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from "./tools";
-import {get_Dict_WheelOrder, getDropdown} from "./tools_get_wheels";
+import {get_Dict_WheelOrder, getDropdown,getWheelSetInformation} from "./tools_get_wheels";
 
 
 export default class NewOrderScreen extends React.Component {
@@ -38,6 +38,7 @@ export default class NewOrderScreen extends React.Component {
             ButtonRainDryWet: 'Rain DryWet',
             ButtonRainHeavy: 'Rain HeavyWet',
             setID :0,
+            SetInformation:{},
         }
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
@@ -106,6 +107,20 @@ export default class NewOrderScreen extends React.Component {
         console.log(this.state.listDropdown)
     }
 
+    async getSetInformation(){
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const setID = await AsyncStorage.getItem('orderSetID');
+        //const raceID = await AsyncStorage.getItem('raceID');
+        console.log(setID)
+        await getWheelSetInformation(accesstoken, setID).then(DataTabular => {
+            console.log(DataTabular);
+            this.setState({SetInformation: DataTabular});
+        }).catch(function (error) {
+            console.log(error);
+        })
+        console.log(this.state.SetInformation);
+    }
+
     async getSetID(event){
         AsyncStorage.setItem("SetIDDropdown",event.target.value);
         const setid = await AsyncStorage.getItem("SetID");
@@ -142,6 +157,7 @@ export default class NewOrderScreen extends React.Component {
         changeWheelSet(this.state.setID,this.state.variant,this.state.orderduration,this.state.term);
         AsyncStorage.setItem('orderSetID',this.state.setID);
         this.refresh_Buttons();
+        this.getWheelData();
     }
 
 
@@ -295,27 +311,13 @@ export default class NewOrderScreen extends React.Component {
         }
 
         async getWheelData(){
+       cons
             this.setState({wheels: []});
+            await this.getSetInformation();
+            
             //TODO: Datenabruf implementieren
-            this.state.wheels.push({
-                setid: setid,
-                status: status,
-                cat: cat,
-                subcat: subcat,
-                temp:0,
-                fl_id: fl_id,
-                fl_pressure,
-                fl_wheel_id,
-                fr_id: fr_id,
-                fr_pressure,
-                fr_wheel_id,
-                bl_id: bl_id,
-                bl_pressure,
-                bl_wheel_id,
-                br_id: br_id,
-                br_pressure,
-                br_wheel_id,
-            })
+            await this.state.wheels.push(this.state.SetInformation);
+            console.log(this.state.wheels)
         }
 
         handleAirPressureChange = event => {
@@ -379,10 +381,9 @@ export default class NewOrderScreen extends React.Component {
                         <td>{wheel.status}</td>
                         <td>{wheel.cat}</td>
                         <td>{wheel.subcat}</td>
-                        <td>{wheel.temp}</td>
-                        <td><input id={wheel.fl_id} onChange={this.handleAirPressureChange}>{this.wheel.fl_pressure}</input><input id={wheel.fr_id} onChange={this.handleAirPressureChange}>{this.wheel.fr_pressure}</input><input id={wheel.bl_id} onChange={this.handleAirPressureChange}>{this.wheel.bl_pressure}</input><input id={wheel.br_id} onChange={this.handleAirPressureChange}>{this.wheel.br_pressure}</input></td>
-                        <td><input id={wheel.fl_id} onChange={this.handleWheelIDChange}>{this.wheel.fl_wheel_id}</input><input id={wheel.fr_id} onChange={this.handleWheelIDChange}>{this.wheel.fr_wheel_id}</input><input id={wheel.bl_id} onChange={this.handleWheelIDChange}>{this.wheel.bl_wheel_id}</input><input id={wheel.br_id} onChange={this.handleWheelIDChange}>{this.wheel.br_wheel_id}</input></td>
-                        <td><input id={wheel.fl_id} onChange={this.handleWheelEditChange}>{this.wheel.fl_wheel_edit}</input><input id={wheel.fr_id} onChange={this.handleWheelEditChange}>{this.wheel.fr_wheel_edit}</input><input id={wheel.bl_id} onChange={this.handleWheelEditChange}>{this.wheel.bl_wheel_edit}</input><input id={wheel.br_id} onChange={this.handleWheelEditChange}>{this.wheel.br_wheel_edit}</input></td>
+                        <td> input id ={wheel.temp} on Change={}</td>
+                        <td><input id={wheel.fl_id} onChange={this.handleAirPressureChange}>{wheel.fl_pressure}</input><input id={wheel.fr_id} onChange={this.handleAirPressureChange}>{wheel.fr_pressure}</input><input id={wheel.bl_id} onChange={this.handleAirPressureChange}>{wheel.bl_pressure}</input><input id={wheel.br_id} onChange={this.handleAirPressureChange}>{wheel.br_pressure}</input></td>
+                        <td><input id={wheel.fl_id} onChange={this.handleWheelIDChange}>{wheel.fl_wheel_id}</input><input id={wheel.fr_id} onChange={this.handleWheelIDChange}>{wheel.fr_wheel_id}</input><input id={wheel.bl_id} onChange={this.handleWheelIDChange}>{wheel.bl_wheel_id}</input><input id={wheel.br_id} onChange={this.handleWheelIDChange}>{wheel.br_wheel_id}</input></td>
                     </tr>
                 )
             })
@@ -536,9 +537,9 @@ export default class NewOrderScreen extends React.Component {
                             <td>Status</td>
                             <td>Cat</td>
                             <td>SubCat</td>
+                            <td>Temp</td>
                             <td>Air Pressure</td>
                             <td>Wheel ID</td>
-                            <td>Wheel Edit</td>
                         </tr>
                         {this.renderWheelTable()}
                     </tbody>
