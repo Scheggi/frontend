@@ -114,6 +114,8 @@ export default class WeatherScreen extends React.Component {
       })
    }
 
+   
+
     render() {
         return (
             <View style={styles.viewStyles}>

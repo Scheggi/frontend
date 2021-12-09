@@ -17,18 +17,20 @@ async function changeWheelSet(id,variant,order_duration,description){
                     description:description,
                 })
             })
-            ).then(response => response.json()).then(data => {
+            ).then(response => response.json()).then(
+                data => {
                 if (data[1]==200) {
-                    console.log("order Changed")
-                    this.getWheelData().then(() => {return})
+                    console.log(data[0])
                 }
                 else {
                     console.log("failed")
                 }
-            }).catch(function (error) {
-                console.log(error);
-            })
+            }
+            ).catch(function (error) {
+            console.log(error);
+        })
 }
+
 
 
 async function createNewRaceRequest(accestoken,type,place,date) {

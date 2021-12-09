@@ -107,6 +107,13 @@ export default class NewOrderScreen extends React.Component {
         console.log(this.state.listDropdown)
     }
 
+    async openTabular(){
+       await this.getSetInformation();
+       this.getWheelData();
+       this.renderWheelTable();
+    }
+
+    // get Set Information
     async getSetInformation(){
         const accesstoken = await AsyncStorage.getItem('acesstoken');
         const setID = await AsyncStorage.getItem('orderSetID');
@@ -118,7 +125,7 @@ export default class NewOrderScreen extends React.Component {
         }).catch(function (error) {
             console.log(error);
         })
-        console.log(this.state.SetInformation);
+
     }
 
     async getSetID(event){
@@ -157,7 +164,7 @@ export default class NewOrderScreen extends React.Component {
         changeWheelSet(this.state.setID,this.state.variant,this.state.orderduration,this.state.term);
         AsyncStorage.setItem('orderSetID',this.state.setID);
         this.refresh_Buttons();
-        this.getWheelData();
+        this.openTabular();
     }
 
 
@@ -311,12 +318,8 @@ export default class NewOrderScreen extends React.Component {
         }
 
         async getWheelData(){
-       cons
             this.setState({wheels: []});
-            await this.getSetInformation();
-            
-            //TODO: Datenabruf implementieren
-            await this.state.wheels.push(this.state.SetInformation);
+            this.state.wheels.push(this.state.SetInformation);
             console.log(this.state.wheels)
         }
 
@@ -375,6 +378,7 @@ export default class NewOrderScreen extends React.Component {
 
         renderWheelTable(){
             return this.state.wheels.map((wheel) => {
+                console.log(wheel);
                 return (
                     <tr>
                         <td>{wheel.setid}</td>
@@ -529,9 +533,12 @@ export default class NewOrderScreen extends React.Component {
                             Stunden: {this.state.time.h} Minuten: {this.state.time.m} Sekunden: {this.state.time.s} </Text>
                     </View>
             </View>
-            <View>
-                <table>
-                    <tbody>
+
+
+                    <div>
+                <h1 id='title'>Reifen bearbeiten</h1>
+                <table  id='list_formel'>
+                   <tbody>
                         <tr>
                             <td>Setnumber</td>
                             <td>Status</td>
@@ -544,7 +551,8 @@ export default class NewOrderScreen extends React.Component {
                         {this.renderWheelTable()}
                     </tbody>
                 </table>
-            </View>
+                </div>
+
         </View>
             );
         }
