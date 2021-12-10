@@ -186,7 +186,6 @@ export default class NewHelpScreen extends React.Component {
         textAlign: 'center',
             marginLeft: 'auto',
             marginRight: 'auto',
-            overflowY: 'scroll',
         },
     };
 

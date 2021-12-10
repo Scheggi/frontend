@@ -79,6 +79,19 @@ export default class WheelScreen extends React.Component {
     }
 
 
+
+   renderTableHeader() {
+    let header = ['Kategorie', 'Unterkategorie', 'Status','Temperatur','Variante',
+        'FL_Luftdruck','FR_Luftdruck','BL_Luftdruck','BR_Luftdruck','FL_ID','FR_ID','RL_ID','RB_ID'];
+      //let header = Object.keys(this.state.list_formel[0]);
+      return header.map((key, index) => {
+         return <th bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}} key={index}>{key.toUpperCase()}</th>
+      })
+   }
+
+
+
+
     renderTableData() {
         console.log(this.state.list_formel)
         return this.state.list_formel.map((list_formel, index) => {
@@ -113,6 +126,7 @@ export default class WheelScreen extends React.Component {
                 <h1 id='title'>Angelegte Reifen</h1>
                 <table  id='list_formel'>
                    <tbody>
+                   {this.renderTableHeader()}
                       {this.renderTableData()}
                    </tbody>
                 </table>

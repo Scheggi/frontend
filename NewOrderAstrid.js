@@ -21,24 +21,19 @@ export default class NewOrderScreen extends React.Component {
             ButtonInter: 'Inters Intermediate',
             ButtonRainDryWet: 'Rain DryWet',
             ButtonRainHeavy: 'Rain HeavyWet',
-            setID :0,
-            SetInformation:{},
-            test_setid:0,
-            test_list :[],
+            setID :-1,
             raceid: 0,
             tyretype: '',
             tyremix: '',
             term1: '',
             variant: '',
-
             //für Tabelle rechts:
             tyretype1: '',
             tyremix1: '',
             variant1: '',
+            orderduration: 0,
             ordertime: '',
-            orderduration: '',
             raceList: [],
-
             time: {},
             seconds: 1800,
             timervalue: "",
@@ -51,9 +46,8 @@ export default class NewOrderScreen extends React.Component {
 
 
      async componentDidMount(){
-       await AsyncStorage.removeItem('setID');
-       await AsyncStorage.removeItem('orderSetID');
-       await AsyncStorage.removeItem('SetID');
+        await AsyncStorage.removeItem('setID');
+        await AsyncStorage.removeItem('orderSetID')
         const accesstoken = await AsyncStorage.getItem('acesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         getDropdown(accesstoken,raceID).then(racelistDropdown => {
@@ -275,6 +269,7 @@ export default class NewOrderScreen extends React.Component {
             return this.state.tyretype.length > 0 && this.state.tyremix.length > 0 && this.state.term1.length > 0 && this.state.orderduration.length > 0 && this.state.variant.length > 0;
         }
 
+
         validateForm1()
         {
             return this.state.timervalue.length > 0;
@@ -314,7 +309,6 @@ export default class NewOrderScreen extends React.Component {
           this.setState({timervalue: time});
           this.startTimer();
         }
-
 
         async getWheelData(){
             //this.setState({wheels: []});
@@ -433,7 +427,6 @@ export default class NewOrderScreen extends React.Component {
                 )
             })
         }
-
 
         render()
         {

@@ -50,6 +50,7 @@ export default class NewRaceScreen extends React.Component {
     handleSubmit = event => {
         event.preventDefault();
         this.generateNewRace(this.state.type,this.state.place,this.state.date);
+        this.prop.navigation.goBack();
     }
 
         // generate DataSet------------------------------------------------------------------------
