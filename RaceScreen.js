@@ -79,6 +79,22 @@ export default class RaceScreen extends React.Component {
         this.props.navigation.push('Wheel');
     }
 
+
+    changeAstrid = event => {
+        event.preventDefault();
+        this.props.navigation.push('Astrid');
+    }
+
+    changeNiklas = event => {
+        event.preventDefault();
+        this.props.navigation.push('Niklas');
+    }
+
+    changeMaen = event => {
+        event.preventDefault();
+        this.props.navigation.push('Maen');
+    }
+
      async getRaceID(event){
         AsyncStorage.setItem("raceID",event.target.value);
         const id = await AsyncStorage.getItem("raceID");
@@ -135,6 +151,21 @@ export default class RaceScreen extends React.Component {
                 <Button
                     title="Neues Mitglied anlegen"
                     onPress={this.changeNewUser}
+                />
+                 <Text style={{height: 10}}> </Text>
+                <Button
+                title="Astrid anzeigen"
+                onPress={this.changeAstrid}
+                />
+                 <Text style={{height: 10}}> </Text>
+                <Button
+                  title="Niklas"
+                    onPress={this.changeNiklas}
+                />
+                 <Text style={{height: 10}}> </Text>
+                <Button
+                  title="Maen anzeigen"
+                    onPress={this.changeMaen}
                 />
                 </View>
                 <View style={{width: 200}}>

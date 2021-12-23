@@ -18,7 +18,10 @@ import WeatherScreen from "./WeatherScreen";
 import IngenieurNav from "./IngenieurNav";
 import ShowRaceScreen from "./ShowRace";
 import WheelScreen from "./Reifenmanagement";
-
+import AstridScreen from "./Astrid";
+import TestScreen from "./Testen";
+import NiklasScreen from "./Niklas";
+import MaenScreen from "./Maen";
 
 const IngeniuerNav = createStackNavigator({
     Wetter:{screen: WeatherScreen},
@@ -52,6 +55,9 @@ const ManagerNav = createStackNavigator({
     Weather: {screen: WeatherScreen},
     ShowRace : {screen :ShowRaceScreen},
     Wheel: {screen: WheelScreen},
+    Astrid: {screen: AstridScreen},
+    Niklas: {screen: NiklasScreen},
+    Testen: {screen: TestScreen},
 
     }, {
     initialRouteName: "Race",
