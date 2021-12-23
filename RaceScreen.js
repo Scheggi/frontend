@@ -79,6 +79,10 @@ export default class RaceScreen extends React.Component {
         this.props.navigation.push('Wheel');
     }
 
+    changeNewFormel = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewFormel');
+    }
 
     changeAstrid = event => {
         event.preventDefault();
@@ -151,6 +155,11 @@ export default class RaceScreen extends React.Component {
                 <Button
                     title="Neues Mitglied anlegen"
                     onPress={this.changeNewUser}
+                />
+                <Text style={{height: 10}}> </Text>
+                <Button
+                    title="Neue Formel anlegen"
+                    onPress={this.changeNewFormel}
                 />
                  <Text style={{height: 10}}> </Text>
                 <Button

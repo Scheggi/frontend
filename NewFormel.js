@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
 
-export default class AstridScreen extends React.Component {
+export default class NewFormelScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {

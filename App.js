@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-
+import 'bootstrap/dist/css/bootstrap.css';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
@@ -22,6 +22,7 @@ import AstridScreen from "./Astrid";
 import TestScreen from "./Testen";
 import NiklasScreen from "./Niklas";
 import MaenScreen from "./Maen";
+import NewFormelScreen  from "./NewFormel";
 
 const IngeniuerNav = createStackNavigator({
     Wetter:{screen: WeatherScreen},
@@ -55,9 +56,11 @@ const ManagerNav = createStackNavigator({
     Weather: {screen: WeatherScreen},
     ShowRace : {screen :ShowRaceScreen},
     Wheel: {screen: WheelScreen},
+    NewFormel: {screen: NewFormelScreen},
     Astrid: {screen: AstridScreen},
     Niklas: {screen: NiklasScreen},
     Testen: {screen: TestScreen},
+    Maen: {screen: MaenScreen},
 
     }, {
     initialRouteName: "Race",

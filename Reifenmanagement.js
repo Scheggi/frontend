@@ -90,8 +90,6 @@ export default class WheelScreen extends React.Component {
    }
 
 
-
-
     renderTableData() {
         console.log(this.state.list_formel)
         return this.state.list_formel.map((list_formel, index) => {
@@ -119,9 +117,10 @@ export default class WheelScreen extends React.Component {
     render() {
         return (
             <View style={styles.viewStyles}>
+                <Text style={{height: 20}}>Dropdownliste, Set auswählen von Rennen</Text>
+                <Text style={{height: 20}}>Tabelle, alle Attribute des Sets in editierbarer Tabelle</Text>
 
                 <ScrollView>
-
                 <div>
                 <h1 id='title'>Angelegte Reifen</h1>
                 <table  id='list_formel'>
