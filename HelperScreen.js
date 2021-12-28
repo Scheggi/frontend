@@ -18,44 +18,66 @@ import {timeoutPromise,getWeatherTab, refreshToken,getRaceList} from "./tools";
 import Table from "./Table";
 
 export default class NewHelpScreen extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            temp_ground: 0.0,
-            temp_air: 0.0,
-            weather_des: "",
-            datetime: "",
-            raceList: [],
-            dataWeather: [],
-            time: {},
-            seconds: 1800,
-            raceid:0,
-        }
+  constructor(props) {
 
-        this.timer = 0;
-        this.startTimer = this.startTimer.bind(this);
-        this.countDown = this.countDown.bind(this);
+    super(props);
 
+    this.state = {
+      temp_ground: 0.0,
+      temp_air: 0.0,
+      weather_des: "",
+      datetime: "",
+      raceList: [],
+      dataWeather: [],
+      time: '',
+      seconds: 0,
+      raceid:0,
+      lastStemp: '',
     }
 
+    this.timer = 0;
+    this.startTimer = this.startTimer.bind(this);
+    this.countDown = this.countDown.bind(this);
+
+  }
+
+  getSecondsToNextMeasurement(ttemp) {
+
+    let lastDate = (new Date(Date.parse(ttemp.datetime)).getTime() / 1000)
+    let nowDate = (new Date().getTime() / 1000)
+    let result = 1800 - Math.floor(nowDate - lastDate)
+
+    if(result <= 0) {
+      this.setState({time: 'Jetzt fällig!'})
+      clearInterval(this.timer)
+    }else {
+      this.setState({seconds: result})
+      this.startTimer()
+    }
+  }
+
     secondsToTime(secs){
+
         let hours = Math.floor(secs / (60 * 60));
         let divisor_for_minutes = secs % (60 * 60);
         let minutes = Math.floor(divisor_for_minutes / 60);
         let divisor_for_seconds = divisor_for_minutes % 60;
         let seconds = Math.ceil(divisor_for_seconds);
-        let obj = {
-          "h": hours,
-          "m": minutes,
-          "s": seconds
-        };
-        return obj;
+
+        if(hours.toString().length == 1) {hours = `0${hours}`}
+        if(minutes.toString().length == 1) {minutes = `0${minutes}`}
+        if(seconds.toString().length == 1) {seconds = `0${seconds}`}
+
+        let obj = `${hours}:${minutes}:${seconds}`;
+        return obj 
+
     }
 
     startTimer() {
         if (this.timer == 0 && this.state.seconds > 0) {
             this.timer = setInterval(this.countDown, 1000);
-            }
+        } 
+        
     }
     countDown() {
         let seconds = this.state.seconds - 1;
@@ -63,18 +85,14 @@ export default class NewHelpScreen extends React.Component {
             time: this.secondsToTime(seconds),
             seconds: seconds,
             });
-        // Check if  zero.
       if (seconds == 0) {
           clearInterval(this.timer);
-          }
-      }
-
-
+        }
+    }
 
     async saveRaceIDinState(){
         const id = await AsyncStorage.getItem("raceIDHelper");
         this.setState({raceid : id} );
-        console.log(this.state.raceid);
         this.getWeatherData(id);
     }
 
@@ -87,12 +105,16 @@ export default class NewHelpScreen extends React.Component {
 
     async getWeatherData(raceID){
        const accesstoken = await AsyncStorage.getItem('acesstoken');
-       //const raceID = await AsyncStorage.getItem('raceID');
-       console.log(raceID);
-       console.log(accesstoken);
        getWeatherTab(accesstoken, raceID).then(DataTabular => {
-                console.log(DataTabular);
                 this.setState({dataWeather: DataTabular});
+                this.setState({lastStemp: this.state.dataWeather[this.state.dataWeather.length-1]})
+                if(this.state.lastStemp != null) {
+                  this.getSecondsToNextMeasurement(this.state.lastStemp)
+                }else {
+                  clearInterval(this.timer)
+                  this.timer = 0;
+                  this.setState({time: '00:00:00'})
+                }
             }).catch(function (error) {
                 console.log(error);
             })
@@ -103,8 +125,7 @@ export default class NewHelpScreen extends React.Component {
         this.setState({ time: timeLeftVar });
         const accesstoken = await AsyncStorage.getItem('acesstoken');
         getRaceList(accesstoken).then(racelistDropdown => {
-            console.log(racelistDropdown);
-            this.setState({raceList: racelistDropdown});
+          this.setState({raceList: racelistDropdown});
         }).catch(function (error) {
             console.log(error);
         });
@@ -128,8 +149,7 @@ export default class NewHelpScreen extends React.Component {
 
 
     async sendNewWeatherRequest(temp_air,temp_ground,weather_des) {
-        console.log(temp_air)
-        const id = await AsyncStorage.getItem("raceIDHelper");
+      const id = await AsyncStorage.getItem("raceIDHelper");
        timeoutPromise(2000, fetch(
             'https://api.race24.cloud/user/weather/create', {
                 method: 'POST',
@@ -155,9 +175,9 @@ export default class NewHelpScreen extends React.Component {
     render() {
         let optionTemplate = this.state.raceList.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
-
     ));
 
+        console.log(this.state.time)
 
     window.addEventListener('load', function() {
         setTimeout(function()
@@ -200,10 +220,7 @@ export default class NewHelpScreen extends React.Component {
               <select id='option' style={{margin: 10, fontFamily: 'arial'}} value={this.state.id} onChange={this.getRaceID}>{optionTemplate}</select>
               </label>
 
-              <div className='test'>
-              <button onClick={this.startTimer} style={{borderRadius: 10, margin: 10, marginBottom: 30, fontFamily: 'arial'}}>Start</button>
-                  <Text style={{fontfamily: 'arial', color: 'white'}}> {this.state.time.m} Minuten : {this.state.time.s} Sekunden </Text>
-              </div>
+              <label style={{margin:20,textAlign:'center',fontFamily:'arial',color:'white'}}>Nächste Messung: {this.state.time}</label>
 
               <label style={{color: 'white',  fontFamily: 'arial'}}>Lufttemperatur</label>
               <TextInput
@@ -227,11 +244,13 @@ export default class NewHelpScreen extends React.Component {
               />
                 <View style={{width: 200}}>
                     <Text> </Text>
+
               <Button
               title="Daten abspeichern"
               disabled={!this.validateForm()}
               onPress={this.handleSubmit}
               />
+
                 <Text> </Text>
                  <Text> </Text>
              <Button
