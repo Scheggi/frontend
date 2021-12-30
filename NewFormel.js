@@ -5,7 +5,7 @@ import {styles} from "./styles"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {timeoutPromise, refreshToken, syncData, getRaceList,getFormelList} from "./tools";
 
-export default class FormelNeu extends React.Component {
+export default class NewFormelScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
