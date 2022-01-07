@@ -85,7 +85,7 @@ export default class MaenScreen extends React.Component {
             </Text>
 
 
-         <LineChart width={800} height={300} data={data} margin={{
+         <LineChart width={800} height={500} data={data} margin={{
             top: 5,
             right: 30,
             left: 20,
