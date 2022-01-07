@@ -82,6 +82,8 @@ export default class MaenScreen extends React.Component {
          <View style={viewStyles1}>
             <Text style={styles.textStyles}>
                Wetterdaten
+               <br></br>
+               <br></br>
             </Text>
 
 
