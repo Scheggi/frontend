@@ -74,48 +74,8 @@ export default class NewFormelScreen extends React.Component {
          console.log(id);
         this.setState({raceID: id});
     }
- handleChangeVariable1 = event => {
-    event.preventDefault();
-    this.setState({variable1: event.target.value});
- }
-handleChangeVariable2 = event => {
-    event.preventDefault();
-    this.setState({variable2: event.target.value});
- }
 
-handleChangeVariable3 = event => {
-    event.preventDefault();
-    this.setState({variable3: event.target.value});
- }
 
-handleChangeVariable4 = event => {
-    event.preventDefault();
-    this.setState({variable4: event.target.value});
- }
-handleChangeAirTemperature= event => {
-    event.preventDefault();
-    this.setState({airTemperature: event.target.value});
- }
-handleChangeTrackTemperature= event => {
-    event.preventDefault();
-    this.setState({trackTemperature: event.target.value});
- }
-handleChangeAirPressureFL= event => {
-    event.preventDefault();
-    this.setState({ air_pressureFL: event.target.value});
- }
-handleChangeAirPressureFR= event => {
-    event.preventDefault();
-    this.setState({ air_pressureFR: event.target.value});
- }
-handleChangeAirPressureBL= event => {
-    event.preventDefault();
-    this.setState({ air_pressureBL: event.target.value});
- }
- handleChangeAirPressureBR= event => {
-    event.preventDefault();
-    this.setState({ air_pressureBR: event.target.value});
- }
 
     render() {
      let optionTemplate = this.state.raceList.map(v => (
@@ -137,13 +97,13 @@ handleChangeAirPressureBL= event => {
              </div>
            <div className="input-group" style={{width:'70%'}}>
                  <span className="input-group-text">Pa*(Tg+</span>
-                 <input type="text" className="form-control"  aria-label="Server"  onChange={this.handleChangeVariable1} value={this.state.variable1}></input>
+                 <input type="text" className="form-control"  aria-label="Server"   onChange={(e) => this.setState({variable1: e.target.value})} value={this.state.variable1}></input>
                   <span className="input-group-text">)/(Ta+</span>
-                 <input type="text" className="form-control"  aria-label="Server"  onChange={this.handleChangeVariable2} value={this.state.variable2}></input>
+                 <input type="text" className="form-control"  aria-label="Server"  onChange={(e) => this.setState({variable2: e.target.value})}></input>
                  <span className="input-group-text">)+(</span>
-                  <input type="text" className="form-control"  aria-label="Server" onChange={this.handleChangeVariable3} value={this.state.variable3}></input>
+                  <input type="text" className="form-control"  aria-label="Server" onChange={(e) => this.setState({variable3: e.target.value})}></input>
                   <span className="input-group-text">)*(Tg-Ta)/(Ta+</span>
-                 <input type="text" className="form-control"  aria-label="Server"  onChange={this.handleChangeVariable4} value={this.state.variable4}></input>
+                 <input type="text" className="form-control"  aria-label="Server"  onChange={(e) => this.setState({variable4: e.target.value})}></input>
                  <span className="input-group-text">)</span>
                  <button disabled={!this.validateForm()} type="button" className="btn btn-primary" onClick={this.handleSubmit}>Formel speichern</button>
              </div>
@@ -151,18 +111,18 @@ handleChangeAirPressureBL= event => {
              <div className="row g-3">
              <div className="col-md-6">
                  <label  className="form-label">Air Temperature</label>
-                 <input type="text" className="form-control" value={this.state.airTemperature} onChange={this.handleChangeAirTemperature}></input>
+                 <input type="text" className="form-control" value={this.state.airTemperature} onChange={(e) => this.setState({airTemperature: e.target.value})}></input>
              </div>
              <div className="col-md-6">
                  <label className="form-label">Track Temperature</label>
-                 <input type="text" className="form-control"  value={this.state.trackTemperature} onChange={this.handleChangeTrackTemperature} required></input>
+                 <input type="text" className="form-control"  value={this.state.trackTemperature} onChange={(e) => this.setState({trackTemperature: e.target.value})} required></input>
              </div>
               <div className="col-md-6">
                  <label className="form-label">Cold TP</label>
-                 <input type="text" className="form-control"  placeholder=" air_pressureFL" value={this.state.air_pressureFL} onChange={this.handleChangeAirPressureFL} required></input>
-                  <input type="text" className="form-control"  placeholder=" air_pressureFR" value={this.state.air_pressureFR} onChange={this.handleChangeAirPressureFR} required></input>
-                   <input type="text" className="form-control"   placeholder=" air_pressureBL" value={this.state.air_pressureBL} onChange={this.handleChangeAirPressureBL} required></input>
-                   <input type="text" className="form-control"  placeholder=" air_pressureBR" value={this.state.air_pressureBR} onChange={this.handleChangeAirPressureBR} required></input>
+                 <input type="text" className="form-control"  placeholder=" air_pressureFL" value={this.state.air_pressureFL} onChange={(e) => this.setState({air_pressureFL: e.target.value})} required></input>
+                  <input type="text" className="form-control"  placeholder=" air_pressureFR" value={this.state.air_pressureFR} onChange={(e) => this.setState({air_pressureFR: e.target.value})} required></input>
+                   <input type="text" className="form-control"   placeholder=" air_pressureBL" value={this.state.air_pressureBL} onChange={(e) => this.setState({air_pressureBL: e.target.value})} required></input>
+                   <input type="text" className="form-control"  placeholder=" air_pressureBR" value={this.state.air_pressureBR} onChange={(e) => this.setState({air_pressureBR: e.target.value})} required></input>
              </div>
                <div className="col-12">
                <button disabled={!this.validateForm1()} type="button" className="btn btn-primary" onClick={this.handleSubmit1}>Daten speichern</button>
