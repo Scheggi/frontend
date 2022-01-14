@@ -59,31 +59,40 @@ export default class LoginScreen extends React.Component {
     render() {
         return (
             <View style={styles.viewStyles}>
-                <Text style={styles.textStyles}>  Reifenmanagement</Text>
+
+                <Text style={styles.textStyles}>Reifenmanagement</Text>
+
                 <View >
-                    <Text style={{height: 50}}> </Text>
+
+                    <Text style={{height: 50}}></Text>
+
                     <table>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white'}}><label> Username eingeben: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.type}
-                                   onChangeText={(username) => this.setState({username})} placeholder='Username'/></td>
-                    </tr>
-                     <tr style={{height: 20}}> </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white'}}><label> Passwort eingeben: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.place}
-                                    secureTextEntry={true} onChangeText={(password) => this.setState({password})} placeholder='Passwort'/>
-                        </td>
-                    </tr>
+
+                    <tbody>
+                        <tr>
+                            <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white'}}><label> Username eingeben: </label></td>
+                            <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.type}
+                            onChangeText={(username) => this.setState({username})} placeholder='Username'/></td>
+                        </tr>
+                    </tbody>
+
+                    <tbody>
+                        <tr>
+                            <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white'}}><label> Passwort eingeben: </label></td>
+                            <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.place}
+                            secureTextEntry={true} onChangeText={(password) => this.setState({password})} placeholder='Passwort'/></td>
+                        </tr>
+                    </tbody>
+
                     </table>
+
                     <View style={{marginLeft: 'auto', marginRight: 'auto', width: 200}}>
-                         <text style={{height: 40}}></text>
-                    <Button
-                        disabled={!this.validateForm()}
-                        title="Login"
-                        onPress={this.handleSubmit}
-                    />
+
+                        <Text style={{height: 40}}></Text>
+                        <Button disabled={!this.validateForm()} title="Login" onPress={this.handleSubmit}/>
+
                     </View>
+
                 </View>
             </View>
         );
