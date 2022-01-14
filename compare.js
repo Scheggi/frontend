@@ -10,6 +10,22 @@ export default class NewOrderScreen extends React.Component {
    constructor(props) {
         super(props);
         this.state = {
+            raceid: 0,
+            tyretype: '',
+            tyremix: '',
+            term: '',
+            variant: '',
+            tyretype1: '',
+            tyremix1: '',
+            variant1: '',
+            orderduration: 0,
+            ordertime: '',
+            ordertime1: '',
+            pickuptime: '',
+            raceList: [],
+            time: {},
+            seconds: 1800,
+            timervalue: "",
             wheels: [],
             listDropdown1:[],
             listDropdown2:[],
@@ -25,35 +41,19 @@ export default class NewOrderScreen extends React.Component {
             SetInformation:{},
             test_setid:0,
             test_list :[],
-            raceid: 0,
-            tyretype: '',
-            tyremix: '',
-            term1: '',
-            variant: '',
 
-            //für Tabelle rechts:
-            tyretype1: '',
-            tyremix1: '',
-            variant1: '',
-            ordertime: '',
-            orderduration: '',
-            raceList: [],
-
-            time: {},
-            seconds: 1800,
-            timervalue: "",
         }
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
         this.countDown = this.countDown.bind(this);
-        this.fillList= this.fillList.bind(this);
     }
 
+    changeMain(){
+        this.props.navigation.goBack();
+    }
 
-     async componentDidMount(){
-       await AsyncStorage.removeItem('setID');
-       await AsyncStorage.removeItem('orderSetID');
-       await AsyncStorage.removeItem('SetID');
+    // get Data
+    async componentDidMount(){
         const accesstoken = await AsyncStorage.getItem('acesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         getDropdown(accesstoken,raceID).then(racelistDropdown => {
@@ -144,8 +144,7 @@ export default class NewOrderScreen extends React.Component {
     }
      handleSubmit = event => {
         event.preventDefault();
-        this.fillList();
-        changeWheelSet(this.state.setID,this.state.variant,this.state.orderduration,this.state.term1);
+        changeWheelSet(this.state.setID,this.state.variant,this.state.orderduration,this.state.term);
         AsyncStorage.setItem('orderSetID',this.state.setID);
         this.refresh_Buttons();
     }
@@ -242,7 +241,7 @@ export default class NewOrderScreen extends React.Component {
             if (atime[2].length > 0) {
                 second = parseInt(atime[2]);
             }
-            this.state.seconds = hour * 3600 + minute * 60 + second;
+            this.state.seconds = stunde * 3600 + minute * 60 + sekunde;
 
             if (this.state.seconds > 0) {
                 this.timer = setInterval(this.countDown, this.state.seconds);
@@ -272,14 +271,10 @@ export default class NewOrderScreen extends React.Component {
 
         validateForm()
         {
-            return this.state.tyretype.length > 0 && this.state.tyremix.length > 0 && this.state.term1.length > 0 && this.state.orderduration.length > 0 && this.state.variant.length > 0;
+            return this.state.orderduration.length > 0 && this.state.variant.length > 0 ;
         }
 
-        validateForm1()
-        {
-            return this.state.timervalue.length > 0;
-        }
-       validateFormButton1(){
+        validateFormButton1(){
        return this.state.dictButtons.length==6 && this.state.dictButtons[0][0]>0;
         }
         validateFormButton2(){
@@ -297,24 +292,11 @@ export default class NewOrderScreen extends React.Component {
         }
 
 
-        fillList(){
-          var date=new Date();
-          let hour= date.getHours();
-          let minutes=date.getMinutes();
-          if((String(hour)).length==1)
-             hour='0'+hour;
-          if((String(minutes)).length==1)
-              minutes='0'+minutes;
-          const time=hour+ ':' + minutes;
-          //alert(time);
-          this.setState({ordertime: time});
-          this.setState({variant1: this.state.variant});
-          this.setState({tyremix1: this.state.tyremix});
-          this.setState({tyretype1: this.state.tyretype});
-          this.setState({timervalue: time});
-          this.startTimer();
-        }
 
+        validateForm1()
+        {
+            return this.state.timervalue.length > 0;
+        }
 
         async getWheelData(){
             //this.setState({wheels: []});
@@ -423,9 +405,9 @@ export default class NewOrderScreen extends React.Component {
                 return (
                     <tr  key={wheel.setid}>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.setNr}</td>
-                        <td> {wheel.status} </td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id ={wheel.cat} placeholder={wheel.cat} value={wheel.cat} /> </td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id ={wheel.subcat} placeholder={wheel.subcat} value={wheel.subcat} /></td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.status}</td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.cat}</td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.subcat}</td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.setid}  placeholder={'Temperatur'} onChange={this.handleTemp} value={wheel.temp}/></td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.fl_id} placeholder={'FL ID'} onChange={this.handleWheelIDChange} value={wheel.fl_wheel_id}/><input id={wheel.fr_id} placeholder={'FR ID'}  onChange={this.handleWheelIDChange} value={wheel.fr_wheel_id}/><input id={wheel.bl_id} placeholder={'BL ID'} onChange={this.handleWheelIDChange} value={wheel.bl_wheel_id}/><input id={wheel.br_id} placeholder={'BR ID '} onChange={this.handleWheelIDChange} value={wheel.br_wheel_id}/></td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.fl_id} placeholder={'FL Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.fl_pressure}/><input id={wheel.fr_id} placeholder={'FR Luftdruck'} onChange={this.handleAirPressureChange}  value={wheel.fr_pressure}/><input id={wheel.bl_id} placeholder={'BL Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.bl_pressure}/><input id={wheel.br_id}  placeholder={'BR Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.br_pressure}/></td>
@@ -436,21 +418,17 @@ export default class NewOrderScreen extends React.Component {
 
         render()
         {
+            let optionTemplate = this.state.raceList.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
+            ));
+
             return (
-                <View>
-                <View style={container1}>
-                    <View style={container2}>
-                         <View>
-                        <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
+                <View style={container2}>
+                    <View style={container3}>
+                        <View style={container5}>
+                        <Text style={{fontSize: 40, fontWeight: 'bold', textAlign: 'center'}}>
                         Neue Reifenbestellung anlegen
                     </Text>
-                        </View>
-                        <View style={{textAlign: 'center'}}>
-                            <Text> </Text>
-                            <Text stlye={{fontfamily: 'arial', fontSize: 16}}>
-                            Reifentyp auswählen:
-                            </Text>
-                            <Text style={{height: 5}}> </Text>
                         </View>
                         <View style={container4}>
                             <Button
@@ -468,11 +446,6 @@ export default class NewOrderScreen extends React.Component {
                             title= {this.state.ButtonSlicks_Hot}
                             onPress={this.handleSubmitButton3}
                         />
-                        </View>
-                        <View>
-                            <Text style={{height: 5}}> </Text>
-                        </View>
-                        <View style={container4}>
                         <Button
                             disabled={!this.validateFormButton4()}
                             title={this.state.ButtonInter}
@@ -489,43 +462,48 @@ export default class NewOrderScreen extends React.Component {
                             onPress={this.handleSubmitButton6}
                         />
                         </View>
-                <View >
-                    <Text style={{height: 20}}> </Text>
+                    </View>
+                <View style={container1}>
+                <View style={{justifyContent: 'flex-start'}}>
+                    <Text style={{height: 10}}> </Text>
                     <table >
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.tyretype}
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.tyretype}
                                    onChangeText={(text) => this.setState({tyretype: text})}/></td>
                     </tr>
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Mischung: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}> <TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.tyremix}
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.tyremix}
                                     onChangeText={(text) => this.setState({tyremix: text})}/>
                         </td>
                     </tr>
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bezeichnung: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.term1}
-                                  onChangeText={(text) => this.setState({term1: text})}/></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.term}
+                                  onChangeText={(text) => this.setState({term: text})}/></td>
                     </tr>
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bearbeitungsvariante: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.variant}
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.variant}
                                    onChangeText={(text) => this.setState({variant: text})}/>
                         </td>
                     </tr>
                     <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Abholdauer: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.orderduration}
-                                   placeholder=" SS:MM:SS" onChangeText={(text) => {this.setState({orderduration: text}); this.setState({timervalue: text})}}/>
-                        </td>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestelldauer: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.orderduration}
+                                   placeholder='TT.MM.JJJJ' onChangeText={(date) => this.setState({orderduration: date})}/></td>
+                    </tr>
+                   <tr>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.ordertime}
+                                   placeholder='SS:MM' onChangeText={(time) => this.setState({ordertime: time})}/></td>
                     </tr>
                 </table>
-                        <View style={{marginLeft: 'auto', marginRight: 'auto', width: 200}}>
-                        <Text style={{height: 20}}> </Text>
+                        <Text> </Text>
                         <Button
                             disabled={!this.validateForm()}
-                            title="Bestellung bestätigen"
+                            title="Reifenbestellung bestätigen"
                             onPress={this.handleSubmit}
                         />
                         <Text> </Text>
@@ -533,18 +511,11 @@ export default class NewOrderScreen extends React.Component {
                             title="zurück"
                             onPress={this.changeRace}
                             />
-                        </View>
                     </View>
-                        </View>
                 <View style={{justifyContent: 'flex-start'}}>
-                    <View style={container3}>
-                    <View>
                     <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
-                        Reifensatz in Bearbeitung
+                        Reifensatz aktuell in Bearbeitung
                     </Text>
-                     <Text> </Text>
-                    </View>
-                    <View>
                      <table>
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>
@@ -561,26 +532,27 @@ export default class NewOrderScreen extends React.Component {
                     </tr>
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.ordertime}
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.ordertime1}
                         </td>
                     </tr>
-                    <tr style={{height: 50}}>
-                        <td> </td>
-                        <td></td>
-                    </tr>
                      </table>
-                    </View>
-                     <View >
-                    <Text style={{color: 'black', fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
-                        Reifen abholbereit in:
+                    <Text style={{height: '10'}}></Text>
+                    <Text style={bigStyle}>
+                        Timer
                     </Text>
-                     <Text> </Text>
-                     </View>
-                        <View style={{textAlign: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
+                        <Text style={orderHeaderStyle}> Reifenbestellung abholbereit in: </Text>
+                        <TextInput
+                            style={orderTextStyle}
+                            placeholder=" SS:MM:SS"
+                            onChangeText={(time) => this.setState({timervalue: time})}
+                        />
+                        <button style={{width:300}}
+
+                            disabled={!this.validateForm1()}
+                            onClick={this.startTimer}>Start
+                        </button>
                         <Text style={orderFeedbackStyle}>
-                            {this.state.time.h} Stunden {this.state.time.m} Minuten {this.state.time.s} Sekunden </Text>
-                     </View>
-                </View>
+                            Stunden: {this.state.time.h} Minuten: {this.state.time.m} Sekunden: {this.state.time.s} </Text>
                     </View>
             </View>
 
