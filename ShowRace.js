@@ -11,7 +11,8 @@ import {
     TouchableOpacity
 } from 'react-native';
 import {getRaceList, getWeatherTab, timeoutPromise,getWheelsList,getRaceDetails_by_ID} from "./tools"
-import { Logs } from 'expo'
+import { Logs } from 'expo';
+import image from './logo.png';
 
 Logs.enableExpoCliLogging()
 
@@ -59,11 +60,6 @@ export default class ShowRaceScreen extends React.Component {
      changeNewUser = event => {
         event.preventDefault();
         this.props.navigation.push('NewUser');
-    }
-
-     changeFormel = event => {
-        event.preventDefault();
-        this.props.navigation.push('Formel');
     }
 
     changeNewOrder = event => {
@@ -187,7 +183,7 @@ export default class ShowRaceScreen extends React.Component {
             <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
                 <nav className="navbar navbar-light" style={{backgroundColor: '#d0d7de'}}>
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="#">Navigation</a>
+                        <a className="navbar-brand" href="#"> <img src={image} style={{width: '70%'}}/> </a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                                 aria-expanded="false" aria-label="Toggle navigation">
@@ -213,6 +209,11 @@ export default class ShowRaceScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeAstrid}>Berechnung Reifendruck
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
                                             aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen
                                     </button>
                                 </li>
@@ -223,7 +224,12 @@ export default class ShowRaceScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
-                                            aria-current="page" onClick={this.changeFormel}>Formel Reifendruck anlegen
+                                            aria-current="page" onClick={this.changeMaen}>Statistiken anzeigen
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeNewFormel}>Formel Reifendruck anlegen
                                     </button>
                                 </li>
                                 <li className="nav-item">
@@ -233,22 +239,7 @@ export default class ShowRaceScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
-                                            aria-current="page" onClick={this.changeNewFormel}>Neue Formel anlegen
-                                    </button>
-                                </li>
-                                <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
-                                            aria-current="page" onClick={this.changeAstrid}>Astrid anzeigen
-                                    </button>
-                                </li>
-                                <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
                                             aria-current="page" onClick={this.changeNiklas}>Niklas
-                                    </button>
-                                </li>
-                                <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
-                                            aria-current="page" onClick={this.changeMaen}>Maen anzeigen
                                     </button>
                                 </li>
                                 <br/>
@@ -266,9 +257,9 @@ export default class ShowRaceScreen extends React.Component {
                     <h1 className="display-4" style={{color: '#d0d7de', textAlign: 'center'}}> Renndaten anzeigen</h1>
                     <br/>
                 </div>
-                <div style={{marginLeft: 'auto', marginRight: 'auto'}}>
-                    <label style={{color: '#d0d7de', fontSize: 16}}> Rennen auswählen: &nbsp; <select
-                        value={this.state.id} onChange={this.getRaceID}>
+                <div className='input-group'>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}> Rennen auswählen: &nbsp; <select
+                        id='option' value={this.state.id} onChange={this.getRaceID}>
                         {optionTemplate}
                     </select>
                     </label>
@@ -369,12 +360,12 @@ export default class ShowRaceScreen extends React.Component {
                 <br/>
                 <br/>
                 <button type='button' className='btn btn-primary' onClick={this.Action}
-                        style={{width: 250, marginLeft: 'auto', marginRight: 'auto'}}>
+                        style={{marginLeft: 'auto', marginRight: 'auto'}}>
                     RENNDATEN ANZEIGEN
                 </button>
                 <br/>
                 <button type='button' className='btn btn-primary' onClick={this.changeRace}
-                        style={{width: 100, marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK
+                        style={{marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK
                 </button>
                 <br/>
                 <br/>

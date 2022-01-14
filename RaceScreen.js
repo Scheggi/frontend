@@ -53,11 +53,6 @@ export default class RaceScreen extends React.Component {
         this.props.navigation.push('NewUser');
     }
 
-     changeFormel = event => {
-        event.preventDefault();
-        this.props.navigation.push('Formel');
-    }
-
     changeNewOrder = event => {
         event.preventDefault();
         this.props.navigation.push('NewOrder');
@@ -136,6 +131,11 @@ export default class RaceScreen extends React.Component {
                     title="Reifenbestellungen verwalten"
                     onPress={this.changeNewOrder}
                 />
+                 <Text style={{height: 10}}> </Text>
+                <Button
+                title="Berechnung Reifendruck"
+                onPress={this.changeAstrid}
+                />
                 <Text style={{height: 10}}> </Text>
                 <Button
                     title="Reifendetails anzeigen"
@@ -146,35 +146,25 @@ export default class RaceScreen extends React.Component {
                     title="Wetterdaten anzeigen"
                     onPress={this.changeWeather}
                 />
+                <Text style={{height: 10}}> </Text>
+                <Button
+                  title="Statistiken anzeigen"
+                    onPress={this.changeMaen}
+                />
                  <Text style={{height: 10}}> </Text>
                 <Button
                     title="Formel Reifendruck anlegen"
-                    onPress={this.changeFormel}
+                    onPress={this.changeNewFormel}
                 />
                 <Text style={{height: 10}}> </Text>
                 <Button
                     title="Neues Mitglied anlegen"
                     onPress={this.changeNewUser}
                 />
-                <Text style={{height: 10}}> </Text>
-                <Button
-                    title="Neue Formel anlegen"
-                    onPress={this.changeNewFormel}
-                />
-                 <Text style={{height: 10}}> </Text>
-                <Button
-                title="Astrid anzeigen"
-                onPress={this.changeAstrid}
-                />
                  <Text style={{height: 10}}> </Text>
                 <Button
                   title="Niklas"
                     onPress={this.changeNiklas}
-                />
-                 <Text style={{height: 10}}> </Text>
-                <Button
-                  title="Maen anzeigen"
-                    onPress={this.changeMaen}
                 />
                 </View>
                 <View style={{width: 200}}>

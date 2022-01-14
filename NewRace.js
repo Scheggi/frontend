@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {getRaceList, timeoutPromise} from "./tools"
 import {sendNewSetRequest, sendWheelRequest, sendWheelsRequest} from "./tools_wheel";
+import image from './logo.png';
 
 
 export default class NewRaceScreen extends React.Component {
@@ -51,11 +52,6 @@ export default class NewRaceScreen extends React.Component {
      changeNewUser = event => {
         event.preventDefault();
         this.props.navigation.push('NewUser');
-    }
-
-     changeFormel = event => {
-        event.preventDefault();
-        this.props.navigation.push('Formel');
     }
 
     changeNewOrder = event => {
@@ -215,7 +211,7 @@ export default class NewRaceScreen extends React.Component {
             <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
                 <nav className="navbar navbar-light" style={{backgroundColor: '#d0d7de'}}>
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="#">Navigation</a>
+                        <a className="navbar-brand" href="#"> <img src={image} style={{width: '70%'}}/> </a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                                 aria-expanded="false" aria-label="Toggle navigation">
@@ -233,28 +229,25 @@ export default class NewRaceScreen extends React.Component {
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewOrder}>Reifenbestellungen verwalten </button>
                                 </li>
                                 <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeAstrid}>Berechnung Reifendruck </button>
+                                </li>
+                                <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
                                 </li>
                                 <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeFormel}>Formel Reifendruck anlegen </button>
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeMaen}>Statistiken anzeigen</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewFormel}>Formel Reifendruck anlegen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewUser}>Neues Mitglied anlegen </button>
                                 </li>
                                 <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewFormel}>Neue Formel anlegen </button>
-                                </li>
-                                <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeAstrid}>Astrid anzeigen </button>
-                                </li>
-                                <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNiklas}>Niklas </button>
-                                </li>
-                                <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeMaen}>Maen anzeigen </button>
                                 </li>
                                 <br/>
                                 <li className="nav-item">
@@ -271,7 +264,6 @@ export default class NewRaceScreen extends React.Component {
                     <br/>
                 </div>
                 <div>
-                    <br/>
                     <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Neues Rennen anlegen</h3>
                 </div>
                 <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
@@ -366,12 +358,12 @@ export default class NewRaceScreen extends React.Component {
                 <br/>
                 <br/>
                 <button disabled={!this.validateForm()} type='button' className='btn btn-primary'
-                        onClick={this.handleSubmit} style={{width: 250, marginLeft: 'auto', marginRight: 'auto'}}>
+                        onClick={this.handleSubmit} style={{marginLeft: 'auto', marginRight: 'auto'}}>
                     RENNDATEN ANLEGEN
                 </button>
                 <br/>
                 <button type='button' className='btn btn-primary'
-                        onClick={this.changeRace} style={{width: 100, marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK
+                        onClick={this.changeRace} style={{marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK
                 </button>
                 <br/>
                 <br/>

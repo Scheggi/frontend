@@ -82,7 +82,7 @@ export default class LoginScreen extends React.Component {
                 <br/>
                 <br/>
                 <button disabled={!this.validateForm()} type='button' className='btn btn-primary'
-                        onClick={this.handleSubmit} style={{width: 150, marginLeft: 'auto', marginRight: 'auto'}}> EINLOGGEN
+                        onClick={this.handleSubmit} style={{marginLeft: 'auto', marginRight: 'auto'}}> EINLOGGEN
                 </button>
             </View>
 
