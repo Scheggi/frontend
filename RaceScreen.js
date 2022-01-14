@@ -180,7 +180,7 @@ export default class RaceScreen extends React.Component {
                 <View style={{width: 200}}>
                 <Text style={{height: 40}}> </Text>
                 <Button
-                    title="Logout"
+                    title="Ausloggen"
                     onPress={this.changeLogout}
                 />
                 </View>

@@ -21,11 +21,11 @@ export default class ShowRaceScreen extends React.Component {
         this.state = {
             date: "",
             place: "",
-            type:"",
+            type: "",
             raceList: [],
             raceID: 1,
             RaceDetails: [],
-            listWheelStart:[],
+            listWheelStart: [],
             zwei: 2,
             i_11: '',
             i_12: '',
@@ -40,15 +40,70 @@ export default class ShowRaceScreen extends React.Component {
             i_61: '',
             i_62: '',
         }
-        this.getRaceID=this.getRaceID.bind(this);
-        this.getRaceDetails=this.getRaceDetails.bind(this);
-        this.Action=this.Action.bind(this);
-        this.getWheelsStart=this.getWheelsStart.bind(this);
+        this.getRaceID = this.getRaceID.bind(this);
+        this.getRaceDetails = this.getRaceDetails.bind(this);
+        this.Action = this.Action.bind(this);
+        this.getWheelsStart = this.getWheelsStart.bind(this);
     }
 
-     changeRace = event => {
+    changeRace = event => {
         event.preventDefault();
-        this.props.navigation.goBack();
+        this.props.navigation.push('Race');
+    }
+
+    changeLogout = event => {
+        event.preventDefault();
+        this.props.navigation.replace('Logout');
+    }
+
+     changeNewUser = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewUser');
+    }
+
+     changeFormel = event => {
+        event.preventDefault();
+        this.props.navigation.push('Formel');
+    }
+
+    changeNewOrder = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewOrder');
+    }
+
+    changeWeather = event => {
+        event.preventDefault();
+        this.props.navigation.push('Weather');
+    }
+
+    changeNewRace = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewRace');
+    }
+
+     changeWheel = event => {
+        event.preventDefault();
+        this.props.navigation.push('Wheel');
+    }
+
+    changeNewFormel = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewFormel');
+    }
+
+    changeAstrid = event => {
+        event.preventDefault();
+        this.props.navigation.push('Astrid');
+    }
+
+    changeNiklas = event => {
+        event.preventDefault();
+        this.props.navigation.push('Niklas');
+    }
+
+    changeMaen = event => {
+        event.preventDefault();
+        this.props.navigation.push('Maen');
     }
 
     async componentDidMount() {
@@ -67,12 +122,13 @@ export default class ShowRaceScreen extends React.Component {
         const id = await AsyncStorage.getItem('raceID');
         this.setState({raceID: id});
     }
-    async getRaceDetails(){
+
+    async getRaceDetails() {
         const accesstoken = await AsyncStorage.getItem('acesstoken');
         AsyncStorage.setItem('raceID', this.state.raceID);
         const raceID = await AsyncStorage.getItem('raceID');
         console.log([raceID])
-        getRaceDetails_by_ID(accesstoken,raceID).then(liste => {
+        getRaceDetails_by_ID(accesstoken, raceID).then(liste => {
             console.log(liste);
             console.log(liste[0]["date"]);
             this.setState({date: liste[0]["date"]});
@@ -85,39 +141,40 @@ export default class ShowRaceScreen extends React.Component {
         })
 
     }
-     //get ReifenData
-    async getWheelsStart(){
+
+    //get ReifenData
+    async getWheelsStart() {
         const accesstoken = await AsyncStorage.getItem('acesstoken');
         AsyncStorage.setItem('raceID', this.state.raceID);
         const raceID = await AsyncStorage.getItem('raceID');
         console.log(raceID)
-        getWheelsList(accesstoken,raceID).then(liste => {
+        getWheelsList(accesstoken, raceID).then(liste => {
             console.log(liste);
             this.setState({listWheelStart: liste});
-            let liste1 = liste.filter(entry => entry.set==1);
-            this.setState({i_11:liste1[0]["identifier"]});
-            this.setState({i_12:liste1[0]["numberOfSets"]});
-            liste1 = liste.filter(entry => entry.set==2);
-            this.setState({i_21:liste1[0]["identifier"]});
-            this.setState({i_22:liste1[0]["numberOfSets"]});
-            liste1 = liste.filter(entry => entry.set==3);
-            this.setState({i_31:liste1[0]["identifier"]});
-            this.setState({i_32:liste1[0]["numberOfSets"]});
-            liste1 = liste.filter(entry => entry.set==4);
-            this.setState({i_41:liste1[0]["identifier"]});
-            this.setState({i_42:liste1[0]["numberOfSets"]});
-            liste1 = liste.filter(entry => entry.set==5);
-            this.setState({i_51:liste1[0]["identifier"]});
-            this.setState({i_52:liste1[0]["numberOfSets"]});
-            liste1 = liste.filter(entry => entry.set==6);
-             this.setState({i_61:liste1[0]["identifier"]});
-             this.setState({i_62:liste1[0]["numberOfSets"]});
+            let liste1 = liste.filter(entry => entry.set == 1);
+            this.setState({i_11: liste1[0]["identifier"]});
+            this.setState({i_12: liste1[0]["numberOfSets"]});
+            liste1 = liste.filter(entry => entry.set == 2);
+            this.setState({i_21: liste1[0]["identifier"]});
+            this.setState({i_22: liste1[0]["numberOfSets"]});
+            liste1 = liste.filter(entry => entry.set == 3);
+            this.setState({i_31: liste1[0]["identifier"]});
+            this.setState({i_32: liste1[0]["numberOfSets"]});
+            liste1 = liste.filter(entry => entry.set == 4);
+            this.setState({i_41: liste1[0]["identifier"]});
+            this.setState({i_42: liste1[0]["numberOfSets"]});
+            liste1 = liste.filter(entry => entry.set == 5);
+            this.setState({i_51: liste1[0]["identifier"]});
+            this.setState({i_52: liste1[0]["numberOfSets"]});
+            liste1 = liste.filter(entry => entry.set == 6);
+            this.setState({i_61: liste1[0]["identifier"]});
+            this.setState({i_62: liste1[0]["numberOfSets"]});
         }).catch(function (error) {
             console.log(error);
         })
     }
 
-    Action(){
+    Action() {
         this.getWheelsStart();
         this.getRaceDetails();
     }
@@ -127,180 +184,202 @@ export default class ShowRaceScreen extends React.Component {
             <option value={v.id} key={v.id}>{v.name}</option>
         ));
         return (
-            <View style={this.order}>
-                <div style={this.container}>
-                        <h2 style={{fontSize: 30, fontWeight: 'bold',color: 'black', textAlign: 'center', fontFamily: 'arial', marginLeft: 'auto', marginRight:'auto'}}> Rennen anzeigen</h2>
-                    <View  style={{marginLeft: 'auto', marginRight:'auto'}}>
-                    <label style={{fontSize: 16, fontFamily: 'arial', textAlign: 'center'}}> Rennen auswählen: <select value={this.state.id} onChange={this.getRaceID}>
+            <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
+                <nav className="navbar navbar-light" style={{backgroundColor: '#d0d7de'}}>
+                    <div className="container-fluid">
+                        <a className="navbar-brand" href="#">Navigation</a>
+                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeRace}>Hauptmenü
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeNewRace}>Renndaten anlegen
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeNewOrder}>Reifenbestellungen
+                                        verwalten
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeFormel}>Formel Reifendruck anlegen
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeNewUser}>Neues Mitglied anlegen
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeNewFormel}>Neue Formel anlegen
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeAstrid}>Astrid anzeigen
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeNiklas}>Niklas
+                                    </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
+                                            aria-current="page" onClick={this.changeMaen}>Maen anzeigen
+                                    </button>
+                                </li>
+                                <br/>
+                                <li className="nav-item">
+                                    <button className="btn btn-primary btn-sm" aria-current="page"
+                                            onClick={this.changeLogout}>Ausloggen
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+                <div className='container' style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                    <br/>
+                    <h1 className="display-4" style={{color: '#d0d7de', textAlign: 'center'}}> Renndaten anzeigen</h1>
+                    <br/>
+                </div>
+                <div style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                    <label style={{color: '#d0d7de', fontSize: 16}}> Rennen auswählen: &nbsp; <select
+                        value={this.state.id} onChange={this.getRaceID}>
                         {optionTemplate}
                     </select>
                     </label>
-                    </View>
-                    <tr style={{height: 20}}> </tr>
-                    <View>
-                     <table style={{textAlign: 'center', fontFamily:'arial, sans-serif', width:'70%', marginLeft:'auto', marginRight:'auto'}}>
-                          <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Renn-ID: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 250, padding: '8px', textAlign: 'left'}}>
-                            <Text style={{textAlign: 'left', height: 20, fontFamily: 'arial'}}>
-                                {" "}{this.state.raceID} </Text> </td>
-                    </tr>
-                         <tr style={{height: 20}}> </tr>
-                         <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Rennart: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 250, padding: '8px', textAlign: 'left'}}>
-                            <Text style={{textAlign: 'left', height: 20, fontFamily: 'arial'}}>
-                                {" "}{this.state.type} </Text> </td>
-                    </tr>
-                       <tr style={{height: 20}}> </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Rennstrecke: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 250, padding: '8px', textAlign: 'left'}}>
-                            <Text style={{textAlign: 'left', height: 20, fontFamily: 'arial'}}>
-                                {" "}{this.state.place} </Text> </td>
-                    </tr>
-                       <tr style={{height: 20}}> </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Startdatum: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 250, padding: '8px', textAlign: 'left'}}>
-                            <Text style={{textAlign: 'left', height: 20, fontFamily: 'arial'}}>
-                                {" "}{this.state.date} </Text> </td>
-                    </tr>
-                     </table>
-                </View>
-                    <View style={{width: 200, textAlign: 'center', marginLeft: 'auto', marginRight:'auto'}}>
-                     <Text style={{height: 20}}> </Text>
-                    <Button
-                        title="Daten anzeigen"
-                        onPress={this.Action}
-                    />
-                        </View>
                 </div>
-                <View style={styles.viewStyles}>
-                    <View>
-                    <Text style={this.textStyles1}>
-                        Verfügbares Kontingent
-                    </Text>
-                    </View>
-                    <br></br>
-                    <div>
-                        <table style={this.tableStyle}>
-                            <tr style={{backgroundColor: 'dimgrey'}}>
-                                <th style={this.thStyle}></th>
-                                <th style={this.thStyle}>Mischung</th>
-                                <th style={this.thbigStyle}>Bezeichnung</th>
-                                <th style={this.thbigStyle}>Kontingent</th>
-                            </tr>
-
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <th style={this.tdStyle}>Slicks</th>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}></td>
-                            </tr>
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}>Cold (H/E)</td>
-                                < td style={this.tdStyle}>{this.state.i_11}</td>
-                                < td style={this.tdStyle}>{this.state.i_12}</td>
-                            </tr>
-
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}>Medium (G/D)</td>
-                                < td style={this.tdStyle}>{this.state.i_21}</td>
-                                < td style={this.tdStyle}>{this.state.i_22}</td>
-
-                            </tr>
-
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}>Hot (I/F)</td>
-                                < td style={this.tdStyle}>{this.state.i_31}</td>
-                                < td style={this.tdStyle}>{this.state.i_32}</td>
-                            </tr>
-
-                            <tr style={{backgroundColor: 'grey'}}>
-                                <th style={this.tdStyle}>Inters</th>
-                                <td style={this.tdStyle}>Intermediate (H+/E+)</td>
-                                < td style={this.tdStyle}>{this.state.i_41}</td>
-                                < td style={this.tdStyle}>{this.state.i_42}</td>
-                            </tr>
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <th style={this.tdStyle}>Rain</th>
-                                <td style={this.tdStyle}></td>
-                                < td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}></td>
-                            </tr>
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}>Dry wet (T/T)</td>
-                                < td style={this.tdStyle}>{this.state.i_51}</td>
-                                < td style={this.tdStyle}>{this.state.i_52}</td>
-                            </tr>
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}>Heavy wet (A/A)</td>
-                                < td style={this.tdStyle}>{this.state.i_61}</td>
-                                < td style={this.tdStyle}>{this.state.i_62}</td>
-                            </tr>
-
-                        </table>
-                    </div>
-                    <View style={{width: 200, textAlign: 'center', marginLeft: 'auto', marginRight:'39.4%'}}>
-                    <Text style={{height: 20}}> </Text>
-                    <Button
-                        title="zurück"
-                        onPress={this.changeRace}
-                    />
-                    </View>
-                    </View>
-
+                <div>
+                    <br/>
+                    <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Rennen</h3>
+                </div>
+                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Renn-ID: </label>
+                    <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 214}}> {this.state.raceID} </label>
+                </div>
+                <br/>
+                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennart: </label>
+                    <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 216}}> {this.state.type} </label>
+                </div>
+                <br/>
+                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennstrecke: </label>
+                    <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 186}}> {this.state.place} </label>
+                </div>
+                <br/>
+                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Startdatum: </label>
+                    <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 193}}> {this.state.date} </label>
+                </div>
+                <div>
+                    <br/>
+                    <br/>
+                    <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Verfügbares
+                        Reifenkontingent </h3>
+                </div>
+                <div>
+                    <table className="table table-striped table-hover table-bordered"
+                           style={{width: 700, backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto', tableLayout: 'fixed'
+                           }}>
+                        <thead>
+                        </thead>
+                        <tbody>
+                        <tr style={{backgroundColor: '#72869d', textAlign: 'center'}}>
+                            <th style={{width: 100}}></th>
+                            <th style={{width: 200}}> Mischung</th>
+                            <th style={{width: 200}}> Bezeichnung</th>
+                            <th style={{width: 200}}> Kontingent</th>
+                        </tr>
+                        <tr>
+                            <th> Slicks</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td> Cold (H/E)</td>
+                            <td> {this.state.i_11} </td>
+                            <td> {this.state.i_12} </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td> Medium (G/D)</td>
+                            <td> {this.state.i_21} </td>
+                            <td> {this.state.i_22} </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td> Hot (I/F)</td>
+                            <td> {this.state.i_31} </td>
+                            <td> {this.state.i_32} </td>
+                        </tr>
+                        <tr style={{backgroundColor: '#72869d'}}>
+                            <th> Inters</th>
+                            <td> Intermediate (H+/E+)</td>
+                            <td> {this.state.i_41} </td>
+                            <td> {this.state.i_42} </td>
+                        </tr>
+                        <tr>
+                            <th> Rain</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td> Dry wet (T/T)</td>
+                            <td> {this.state.i_51} </td>
+                            <td> {this.state.i_52} </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td> Heavy wet (A/A)</td>
+                            <td> {this.state.i_61} </td>
+                            <td> {this.state.i_62} </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <br/>
+                <button type='button' className='btn btn-primary' onClick={this.Action}
+                        style={{width: 250, marginLeft: 'auto', marginRight: 'auto'}}>
+                    RENNDATEN ANZEIGEN
+                </button>
+                <br/>
+                <button type='button' className='btn btn-primary' onClick={this.changeRace}
+                        style={{width: 100, marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK
+                </button>
+                <br/>
+                <br/>
             </View>
         );
 
     }
-     tableStyle = {
-    textAlign: 'center',
-     fontFamily:'arial, sans-serif',
-        width:'50%',
-        marginLeft:'auto',
-        marginRight:'23%',
-    }
-    tdStyle={
-        textAlign:'left',
-        padding:'8px'
-    }
-    thStyle={
-        textAlign:'left',
-        padding:'8px',
-        color: 'white'
-    }
-    thbigStyle={
-        textAlign: 'left',
-        padding: '8px',
-        color: 'white',
-        width: 400
-    }
-    order={
-
-        justifyContent: 'space-around',
-        flexDirection: 'row',
-        padding: '0',
-        height: '100%'
-
-    }
-    container={
-        width:"30%",
-        padding: '50px',
-    }
-    textStyles1={
-         color: 'black',
-        fontSize: 30,
-        fontWeight: 'bold',
-        fontFamily: 'arial',
-        marginRight: 'auto',
-        marginLeft: 'auto'
-    }
-
 }

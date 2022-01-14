@@ -15,7 +15,7 @@ import {sendNewSetRequest, sendWheelRequest, sendWheelsRequest} from "./tools_wh
 
 
 export default class NewRaceScreen extends React.Component {
-  constructor(props) {
+    constructor(props) {
         super(props);
         this.state = {
             type: '',
@@ -40,35 +40,90 @@ export default class NewRaceScreen extends React.Component {
 
     changeRace = event => {
         event.preventDefault();
-        this.props.navigation.goBack();
+        this.props.navigation.push('Race');
+    }
+
+        changeLogout = event => {
+        event.preventDefault();
+        this.props.navigation.replace('Logout');
+    }
+
+     changeNewUser = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewUser');
+    }
+
+     changeFormel = event => {
+        event.preventDefault();
+        this.props.navigation.push('Formel');
+    }
+
+    changeNewOrder = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewOrder');
+    }
+
+    changeWeather = event => {
+        event.preventDefault();
+        this.props.navigation.push('Weather');
+    }
+
+    changeShowRace = event => {
+        event.preventDefault();
+        this.props.navigation.push('ShowRace');
+    }
+
+     changeWheel = event => {
+        event.preventDefault();
+        this.props.navigation.push('Wheel');
+    }
+
+    changeNewFormel = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewFormel');
+    }
+
+    changeAstrid = event => {
+        event.preventDefault();
+        this.props.navigation.push('Astrid');
+    }
+
+    changeNiklas = event => {
+        event.preventDefault();
+        this.props.navigation.push('Niklas');
+    }
+
+    changeMaen = event => {
+        event.preventDefault();
+        this.props.navigation.push('Maen');
     }
 
     validateForm() {
-        return (this.state.date.length > 0 && this.state.place.length >0 && this.state.identifierSlicksCold != "" && this.state.contingentSlicksCold != -1 && this.state.identifierSlicksMedium != "" && this.state.contingentSlicksMedium != -1 && this.state.identifierSlicksHot != "" && this.state.contingentSlicksHot != -1 && this.state.identifierIntersIntermediate != "" && this.state.contingentIntersIntermediate != "" && this.state.identifierRainDryWet != "" && this.state.contingentRainDryWet != -1 && this.state.identifierRainHeavyWet != "" && this.state.contingentRainHeavyWet != -1)
+        return (this.state.date.length > 0 && this.state.place.length > 0 && this.state.identifierSlicksCold != "" && this.state.contingentSlicksCold != -1 && this.state.identifierSlicksMedium != "" && this.state.contingentSlicksMedium != -1 && this.state.identifierSlicksHot != "" && this.state.contingentSlicksHot != -1 && this.state.identifierIntersIntermediate != "" && this.state.contingentIntersIntermediate != "" && this.state.identifierRainDryWet != "" && this.state.contingentRainDryWet != -1 && this.state.identifierRainHeavyWet != "" && this.state.contingentRainHeavyWet != -1)
     }
 
     handleSubmit = event => {
         event.preventDefault();
-        this.generateNewRace(this.state.type,this.state.place,this.state.date);
+        this.generateNewRace(this.state.type, this.state.place, this.state.date);
         this.prop.navigation.goBack();
     }
 
-        // generate DataSet------------------------------------------------------------------------
+    // generate DataSet------------------------------------------------------------------------
     //raceID, set, cat, subcat, identifier, numberOfSets
-    generateAllSets(raceID,set,cat,subcat,numberOfSets){
-        for(let i =1; i < parseInt(numberOfSets)+1;i++){
+    generateAllSets(raceID, set, cat, subcat, numberOfSets) {
+        for (let i = 1; i < parseInt(numberOfSets) + 1; i++) {
             console.log(i);
-            this.generateNewWheelSet(raceID,i,cat,subcat);
+            this.generateNewWheelSet(raceID, i, cat, subcat);
         }
     }
 
 
-    async generateNewWheelSet(raceID,setNr,cat,subcat){
+    async generateNewWheelSet(raceID, setNr, cat, subcat) {
 
         let cols = [];
-        for (let i =0; i < 4; i++) {
+        for (let i = 0; i < 4; i++) {
             const accesstoken = await AsyncStorage.getItem('acesstoken');
-            await sendWheelRequest(accesstoken,0,'', '').then(Data => {
+            await sendWheelRequest(accesstoken, 0, '', '').then(Data => {
                 console.log(Data);
                 cols.push(Data);
             }).catch(function (error) {
@@ -79,35 +134,35 @@ export default class NewRaceScreen extends React.Component {
         }
         console.log(cols)
         const accesstoken = await AsyncStorage.getItem('acesstoken');
-      await sendWheelsRequest(accesstoken, parseInt( cols[0]), parseInt(cols[1]), parseInt(cols[2]), parseInt(cols[3]), '').then(Data => {
-                console.log(Data);
-                cols.push(Data);
-            }).catch(function (error) {
-                console.log(error);
-            });
+        await sendWheelsRequest(accesstoken, parseInt(cols[0]), parseInt(cols[1]), parseInt(cols[2]), parseInt(cols[3]), '').then(Data => {
+            console.log(Data);
+            cols.push(Data);
+        }).catch(function (error) {
+            console.log(error);
+        });
         console.debug(cols[4])
         // sendNewSetRequest(raceID,setNr,cat,subcat,wheels)
-        sendNewSetRequest(raceID,setNr,cat, subcat,cols[4] );
+        sendNewSetRequest(raceID, setNr, cat, subcat, cols[4]);
     }
 
 
     // end generate---------------------------------------------------------------------------
 
-     async generateNewRace(type,place,date){
-      let id  = '';
+    async generateNewRace(type, place, date) {
+        let id = '';
         const accesstoken = await AsyncStorage.getItem('acesstoken');
-        await createNewRaceRequest(accesstoken,type,place,date).then(Data => {
-                console.log(Data);
-                id = Data;
-            }).catch(function (error) {
-                console.log(error);
-            })
-         console.log(id)
-         this.setState({raceID:id});
+        await createNewRaceRequest(accesstoken, type, place, date).then(Data => {
+            console.log(Data);
+            id = Data;
+        }).catch(function (error) {
+            console.log(error);
+        })
+        console.log(id)
+        this.setState({raceID: id});
         console.log(this.state.raceID);
-         this.sendNewContigentRequest(this.state.raceID, 1, "Slicks", "Cold", this.state.identifierSlicksCold, this.state.contingentSlicksCold);
+        this.sendNewContigentRequest(this.state.raceID, 1, "Slicks", "Cold", this.state.identifierSlicksCold, this.state.contingentSlicksCold);
         // raceID,set,cat,subcat,numberOfSets
-        this.generateAllSets(this.state.raceID,"Slicks", "Cold", this.state.contingentSlicksCold)
+        this.generateAllSets(this.state.raceID, "Slicks", "Cold", this.state.contingentSlicksCold)
         this.sendNewContigentRequest(this.state.raceID, 2, "Slicks", "Medium", this.state.identifierSlicksMedium, parseInt(this.state.contingentSlicksMedium));
         this.generateAllSets(this.state.raceID, 2, "Slicks", "Medium", parseInt(this.state.contingentSlicksMedium));
         this.sendNewContigentRequest(this.state.raceID, 3, "Slicks", "Hot", this.state.identifierSlicksHot, parseInt(this.state.contingentSlicksHot));
@@ -119,11 +174,11 @@ export default class NewRaceScreen extends React.Component {
         this.sendNewContigentRequest(this.state.raceID, 6, "Rain", "HeavyWet", this.state.identifierRainHeavyWet, parseInt(this.state.contingentRainHeavyWet));
         this.generateAllSets(this.state.raceID, 6, "Rain", "HeavyWet", parseInt(this.state.contingentRainHeavyWet));
 
-  }
+    }
 
 
-      async sendNewContigentRequest(raceID, set, cat, subcat, identifier, numberOfSets) {
-       timeoutPromise(2000, fetch(
+    async sendNewContigentRequest(raceID, set, cat, subcat, identifier, numberOfSets) {
+        timeoutPromise(2000, fetch(
             'https://api.race24.cloud/wheels_start_astrid/create', {
                 method: 'POST',
                 headers: {
@@ -139,230 +194,188 @@ export default class NewRaceScreen extends React.Component {
                     numberOfSets: numberOfSets, // Kontigent Int
                 })
             })
-            ).then(response => response.json()).then(data => {
-                console.log(data)
-                if (data[1]==200) {
-                    console.log(data[0]);
-                    return data[0].id
-                }
-                else {
-                    console.log("failed");
-                    return data[0].id;
-                }
+        ).then(response => response.json()).then(data => {
+            console.log(data)
+            if (data[1] == 200) {
+                console.log(data[0]);
+                return data[0].id
+            } else {
+                console.log("failed");
                 return data[0].id;
-            }).catch(function (error) {
-                console.log(error);
-                return 0;
-            })
+            }
+            return data[0].id;
+        }).catch(function (error) {
+            console.log(error);
+            return 0;
+        })
     }
 
-  render() {
+    render() {
         return (
-            <View style={this.order}>
-                <div style={this.container}>
-                    <View>
-                        <text style={{height: 75}}> </text>
-                    </View>
-                    <h1 style={{fontSize: 30, fontWeight: 'bold',color: 'black', textAlign: 'center', fontFamily: 'arial', marginLeft: 'auto', marginRight:'auto'}}>
-                    Neues Rennen anlegen
-                </h1>
-                <View >
-                     <table style={{textAlign: 'center', fontFamily:'arial, sans-serif', width:'70%', marginLeft:'auto', marginRight:'auto'}}>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Rennart: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, padding: '8px', textAlign: 'center'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.type}
-                                   onChangeText={(type) => this.setState({type:type})} placeholder='24h-Rennen'/></td>
-                    </tr>
-                       <tr style={{height: 20}}> </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Rennstrecke: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, padding: '8px', textAlign: 'center'}}> <TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.place}
-                                    onChangeText={(place) => this.setState({place: place})} placeholder='Rennstrecke'/>
-                        </td>
-                    </tr>
-                       <tr style={{height: 20}}> </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Startdatum: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, padding: '8px', textAlign: 'center'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.date}
-                                   onChangeText={(text) => this.setState({date: text})} placeholder='TT.MM.JJJJ'/></td>
-                    </tr>
-                     </table>
-                </View>
-
-                </div>
-                <View style={styles.viewStyles}>
-                    <Text style={this.textStyles1}>
-                        Reifenkontingent festlegen
-                    </Text>
-                    <br></br>
-                    <div>
-                        <table style={this.tableStyle}>
-                            <tr style={{backgroundColor: 'dimgrey'}}>
-                                <th style={this.thStyle}></th>
-                                <th style={this.thStyle}>Mischung</th>
-                                <th style={this.thStyle}>Bezeichnung</th>
-                                <th style={this.thStyle}>Kontingent</th>
-                            </tr>
-
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <th style={this.tdStyle}>Slicks</th>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}></td>
-                            </tr>
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}>Cold (H/E)</td>
-                                < td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
-                                    onChangeText={(x) => this.setState({identifierSlicksCold: x})}
-                                />
-                                </td>
-                                <td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
-                                    onChangeText={(x) => this.setState({contingentSlicksCold: x})}
-                                />
-                                </td>
-                            </tr>
-
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}>Medium (G/D)</td>
-                                < td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
-                                    onChangeText={(x) => this.setState({identifierSlicksMedium: x})}
-                                />
-                                </td>
-                                <td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
-                                    onChangeText={(x) => this.setState({contingentSlicksMedium: x})}
-                                />
-                                </td>
-                            </tr>
-
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}>Hot (I/F)</td>
-                                < td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
-                                    onChangeText={(x) => this.setState({identifierSlicksHot: x})}
-                                />
-                                </td>
-                                <td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
-                                    onChangeText={(x) => this.setState({contingentSlicksHot: x})}
-                                />
-                                </td>
-                            </tr>
-
-                            <tr style={{backgroundColor: 'gray'}}>
-                                <th style={this.tdStyle}>Inters</th>
-                                <td style={this.tdStyle}>Intermediate (H+/E+)</td>
-                                < td style={this.tdStyle}><TextInput
-                                    style={{height: 20, color: 'white'}}
-                                    onChangeText={(x) => this.setState({identifierIntersIntermediate: x})}
-                                />
-                                </td>
-                                <td style={this.tdStyle}><TextInput
-                                    style={{height: 20,  color: 'white'}}
-                                    onChangeText={(x) => this.setState({contingentIntersIntermediate: x})}
-                                />
-                                </td>
-                            </tr>
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <th style={this.tdStyle}>Rain</th>
-                                <td style={this.tdStyle}></td>
-                                < td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}></td>
-                            </tr>
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}>Dry wet (T/T)</td>
-                                < td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
-                                    onChangeText={(x) => this.setState({identifierRainDryWet: x})}
-                                />
-                                </td>
-                                <td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
-                                    onChangeText={(x) => this.setState({contingentRainDryWet: x})}
-                                />
-                                </td>
-                            </tr>
-                            <tr style={{backgroundColor: 'lightgrey'}}>
-                                <td style={this.tdStyle}></td>
-                                <td style={this.tdStyle}>Heavy wet (A/A)</td>
-                                < td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
-                                    onChangeText={(x) => this.setState({identifierRainHeavyWet: x})}
-                                />
-                                </td>
-                                <td style={this.tdStyle}><TextInput
-                                    style={{height: 20}}
-                                    onChangeText={(x) => this.setState({contingentRainHeavyWet: x})}
-                                />
-                                </td>
-                            </tr>
-
-                        </table>
-                         <Text style={{height: 20}}> </Text>
+            <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
+                <nav className="navbar navbar-light" style={{backgroundColor: '#d0d7de'}}>
+                    <div className="container-fluid">
+                        <a className="navbar-brand" href="#">Navigation</a>
+                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeRace}>Hauptmenü </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeShowRace}>Renndaten anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewOrder}>Reifenbestellungen verwalten </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeFormel}>Formel Reifendruck anlegen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewUser}>Neues Mitglied anlegen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewFormel}>Neue Formel anlegen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeAstrid}>Astrid anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNiklas}>Niklas </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeMaen}>Maen anzeigen </button>
+                                </li>
+                                <br/>
+                                <li className="nav-item">
+                                    <button className="btn btn-primary btn-sm" aria-current="page" onClick={this.changeLogout}>Ausloggen </button>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-                <view style={{marginLeft: 'auto', marginRight: 'auto', width: 200}}>
-                     <Text style={{height: 20}}> </Text>
-                    <Button
-                        disabled={!this.validateForm()}
-                        title="Renndaten anlegen"
-                        onPress={this.handleSubmit}
-                    />
-                     <Text style={{height: 20}}> </Text>
-                    <Button
-                        title="zurück"
-                        onPress={this.changeRace}
-                    />
-                </view>
-
-                </View>
+                </nav>
+                <div className='container' style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                    <br/>
+                    <h1 className="display-4" style={{color: '#d0d7de', textAlign: 'center'}}> Neue Renndaten
+                        anlegen</h1>
+                    <br/>
+                </div>
+                <div>
+                    <br/>
+                    <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Neues Rennen anlegen</h3>
+                </div>
+                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennart: </label>
+                    <input type='text' className='form-control' aria-label='Server' value={this.state.type}
+                           onChange={(type) => this.setState({type: type.target.value})} placeholder='24h-Rennen'/>
+                </div>
+                <br/>
+                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennstrecke: </label>
+                    <input type='text' className='form-control' aria-label='Server' value={this.state.place}
+                           onChange={(place) => this.setState({place: place.target.value})} placeholder='Rennstrecke'/>
+                </div>
+                <br/>
+                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Startdatum: </label>
+                    <input type='text' className='form-control' aria-label='Server' value={this.state.date}
+                           onChange={(text) => this.setState({date: text.target.value})} placeholder='TT.MM.JJJJ'/>
+                </div>
+                <div>
+                <br/>
+                <br/>
+                <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Reifenkontingent festlegen </h3>
+                </div>
+                <div>
+                    <table className="table table-striped table-hover table-bordered"
+                           style={{width: 700, backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto', tableLayout: 'fixed'}}>
+                        <thead>
+                        </thead>
+                        <tbody>
+                        <tr style={{backgroundColor: '#72869d', textAlign: 'center'}}>
+                            <th style={{width: 100}}> </th>
+                            <th style={{width: 200}}> Mischung</th>
+                            <th style={{width: 200}}> Bezeichnung</th>
+                            <th style={{width: 200}}> Kontingent</th>
+                        </tr>
+                        <tr>
+                            <th> Slicks</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td> Cold (H/E)</td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({identifierSlicksCold: x.target.value})}/></td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({contingentSlicksCold: x.target.value})}/></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td> Medium (G/D)</td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({identifierSlicksMedium: x.target.value})}/>
+                            </td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({contingentSlicksMedium: x.target.value})}/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td> Hot (I/F)</td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({identifierSlicksHot: x.target.value})}/></td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({contingentSlicksHot: x.target.value})}/></td>
+                        </tr>
+                        <tr style={{backgroundColor: '#72869d'}}>
+                            <th> Inters</th>
+                            <td> Intermediate (H+/E+)</td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({identifierIntersIntermediate: x.target.value})}/></td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({contingentIntersIntermediate: x.target.value})}/></td>
+                        </tr>
+                        <tr>
+                            <th> Rain</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td> Dry wet (T/T)</td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({identifierRainDryWet: x.target.value})}/></td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({contingentRainDryWet: x.target.value})}/></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td> Heavy wet (A/A)</td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({identifierRainHeavyWet: x.target.value})}/>
+                            </td>
+                            <td><input style={{width: 180, alignItems: 'center'}} type='text' onChange={(x) => this.setState({contingentRainHeavyWet: x.target.value})}/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <br/>
+                <br/>
+                <button disabled={!this.validateForm()} type='button' className='btn btn-primary'
+                        onClick={this.handleSubmit} style={{width: 250, marginLeft: 'auto', marginRight: 'auto'}}>
+                    RENNDATEN ANLEGEN
+                </button>
+                <br/>
+                <button type='button' className='btn btn-primary'
+                        onClick={this.changeRace} style={{width: 100, marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK
+                </button>
+                <br/>
+                <br/>
             </View>
         );
-
     }
-     tableStyle = {
-    textAlign: 'center',
-     fontFamily:'arial, sans-serif',
-        width:'50%',
-        marginLeft:'auto',
-        marginRight:'30%',
-    }
-    tdStyle={
-        textAlign:'left',
-        padding:'8px'
-    }
-    thStyle={
-        textAlign:'left',
-        padding:'8px',
-        color: 'white'
-
-    }
-    order={
-        justifyContent: 'space-around',
-        flexDirection: 'row',
-        padding: '0',
-        height: '100%'
-
-    }
-    container={
-        width:"35%",
-        padding: '50px',
-    }
-    textStyles1={
-         color: 'black',
-        fontSize: 30,
-        fontWeight: 'bold',
-        fontFamily: 'arial',
-        marginRight: '35%',
-        marginLeft: 'auto'
-    }
-
-
-
 }
