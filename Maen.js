@@ -34,56 +34,13 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
   );
 };
 
-const data = [
-    {
-      Uhrzeit: "08:00",
-      Lufttemperatur: 27,
-      Streckentemperatur: 20,
-    },
-    {
-      Uhrzeit: "09:00",
-      Lufttemperatur: 30,
-      Streckentemperatur: 23,
-    },
-    {
-      Uhrzeit: "09:30",
-      Lufttemperatur: 21,
-      Streckentemperatur: 28,
-    },
-    {
-      Uhrzeit: "10:00",
-      Lufttemperatur: 33,
-      Streckentemperatur: 40,
-    },
-    {
-      Uhrzeit: "07:22",
-      Lufttemperatur: 55,
-      Streckentemperatur: 60,
-    },
-    {
-      Uhrzeit: "08:30",
-      Lufttemperatur: 25,
-      Streckentemperatur: 50,
-    },
-    {
-      Uhrzeit: "11:22",
-      Lufttemperatur: 41,
-      Streckentemperatur: 19,
-    },
-    {
-      Uhrzeit: "11:30",
-      Lufttemperatur: 5,
-      Streckentemperatur: 12,
-    },
 
-  ];
-
-
-export default class TestScreen extends React.Component {
+export default class MaenScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            raceID :0,
+            raceID :1,
+            dataWeather: [],
             data: [{name: 'Slicks Cold', value: 0},
                    { name: 'Slicks Medium', value: 0 },
                    { name: 'Slicks Hot', value: 0 },
@@ -97,6 +54,9 @@ export default class TestScreen extends React.Component {
             showWeatherData: false,
 
         }
+        this.getRaceID=this.getRaceID.bind(this);
+        this.handleSubmit=this.handleSubmit.bind(this);
+        this.handleSubmit2=this.handleSubmit2.bind(this);
     }
    async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('acesstoken');
@@ -111,8 +71,9 @@ export default class TestScreen extends React.Component {
        return this.state.raceID!=0;
     }
      async getRaceID(event) {
-        AsyncStorage.setItem('raceID', event.target.value);
-        const id = await AsyncStorage.getItem('raceID');
+        //AsyncStorage.setItem('raceID', event.target.value);
+        //const id = await AsyncStorage.getItem('raceID');
+         const id=event.target.value;
         this.setState({raceID: id});
     }
 
@@ -141,7 +102,36 @@ export default class TestScreen extends React.Component {
         this.setState({data: data });
         this.setState({showLegend: 1});
         this.setState({showText: 1});
+        //this.setState({showWeatherData: 1});
+        this.getWeatherData();
+    }
+
+    handleSubmit2(){
+        const data=this.state.dataWeather;
+        const data2=[];
+        for(let i = 0; i < data.length; i++) {
+            const uhrzeit=data[i]["datetime"].split(' ');
+            const uhrzeit1=uhrzeit[4].split(':');
+            const uhrzeitFinal=""+uhrzeit1[0]+":"+uhrzeit1[1];
+            data2.push({"Uhrzeit": uhrzeitFinal, "Streckentemperatur": data[i]["temp_ground"], "Lufttemperatur": data[i]["temp_air"]});
+          }
+        this.setState({dataWeather: data2});
         this.setState({showWeatherData: 1});
+    }
+
+    async getWeatherData(){
+       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       //const raceID = await AsyncStorage.getItem('raceID');
+        const raceID= this.state.raceID;
+       console.log(raceID)
+       getWeatherTab(accesstoken, raceID).then(DataTabular => {
+                console.log(DataTabular);
+                this.setState({dataWeather: DataTabular});
+                console.log(this.state.dataWeather);
+                this.handleSubmit2();
+            }).catch(function (error) {
+                console.log(error);
+            })
     }
 
 
@@ -200,7 +190,7 @@ export default class TestScreen extends React.Component {
             </Text>
             }
             {this.state.showWeatherData &&
-                <LineChart width={600} height={400} data={data} margin={{
+                <LineChart width={600} height={400} data={this.state.dataWeather} margin={{
                 top: 5,
                 right: 30,
                 left: 20,
