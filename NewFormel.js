@@ -57,6 +57,41 @@ export default class NewFormelScreen extends React.Component {
 
 
     }
+async sendNewFormelRequest(raceID, variable1, variable2, variable3, variable4, airTemperature, trackTemperature,air_pressureFL,air_pressureFR, air_pressureBL,air_pressureBR ) {
+        console.log(formel)
+       timeoutPromise(2000, fetch(
+           //Link muss noch verändert werden
+            'https://api.race24.cloud/formel/create', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    raceID : raceID,
+                    air_temp : airTemperature,
+                    track_temp : trackTemperature,
+                    air_pressureFL: air_pressureFL,
+                    air_pressureFR : air_pressureFR,
+                    air_pressureBL : air_pressureBL,
+                    air_pressureBR : air_pressureBR,
+                    variable1 : variable1,
+                    variable2 : variable2,
+                    variable3 : variable3,
+                    variable4 : variable4,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    this.getTabularData()
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+    }
 
 
 
