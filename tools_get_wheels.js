@@ -203,6 +203,46 @@ function getWheelSetInformation(accesstoken,id) {
     })
 }
 
+// create Reifendruck
+async function createReifendruckRequest(accesstoken,raceID) {
+    return await timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/race/create', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    access_token:accesstoken,
+                    raceID:raceID,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                console.log(data)
+                if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                    createReifendruckRequest(token,raceID);
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  return data[0].id;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
 // get Reifendruck Formel
 function getReifendruckDetails(accesstoken,raceID) {
     return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getReifendruck', {
@@ -490,7 +530,8 @@ function get_Dict_WheelOrder(accesstoken,raceID) {
 }
 
 
-// 
+
+
 //wheel_Set by raceID_cat_subcat
 function get_raceID_cat_subcat(accesstoken,raceID,cat,subcat) {
   return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/raceID_cat_subcat', {
@@ -578,8 +619,6 @@ async function refreshToken() {
       }
   )
 }
-
-
 
 export {getDropdown,get_Dict_WheelOrder,getWheelSetInformation,getWheelInformations}
 
