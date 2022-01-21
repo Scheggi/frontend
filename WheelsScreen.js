@@ -14,9 +14,6 @@ export default class WheelsScreen extends React.Component {
         }
     }
 
-
-
-
     renderTableData() {
       return this.state.list_formel.map((list_formel, index) => {
          const { n, formel } =list_formel //destructuring

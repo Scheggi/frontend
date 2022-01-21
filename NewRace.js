@@ -50,7 +50,7 @@ export default class NewRaceScreen extends React.Component {
     handleSubmit = event => {
         event.preventDefault();
         this.generateNewRace(this.state.type,this.state.place,this.state.date);
-        this.prop.navigation.goBack();
+        this.props.navigation.goBack();
     }
 
         // generate DataSet------------------------------------------------------------------------
@@ -67,7 +67,7 @@ export default class NewRaceScreen extends React.Component {
 
         let cols = [];
         for (let i =0; i < 4; i++) {
-            const accesstoken = await AsyncStorage.getItem('acesstoken');
+            const accesstoken = await AsyncStorage.getItem('accesstoken');
             await sendWheelRequest(accesstoken,0,'', '').then(Data => {
                 console.log(Data);
                 cols.push(Data);
@@ -78,7 +78,7 @@ export default class NewRaceScreen extends React.Component {
 
         }
         console.log(cols)
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
       await sendWheelsRequest(accesstoken, parseInt( cols[0]), parseInt(cols[1]), parseInt(cols[2]), parseInt(cols[3]), '').then(Data => {
                 console.log(Data);
                 cols.push(Data);
@@ -95,7 +95,7 @@ export default class NewRaceScreen extends React.Component {
 
      async generateNewRace(type,place,date){
       let id  = '';
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         await createNewRaceRequest(accesstoken,type,place,date).then(Data => {
                 console.log(Data);
                 id = Data;

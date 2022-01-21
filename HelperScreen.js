@@ -104,7 +104,7 @@ export default class NewHelpScreen extends React.Component {
 
 
     async getWeatherData(raceID){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const accesstoken = await AsyncStorage.getItem('accesstoken');
        getWeatherTab(accesstoken, raceID).then(DataTabular => {
                 this.setState({dataWeather: DataTabular});
                 this.setState({lastStemp: this.state.dataWeather[this.state.dataWeather.length-1]})
@@ -123,7 +123,7 @@ export default class NewHelpScreen extends React.Component {
     async componentDidMount() {
         let timeLeftVar = this.secondsToTime(this.state.seconds);
         this.setState({ time: timeLeftVar });
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         getRaceList(accesstoken).then(racelistDropdown => {
           this.setState({raceList: racelistDropdown});
         }).catch(function (error) {

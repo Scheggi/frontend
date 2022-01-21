@@ -108,7 +108,7 @@ export default class AstridScreen extends React.Component {
 
 
     async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID= await AsyncStorage.getItem('raceID');
         console.log(raceID);
         this.setState({raceID: raceID});

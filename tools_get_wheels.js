@@ -517,7 +517,7 @@ function timeoutPromise(ms, promise) {
 
 
 async function refreshToken() {
-  let accesstoken = await AsyncStorage.getItem('acesstoken');
+  let accesstoken = await AsyncStorage.getItem('accesstoken');
   let refreshtoken = await AsyncStorage.getItem('refreshtoken');
   await timeoutPromise(2000, fetch(
       'https://api.race24.cloud/user/auth/refresh', {
@@ -535,7 +535,7 @@ async function refreshToken() {
       response => response.json()
   ).then(
       data => {
-        AsyncStorage.setItem('acesstoken', String(data.access_token));
+        AsyncStorage.setItem('accesstoken', String(data.access_token));
       }
   )
 }
