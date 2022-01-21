@@ -206,7 +206,7 @@ function getWheelSetInformation(accesstoken,id) {
 // create Reifendruck
 async function createReifendruckRequest(accesstoken,raceID) {
     return await timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/race/create', {
+            'https://api.race24.cloud/wheel_cont/createReifencontigent', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
