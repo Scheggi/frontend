@@ -203,7 +203,6 @@ function getWheelSetInformation(accesstoken,id) {
     })
 }
 
-
 // get Reifendruck Formel
 function getReifendruckDetails(accesstoken,raceID) {
     return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getReifendruck', {
