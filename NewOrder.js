@@ -54,7 +54,7 @@ export default class NewOrderScreen extends React.Component {
        await AsyncStorage.removeItem('setID');
        await AsyncStorage.removeItem('orderSetID');
        await AsyncStorage.removeItem('SetID');
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         getDropdown(accesstoken,raceID).then(racelistDropdown => {
             console.log(racelistDropdown);
@@ -84,7 +84,7 @@ export default class NewOrderScreen extends React.Component {
 
     //get Wheel Data
     async getWheelDict(){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const accesstoken = await AsyncStorage.getItem('accesstoken');
        const raceID = await AsyncStorage.getItem('raceID');
        //const raceID = await AsyncStorage.getItem('raceID');
        console.log(raceID)
@@ -98,7 +98,7 @@ export default class NewOrderScreen extends React.Component {
     }
     // get Dropdown list free,order,used
     async getDropdownList(){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const accesstoken = await AsyncStorage.getItem('accesstoken');
        const raceID = await AsyncStorage.getItem('raceID');
        //const raceID = await AsyncStorage.getItem('raceID');
        console.log(raceID)
@@ -318,7 +318,7 @@ export default class NewOrderScreen extends React.Component {
 
         async getWheelData(){
             //this.setState({wheels: []});
-            const accesstoken = await AsyncStorage.getItem('acesstoken');
+            const accesstoken = await AsyncStorage.getItem('accesstoken');
         const setID = await AsyncStorage.getItem('orderSetID');
         //const raceID = await AsyncStorage.getItem('raceID');
         console.log(setID)
@@ -423,9 +423,9 @@ export default class NewOrderScreen extends React.Component {
                 return (
                     <tr  key={wheel.setid}>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.setNr}</td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.status}</td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.cat}</td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.subcat}</td>
+                        <td> {wheel.status} </td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id ={wheel.cat} placeholder={wheel.cat} value={wheel.cat} /> </td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id ={wheel.subcat} placeholder={wheel.subcat} value={wheel.subcat} /></td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.setid}  placeholder={'Temperatur'} onChange={this.handleTemp} value={wheel.temp}/></td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.fl_id} placeholder={'FL ID'} onChange={this.handleWheelIDChange} value={wheel.fl_wheel_id}/><input id={wheel.fr_id} placeholder={'FR ID'}  onChange={this.handleWheelIDChange} value={wheel.fr_wheel_id}/><input id={wheel.bl_id} placeholder={'BL ID'} onChange={this.handleWheelIDChange} value={wheel.bl_wheel_id}/><input id={wheel.br_id} placeholder={'BR ID '} onChange={this.handleWheelIDChange} value={wheel.br_wheel_id}/></td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.fl_id} placeholder={'FL Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.fl_pressure}/><input id={wheel.fr_id} placeholder={'FR Luftdruck'} onChange={this.handleAirPressureChange}  value={wheel.fr_pressure}/><input id={wheel.bl_id} placeholder={'BL Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.bl_pressure}/><input id={wheel.br_id}  placeholder={'BR Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.br_pressure}/></td>
@@ -434,10 +434,8 @@ export default class NewOrderScreen extends React.Component {
             })
         }
 
-
         render()
         {
-
             return (
                 <View>
                 <View style={container1}>
@@ -584,8 +582,7 @@ export default class NewOrderScreen extends React.Component {
                      </View>
                 </View>
                     </View>
-
-        </View>
+            </View>
 
                     <div>
                 <h1 id='title'>Reifen bearbeiten</h1>
@@ -608,7 +605,6 @@ export default class NewOrderScreen extends React.Component {
         color: 'black',
         fontSize: 30,
         fontWeight: 'bold'
-
     }
 
     const

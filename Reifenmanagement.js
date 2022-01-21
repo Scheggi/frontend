@@ -62,7 +62,7 @@ export default class WheelScreen extends React.Component {
     }
 
     async getTabularData(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         await getWheelInformations(accesstoken,raceID).then(formellistTab => {
             console.log(formellistTab);

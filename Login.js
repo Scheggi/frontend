@@ -40,7 +40,7 @@ export default class LoginScreen extends React.Component {
             })
             ).then(response => response.json()).then(data => {
                 if (data[1]==200) {
-                    AsyncStorage.setItem('acesstoken', String(data[0].access_token));
+                    AsyncStorage.setItem('accesstoken', String(data[0].access_token));
                     AsyncStorage.setItem('refreshtoken', String(data[0].refresh_token));
                     AsyncStorage.setItem('userid', String(data[0].userid));
                     AsyncStorage.setItem('usergroup',String(data[0].usergroup));

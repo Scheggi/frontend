@@ -43,7 +43,7 @@ export default class WeatherScreen extends React.Component {
 
     //get RaceDetails by RaceID
     async getRaceDetails(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         getRaceDetails_by_ID(accesstoken,raceID).then(liste => {
             console.log(liste);
@@ -55,7 +55,7 @@ export default class WeatherScreen extends React.Component {
 
     //get ReifenData
     async getWheelsStart(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         getWheelsList(accesstoken,raceID).then(liste => {
             console.log(liste);
@@ -68,7 +68,7 @@ export default class WeatherScreen extends React.Component {
 
     //get Weather Data, it will be used in getRaceID
     async getWeatherData(){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const accesstoken = await AsyncStorage.getItem('accesstoken');
        const raceID = await AsyncStorage.getItem('raceID');
        //const raceID = await AsyncStorage.getItem('raceID');
        console.log(raceID)

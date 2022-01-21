@@ -164,7 +164,7 @@ function getWheelInformations(accesstoken,raceID) {
 
 
 ///wheel_cont/getWheels_withWheel
-// geht set informarion
+// geht set information
 function getWheelSetInformation(accesstoken,id) {
     return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getIdsWheelSet', {
         method: 'POST',
@@ -182,6 +182,46 @@ function getWheelSetInformation(accesstoken,id) {
             if (data['msg'] === 'Token has expired'){
                 refreshToken().then( token => {
                     getWheelSetInformation(token,id);
+                    }
+                ).catch( function (error) {
+                        console.log('Refresh failed');
+                        console.log(error);
+                    }
+                );
+                return [];
+            }
+        }
+        else{
+            console.log('Return Data');
+            console.log(data[0].data);
+            return data[0].data;
+        }
+        return [];
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    })
+}
+
+
+// get Reifendruck Formel
+function getReifendruckDetails(accesstoken,raceID) {
+    return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getReifendruck', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            access_token: accesstoken,
+            raceID:raceID
+        })
+    })).then(response => response.json()).then(data => {
+        console.log(data);
+        if ('msg' in data){
+            if (data['msg'] === 'Token has expired'){
+                refreshToken().then( token => {
+                    getReifendruckDetails(token,raceID);
                     }
                 ).catch( function (error) {
                         console.log('Refresh failed');
@@ -517,7 +557,7 @@ function timeoutPromise(ms, promise) {
 
 
 async function refreshToken() {
-  let accesstoken = await AsyncStorage.getItem('acesstoken');
+  let accesstoken = await AsyncStorage.getItem('accesstoken');
   let refreshtoken = await AsyncStorage.getItem('refreshtoken');
   await timeoutPromise(2000, fetch(
       'https://api.race24.cloud/user/auth/refresh', {
@@ -535,7 +575,7 @@ async function refreshToken() {
       response => response.json()
   ).then(
       data => {
-        AsyncStorage.setItem('acesstoken', String(data.access_token));
+        AsyncStorage.setItem('accesstoken', String(data.access_token));
       }
   )
 }
