@@ -620,5 +620,5 @@ async function refreshToken() {
   )
 }
 
-export {getDropdown,get_Dict_WheelOrder,getWheelSetInformation,getWheelInformations}
+export {getDropdown,get_Dict_WheelOrder,getWheelSetInformation,getWheelInformations,createReifendruckRequest,getReifendruckDetails }
 
