@@ -35,7 +35,7 @@ async function generateNewWheelSet(raceID,setNr,cat,subcat){
 }
 
 
-async function sendWheelRequest(accestoken,air_press = 0,id_scan='',id = '' ) {
+async function sendWheelRequest(accesstoken,air_press = 0,id_scan='',id = '' ) {
    return await timeoutPromise(2000, fetch(
         'https://api.race24.cloud/wheel_cont/createWheel', {
             method: 'POST',
@@ -44,7 +44,7 @@ async function sendWheelRequest(accestoken,air_press = 0,id_scan='',id = '' ) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                aceess_tolen:accestoken,
+                aceess_tolen:accesstoken,
                 air_press:air_press,
                 id_scan:id_scan,
                 id:id,
@@ -54,7 +54,7 @@ async function sendWheelRequest(accestoken,air_press = 0,id_scan='',id = '' ) {
                 if ("msg" in data){
                             if (data["msg"] === "Token has expired"){
                                 refreshToken().then( token => {
-                                    sendWheelRequest(accestoken,air_press,id_scan,id  );
+                                    sendWheelRequest(accesstoken,air_press,id_scan,id  );
                                     }
                                 ).catch( function (error) {
                                         console.log("Refresh failed");
@@ -77,9 +77,8 @@ async function sendWheelRequest(accestoken,air_press = 0,id_scan='',id = '' ) {
 }
 
 
-
 //generate one wheelS and return id
-async function sendWheelsRequest(accestoken,id_FL,id_FR,id_BL,id_BR,id = '') {
+async function sendWheelsRequest(accesstoken,id_FL,id_FR,id_BL,id_BR,id = '') {
     console.log([id_FL,id_FR,id_BL,id_BR]);
    return await timeoutPromise(2000, fetch(
         'https://api.race24.cloud/wheel_cont/createWheels', {
@@ -89,7 +88,7 @@ async function sendWheelsRequest(accestoken,id_FL,id_FR,id_BL,id_BR,id = '') {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                acces_token:accestoken,
+                acces_token:accesstoken,
                 id_FL:id_FL,
                 id_FR:id_FR,
                 id_BL:id_BL,
@@ -101,7 +100,7 @@ async function sendWheelsRequest(accestoken,id_FL,id_FR,id_BL,id_BR,id = '') {
                 if ("msg" in data){
                             if (data["msg"] === "Token has expired"){
                                 refreshToken().then( token => {
-                                    sendWheelsRequest(accestoken,id_FL,id_FR,id_BL,id_BR,id );
+                                    sendWheelsRequest(accesstoken,id_FL,id_FR,id_BL,id_BR,id );
                                     }
                                 ).catch( function (error) {
                                         console.log("Refresh failed");
@@ -122,6 +121,133 @@ async function sendWheelsRequest(accestoken,id_FL,id_FR,id_BL,id_BR,id = '') {
             return [];
         })
 }
+
+// save formel changes
+async function sendFormelRequest(accesstoken,setid,data_dict) {
+   return await timeoutPromise(2000, fetch(
+        'https://api.race24.cloud/wheel_cont/saveformel', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                acces_token:accesstoken,
+                setid:setid,
+                data_dict:data_dict
+            })
+        })
+        ).then(response => response.json()).then(data => {
+                if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                    sendWheelsRequest(accesstoken,setid,data_dict);
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  console.log("Return Data");
+                  console.log(data[0].id);
+                  return data[0].id;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// save bleed changes
+async function sendBleedRequest(accesstoken,setid,bleed_initial,bleed_hot) {
+   return await timeoutPromise(2000, fetch(
+        'https://api.race24.cloud/wheel_cont/saveBleed', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                acces_token:accesstoken,
+                setid:setid,
+                bleed_hot:bleed_hot,
+                bleed_initial:bleed_initial
+            })
+        })
+        ).then(response => response.json()).then(data => {
+                if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                    sendWheelsRequest(accesstoken,setid,bleed_initial,bleed_hot);
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  console.log("Return Data");
+                  console.log(data[0].id);
+                  return data[0].id;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+// save bleed changes
+async function sendStatusRequest(accesstoken,setid,status) {
+   return await timeoutPromise(2000, fetch(
+        'https://api.race24.cloud/wheel_cont/saveStatus', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                acces_token:accesstoken,
+                setid:setid,
+                status:status
+            })
+        })
+        ).then(response => response.json()).then(data => {
+                if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                    sendWheelsRequest(accesstoken,setid,status);
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  console.log("Return Data");
+                  console.log(data[0].id);
+                  return data[0].id;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
+
 
 
 //generate one wheelsSet and return id
@@ -209,7 +335,7 @@ function timeoutPromise(ms, promise) {
 
 
 async function refreshToken() {
-  let accesstoken = await AsyncStorage.getItem('acesstoken');
+  let accesstoken = await AsyncStorage.getItem('accesstoken');
   let refreshtoken = await AsyncStorage.getItem('refreshtoken');
   await timeoutPromise(2000, fetch(
       'https://api.race24.cloud/user/auth/refresh', {
@@ -227,12 +353,10 @@ async function refreshToken() {
       response => response.json()
   ).then(
       data => {
-        AsyncStorage.setItem('acesstoken', String(data.access_token));
+        AsyncStorage.setItem('accesstoken', String(data.access_token));
       }
   )
 }
 
 
-
-export {generateAllSets,sendWheelRequest,sendNewSetRequest,sendWheelsRequest}
-
+export {generateAllSets,sendWheelRequest,sendNewSetRequest,sendWheelsRequest,sendStatusRequest,sendBleedRequest}
