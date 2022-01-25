@@ -12,10 +12,10 @@ export default class NewFormelScreen extends React.Component {
         this.state = {
             raceList:[],
             raceID: -1,
-            variable1: "",
-            variable2: "",
-            variable3: "",
-            variable4: "",
+            variable1: 273.15,
+            variable2: 273.15,
+            variable3: 1.013,
+            variable4: 273.15,
             air_pressureFL: "",
             air_pressureFR: "",
             air_pressureBL: "",
@@ -107,14 +107,71 @@ export default class NewFormelScreen extends React.Component {
         console.log(this.state.air_pressureFR);
         console.log(this.state.air_pressureBL);
         console.log(this.state.air_pressureBR);
-
+        this.sendDataReifenFormel();
 
     }
+    async sendDataReifenFormel(){
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        this.createReifendruckRequest(accesstoken, this.state.raceID, this.state.variable1, this.state.variable2, this.state.variable3, this.state.variable4, this.state.airTemperature, this.state.trackTemperature, this.state.air_pressureFL, this.state.air_pressureFR, this.state.air_pressureBL, this.state.air_pressureBR)
+
+    }
+
+
+   async createReifendruckRequest(accesstoken,raceID,variable1, variable2, variable3, variable4, airTemperature, trackTemperature,air_pressureFL,air_pressureFR, air_pressureBL,air_pressureBR ) {
+
+        return await timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/createReifencontigent', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    access_token:accesstoken,
+                    raceID:raceID,
+                    air_temp : airTemperature,
+                    track_temp : trackTemperature,
+                    air_pressureFL: air_pressureFL,
+                    air_pressureFR : air_pressureFR,
+                    air_pressureBL : air_pressureBL,
+                    air_pressureBR : air_pressureBR,
+                    variable1 : variable1,
+                    variable2 : variable2,
+                    variable3 : variable3,
+                    variable4 : variable4,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                console.log(data)
+                if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                    createReifendruckRequest(token,raceID, variable1, variable2, variable3, variable4, airTemperature, trackTemperature,air_pressureFL,air_pressureFR, air_pressureBL,air_pressureBR);
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  return data[0].id;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
 
 
 
     async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const raceID = await AsyncStorage.getItem('raceID');
+        this.setState({raceID: raceID});
         getRaceList(accesstoken).then(racelistDropdown => {
             console.log(racelistDropdown);
             this.setState({raceList: racelistDropdown});
@@ -206,11 +263,11 @@ export default class NewFormelScreen extends React.Component {
             <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>Pa*(Tg+</label>
             <input type="text" className="form-control"  aria-label="Server"   onChange={(e) => this.setState({variable1: e.target.value})} value={this.state.variable1}></input>
             <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>)/(Ta+</label>
-            <input type="text" className="form-control"  aria-label="Server"  onChange={(e) => this.setState({variable2: e.target.value})}></input>
+            <input type="text" className="form-control"  aria-label="Server"  onChange={(e) => this.setState({variable2: e.target.value})} value={this.state.variable2}></input>
             <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>)+(</label>
-            <input type="text" className="form-control"  aria-label="Server" onChange={(e) => this.setState({variable3: e.target.value})}></input>
+            <input type="text" className="form-control"  aria-label="Server" onChange={(e) => this.setState({variable3: e.target.value})} value={this.state.variable3}></input>
             <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>)*(Tg-Ta)/(Ta+</label>
-            <input type="text" className="form-control"  aria-label="Server"  onChange={(e) => this.setState({variable4: e.target.value})}></input>
+            <input type="text" className="form-control"  aria-label="Server"  onChange={(e) => this.setState({variable4: e.target.value})} value={this.state.variable4}></input>
             <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>)</label>
          <button disabled={!this.validateForm()} type="button" className="btn btn-primary" onClick={this.handleSubmit}>FORMEL SPEICHERN</button>
          </div>
