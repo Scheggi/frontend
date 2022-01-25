@@ -33,8 +33,8 @@ async function changeWheelSet(id,variant,order_duration,description){
 
 
 
-async function createNewRaceRequest(accestoken,type,place,date) {
-    console.log([accestoken,type,place,date]);
+async function createNewRaceRequest(accesstoken,type,place,date) {
+    console.log([accesstoken,type,place,date]);
     return await timeoutPromise(2000, fetch(
             'https://api.race24.cloud/race/create', {
                 method: 'POST',
@@ -43,7 +43,7 @@ async function createNewRaceRequest(accestoken,type,place,date) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    acces_token:accestoken,
+                    access_token:accesstoken,
                     type:type,
                     place:place,
                     date:date,
@@ -119,8 +119,7 @@ function timeoutPromise(ms, promise) {
 }
 
 //get Race List
-function getRaceList(accesstoken) {
-  //const accesstoken = AsyncStorage.getItem('acesstoken');
+function getRaceList(token) {
   return timeoutPromise(2000, fetch("https://api.race24.cloud/user/race/get", {
       method: 'POST',
       headers: {
@@ -128,14 +127,15 @@ function getRaceList(accesstoken) {
           'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-          access_token: accesstoken,
+          access_token: token
       })
       })).then(response => response.json()).then(data => {
               console.log(data);
               if ("msg" in data){
-                            if (data["msg"] === "Token has expired"){
+                            if (data["msg"]=== "Token has expired" || data["msg"]==="Not enough segments" ){
                                 refreshToken().then( token => {
-                                        getRaceList(token);
+                                    console.log(token)
+                                    getRaceList(token);
                                     }
                                 ).catch( function (error) {
                                         console.log("Refresh failed");
@@ -159,7 +159,7 @@ function getRaceList(accesstoken) {
 
 // get RaceDetails od RaceID
 function getRaceDetails_by_ID(accesstoken,raceid) {
-  //const accesstoken = AsyncStorage.getItem('acesstoken');
+  //const accesstoken = AsyncStorage.getItem('accesstoken');
   return timeoutPromise(2000, fetch("https://api.race24.cloud/user/raceDetails/get", {
       method: 'POST',
       headers: {
@@ -245,7 +245,7 @@ function getWeatherTab(accesstoken,raceID) {
 
 //get Wheels
 function getWheelsList(accesstoken,raceID) {
-  //const accesstoken = AsyncStorage.getItem('acesstoken');
+  //const accesstoken = AsyncStorage.getItem('accesstoken');
     console.log([raceID])
   return timeoutPromise(2000, fetch("https://api.race24.cloud/wheels_start/get", {
       method: 'POST',
@@ -289,7 +289,7 @@ function getWheelsList(accesstoken,raceID) {
 
 
 function getFormelList(accesstoken) {
-  //const accesstoken = AsyncStorage.getItem('acesstoken');
+  //const accesstoken = AsyncStorage.getItem('accesstoken');
   return timeoutPromise(2000, fetch("https://api.race24.cloud/formel/get", {
       method: 'POST',
       headers: {
@@ -329,7 +329,7 @@ function getFormelList(accesstoken) {
 
 
 async function refreshToken() {
-  let accesstoken = await AsyncStorage.getItem('acesstoken');
+  let accesstoken = await AsyncStorage.getItem('accesstoken');
   let refreshtoken = await AsyncStorage.getItem('refreshtoken');
   await timeoutPromise(2000, fetch(
       'https://api.race24.cloud/user/auth/refresh', {
@@ -347,7 +347,7 @@ async function refreshToken() {
       response => response.json()
   ).then(
       data => {
-        AsyncStorage.setItem('acesstoken', String(data.access_token));
+        AsyncStorage.setItem('accesstoken', String(data.access_token));
       }
   )
 }
@@ -395,4 +395,3 @@ function TableNiklas(list) {
 
 
 export {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID,changeWheelSet}
-
