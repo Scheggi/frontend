@@ -3,43 +3,52 @@ import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
 import {styles} from "./styles"
 //import { AsyncStorage } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {timeoutPromise, refreshToken, syncData, getRaceList,getFormelList} from "./tools";
+import {timeoutPromise, refreshToken, syncData, getRaceList, getFormelList, getWeatherTab} from "./tools";
 import image from './logo.png';
+import {sendBleedRequest} from "./tools_wheel";
+import {getDropdown,getWheelSetInformation,getReifendruckDetails} from "./tools_get_wheels";
 
 export default class AstridScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             raceID: -1,
-            variable1: 273.15,
-            variable2: 273.15,
-            variable3: 1.013,
-            variable4: 273.15,
-            air_pressureFL: 1.36,
-            air_pressureFR: 1.4,
-            air_pressureBL: 1.2,
-            air_pressureBR: 1.27,
+            variable1: 0,
+            variable2: 0,
+            variable3: 0,
+            variable4: 0,
+            air_pressureFL: 0,
+            air_pressureFR: 0,
+            air_pressureBL: 0,
+            air_pressureBR: 0,
             air_pressureFL1: "",
             air_pressureFR1: "",
             air_pressureBL1: "",
             air_pressureBR1: "",
-             air_pressureFL2: "",
-            air_pressureFR2: "",
-            air_pressureBL2: "",
-            air_pressureBR2: "",
-            airTemperature: 20,
+            airTemperature: 0,
             airTemperatureUpdate: "",
-            trackTemperature: 10,
+            trackTemperature: 0,
             trackTemperatureUpdate:"",
             //Bleed der die Streckentemperatur berücksichtigt
-            bleed1:"",
+            bleed1:0,
             bleedString1:"",
             //bleed der Streckentemperatur und Heiztemperatur berücksichtigt
-            bleed2:"",
+            bleed2:0,
             bleedString2: "",
             anpassungsKonstante: "",
             heizTemperatur: "",
+            dataDropdown:[],
+            reifenFormelDetails: [],
+            wheelSetInformation: [],
+            setID: 0,
         }
+        this.getSetID=this.getSetID.bind(this);
+        this.changeBleed=this.changeBleed.bind(this);
+        this.handleTemp=this.handleTemp.bind(this);
+        this.handleAirPressureChangeFL=this.handleAirPressureChangeFL.bind(this);
+        this.handleAirPressureChangeFR=this.handleAirPressureChangeFR.bind(this);
+        this.handleAirPressureChangeBL=this.handleAirPressureChangeBL.bind(this);
+        this.handleAirPressureChangeBR=this.handleAirPressureChangeBR.bind(this);
     }
 
     changeRace = event => {
@@ -99,14 +108,11 @@ export default class AstridScreen extends React.Component {
 
 
     validateForm() {
-       return this.state.airTemperatureUpdate!="";
+       return this.state.setID!=0&&this.state.airTemperatureUpdate!="";
     }
     validateForm1(){
-        return this.state.heizTemperatur!=""&&this.state.anpassungsKonstante!=""&&this.state.airTemperatureUpdate!=""&&this.state.trackTemperatureUpdate!="" && this.state.air_pressureFL1!=""&&this.state.air_pressureFR1!=""&&this.state.air_pressureBL1!=""&&this.state.air_pressureBR1!="";
+        return this.state.setID!=0&&this.state.heizTemperatur!=""&&this.state.anpassungsKonstante!=""&&this.state.airTemperatureUpdate!=""&&this.state.trackTemperatureUpdate!="" && this.state.air_pressureFL1!=""&&this.state.air_pressureFR1!=""&&this.state.air_pressureBL1!=""&&this.state.air_pressureBR1!="";
 
-    }
-    validateForm2(){
-        return this.state.anpassungsKonstante!=""&&this.state.trackTemperatureUpdate!="";
     }
 
     handleSubmit = event => {
@@ -141,10 +147,20 @@ export default class AstridScreen extends React.Component {
        const wert2BR=parseFloat(wert1BR/(airTemperature+variable2)).toFixed(4);
        const BR=parseFloat(parseFloat(wert2BR)+parseFloat(wert5)).toFixed(3);
 
+      console.log(FL);
+      console.log(FR);
+      console.log(BL);
+      console.log(BR);
+
        this.setState({air_pressureFL1: FL});
        this.setState({air_pressureFR1: FR});
        this.setState({air_pressureBL1: BL});
        this.setState({air_pressureBR1: BR});
+       this.handleTemp();
+       this.handleAirPressureChangeFL(FL);
+       this.handleAirPressureChangeFR(FR);
+       this.handleAirPressureChangeBL(BL);
+       this.handleAirPressureChangeBR(BR);
     }
 
      handleSubmit1 = event => {
@@ -160,8 +176,18 @@ export default class AstridScreen extends React.Component {
         this.setState({bleedString1:bleedString1});
         this.setState({bleed2: bleed2});
         this.setState({bleedString2:bleedString2});
+        this.changeBleed();
 
 
+    }
+    async changeBleed(){
+          const accesstoken = await AsyncStorage.getItem('acesstoken');
+          const bleed1= this.state.bleed1;
+          const bleed2=this.state.bleed2;
+          const setID=this.state.setID;
+          console.log(bleed1);
+          console.log(bleed2);
+         sendBleedRequest(accesstoken, setID, bleed1, bleed2);
     }
 
 
@@ -171,15 +197,288 @@ export default class AstridScreen extends React.Component {
         const raceID= await AsyncStorage.getItem('raceID');
         console.log(raceID);
         this.setState({raceID: raceID});
+        getDropdown(accesstoken, raceID).then(racelistDropdown => {
+            let dropdown= racelistDropdown[0];
+            dropdown[0]={'name': "", 'id':0};
+            this.setState({dataDropdown: dropdown});
+        }).catch(function (error) {
+            console.log(error);
+        })
+        //Funktion aufrufen für Formelwerte
+        getReifendruckDetails(accesstoken, raceID).then(reifenFormelDetails => {
+            console.log(reifenFormelDetails);
+            this.setState({reifenFormelDetails: reifenFormelDetails});
+        }).catch(function (error) {
+            console.log(error);
+        })
+        //console.log(this.state.reifennFormelDetails);
+        //const variable1= this.state.reifenFormelDetails['variable1'];
+        //const variable2= this.state.reifenFormelDetails['variable2'];
+        //const variable3= this.state.reifenFormelDetails['variable3'];
+        //const variable4= this.state.reifenFormelDetails['variable4'];
+        //const air_pressureFL= this.state.reifenFormelDetails['air_pressureFL'];
+        //const air_pressureFR= this.state.reifenFormelDetails['air_pressureFR'];
+        //const air_pressureBL= this.state.reifenFormelDetails['air_pressureBL'];
+        //const air_pressureBR= this.state.reifenFormelDetails['air_pressureBR'];
+        //const airTemperature= this.state.reifenFormelDetails['temp_air'];
+        //const trackTemperature= this.state.reifenFormelDetails['track_temp'];
+
+
+        const variable1= 273.15;
+        const variable2= 273.15;
+        const variable3= 1.013;
+        const variable4= 273.15;
+        const air_pressureFL= 1.36;
+        const air_pressureFR= 1.4;
+        const air_pressureBL= 1.2;
+        const air_pressureBR= 1.27;
+        const airTemperature= 20;
+        const trackTemperature= 10;
+
+        this.setState({variable1: variable1});
+        this.setState({variable2: variable2});
+        this.setState({variable3: variable3});
+        this.setState({variable4: variable4});
+        this.setState({air_pressureFL: air_pressureFL});
+        this.setState({air_pressureFR: air_pressureFR});
+        this.setState({air_pressureBL: air_pressureBL});
+        this.setState({air_pressureBR: air_pressureBR});
+        this.setState({airTemperature: airTemperature});
+        this.setState({trackTemperature: trackTemperature});
+
+        //Funktion aufrufen für möglicherweise bereits eingegeben und berechnete Werte
+        const bleed1="";
+        const bleed2="";
+        const bleedString1=bleed1.toString()+" bar";
+        const bleedString2=bleed2.toString()+" bar";
+        const air_pressureFL1= "";
+        const air_pressureFR1= "";
+        const air_pressureBL1= "";
+        const air_pressureBR1= "";
+        const airTemperatureUpdate= "";
+        const heizTemperatur="";
+
+        //this.setState({bleed1: bleed1});
+        //this.setState({bleedString1:bleedString1});
+        //this.setState({bleed2: bleed2});
+        //this.setState({bleedString2:bleedString2});
+        //this.setState({air_pressureFL1: air_pressureFL1});
+        //this.setState({air_pressureFR1: air_pressureFR1});
+        //this.setState({air_pressureBL1: air_pressureBL1});
+        //this.setState({air_pressureBR1: air_pressureBR1});
+        //this.setState({airTemperatureUpdate: airTemperatureUpdate});
+        //this.setState({heizTemperatur:heizTemperatur});
 
         }
-    handleChangeAirTemperatureUpdate= event => {
-    event.preventDefault();
-    this.setState({airTemperatureUpdate: event.target.value});
- }
+
+        async getSetID(event) {
+        this.setState({airTemperatureUpdate: ""});
+        this.setState({bleedString1: ""});
+        this.setState({bleedString2: ""});
+        this.setState({air_pressureFL1: ""});
+        this.setState({air_pressureFR1: ""});
+        this.setState({air_pressureBL1: ""});
+        this.setState({air_pressureBR1: ""});
+        this.setState({trackTemperatureUpdate: ""});
+        this.setState({anpassungsKonstante: ""});
+        this.setState({heizTemperatur: ""});
+        this.setState({setID: event.target.value});
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const id=event.target.value;
+        console.log(id);
+        if(id!=0) {
+            getWheelSetInformation(accesstoken, id).then(racelistDropdown => {
+                console.log(racelistDropdown);
+                this.setState({wheelSetInformation: racelistDropdown});
+                const bleed2 = this.state.wheelSetInformation["bleed_hot"];
+                if (this.state.wheelSetInformation['bleed_hot'] != null) {
+                    this.setState({bleed2: bleed2});
+                    const bleedString2 = bleed2.toString() + " bar";
+                    this.setState({bleedString2: bleedString2});
+                }
+                const bleed1 = this.state.wheelSetInformation["bleed_initial"];
+                if (this.state.wheelSetInformation['bleed_initial'] != null) {
+                    this.setState({bleed1: bleed1});
+                    const bleedString1 = bleed1.toString() + " bar";
+                    this.setState({bleedString1: bleedString1});
+                }
+                if (this.state.wheelSetInformation['temp_air'] != null) {
+                    this.setState({airTemperatureUpdate: this.state.wheelSetInformation['temp_air']});
+                }
+                if (this.state.wheelSetInformation['fl_pressure'] != 0 && this.state.wheelSetInformation['fl_pressure'] != null) {
+                    this.setState({air_pressureFL1: this.state.wheelSetInformation['fl_pressure']})
+                }
+                if (this.state.wheelSetInformation['fr_pressure'] != 0 && this.state.wheelSetInformation['fr_pressure'] != null) {
+                    this.setState({air_pressureFR1: this.state.wheelSetInformation['fr_pressure']})
+                }
+                if (this.state.wheelSetInformation['bl_pressure'] != 0 && this.state.wheelSetInformation['bl_pressure'] != null) {
+                    this.setState({air_pressureBL1: this.state.wheelSetInformation['bl_pressure']})
+                }
+                if (this.state.wheelSetInformation['br_pressure'] != 0 && this.state.wheelSetInformation['br_pressure'] != null) {
+                    this.setState({air_pressureBR1: this.state.wheelSetInformation['br_pressure']})
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+    }
+             handleTemp () {
+          console.log(parseFloat(this.state.airTemperatureUpdate));
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel/set_temp', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    set_id: this.state.setID,
+                    temp_air: parseFloat(this.state.airTemperatureUpdate),
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("temp Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+         handleAirPressureChangeFL (FL) {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: this.state.wheelSetInformation["fl_id"],
+                    air_press: FL,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+        handleAirPressureChangeFR (FR) {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                     id: this.state.wheelSetInformation["fr_id"],
+                    air_press: FR,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+        handleAirPressureChangeBL (BL) {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                     id: this.state.wheelSetInformation["bl_id"],
+                    air_press: BL,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+        handleAirPressureChangeBR(BR) {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                     id: this.state.wheelSetInformation["br_id"],
+                     air_press: BR,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
 
 
     render() {
+         let optionTemplate = this.state.dataDropdown.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
+        ));
+         const airPressure= this.state.air_pressureBR1!=0;
+         let button;
+         if(airPressure){
+             button=<button disabled={!this.validateForm()} type="button" className="btn btn-primary"
+                         onClick={this.handleSubmit}>KALTDRUCK ERNEUT BERECHNEN
+                 </button>;
+         }
+         else{
+             button=<button disabled={!this.validateForm()} type="button" className="btn btn-primary"
+                         onClick={this.handleSubmit}>KALTDRUCK BERECHNEN
+                 </button>;
+         }
+         const bleed= this.state.bleedString2!="";
+         let button1;
+         if(bleed){
+             button1=<button disabled={!this.validateForm1()} type="button" className="btn btn-primary" onClick={this.handleSubmit1}>BLEED ERNEUT BERECHNEN </button>;
+         }
+         else{
+             button1=<button disabled={!this.validateForm1()} type="button" className="btn btn-primary" onClick={this.handleSubmit1}>BLEED BERECHNEN </button>;
+         }
 
      return(
          <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
@@ -235,18 +534,27 @@ export default class AstridScreen extends React.Component {
              <br/>
          <h1 className="display-4" style={{color: '#d0d7de', textAlign: 'center'}} >Berechnung Reifendruck</h1>
              <br/>
+         <div className='input-group'>
+             <label className='input-group-text' style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}> Reifenset auswählen: &nbsp; <select id='option' value={this.state.setID} onChange={this.getSetID}>
+                        {optionTemplate}
+             </select>
+             </label>
+         </div>
              <br/>
-              <div className="input-group" style={{width: 500, marginLeft: 'auto', marginRight: 'auto'}}>
-                 <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>Lufttemperatur: </label>
-                 <input type="text" className="form-control"  aria-label="Server" style={{backgroundcolor: '#d0d7de', color: '#29323c'}}  onChange={this.handleChangeAirTemperatureUpdate} value={this.state.airTemperatureUpdate}></input>
-                 <button disabled={!this.validateForm()} type="button" className="btn btn-primary" onClick={this.handleSubmit}>KALTDRUCK BERECHNEN</button>
+             <br/>
+             <div className="input-group" style={{width: 500, marginLeft: 'auto', marginRight: 'auto'}}>
+                 <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>Felgentemperatur: </label>
+                 <input type="text" className="form-control" aria-label="Server"
+                        style={{backgroundcolor: '#d0d7de', color: '#29323c'}}
+                        onChange={(e) => this.setState({airTemperatureUpdate: e.target.value})}
+                        value={this.state.airTemperatureUpdate}></input>
+                 {button}
              </div>
+
              <div>
              <br/>
              <br/>
              <h3 className="display-6" style={{color: '#d0d7de', textAlign: 'center'}}>Berechnete Kaltdruckwerte</h3>
-             </div>
-             <div>
              <table className="table table-striped table-hover table-bordered"
                            style={{width: 500, backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto', tableLayout: 'fixed'
                            }}>
@@ -274,10 +582,11 @@ export default class AstridScreen extends React.Component {
              </div>
              <br/>
              <br/>
+              <div>
              <div className="input-group" style={{width: 500, marginLeft: 'auto', marginRight: 'auto'}}>
                  <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>Streckentemperatur: </label>
                  <input type="text" className="form-control"  aria-label="Server"  onChange={(e)=>this.setState({trackTemperatureUpdate:e.target.value})} value={this.state.trackTemperatureUpdate}></input>
-                 <button disabled={!this.validateForm1()} type="button" className="btn btn-primary" onClick={this.handleSubmit1}>BLEED BERECHNEN </button>
+                 {button1}
              </div>
              <br/>
               <div className="input-group" style={{width: 500, marginLeft: 'auto', marginRight: 'auto'}}>
@@ -289,7 +598,8 @@ export default class AstridScreen extends React.Component {
                  <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>Heiztemperatur: </label>
                  <input type="text" className="form-control"  aria-label="Server"  onChange={(e)=>this.setState({heizTemperatur:e.target.value})} value={this.state.heizTemperatur}></input>
              </div>
-             <div>
+              </div>
+              <div>
              <br/>
              <br/>
              <h3 className="display-6" style={{color: '#d0d7de', textAlign: 'center'}}>Bleed</h3>
