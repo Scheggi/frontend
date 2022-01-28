@@ -25,7 +25,9 @@ export default class WheelScreen extends React.Component {
         this.state = {
             list_formel:[],
             formel:"",
-            raceID:0
+            raceID:0,
+            dataViews: [{'name': "Alle Werte", 'id': 1}, {'name': "Heizdaten", 'id': 2}, {'name': "Laufleistungen", 'id': 3}, {'name': "Kalt- und Warmdruckwerte", 'id': 4} ],
+            selectedView: 1,
         }
     }
 
@@ -114,9 +116,21 @@ export default class WheelScreen extends React.Component {
       })
    }
 
+   changeView = event => {
+        this.setState({selectedView: event.target.value});
+   }
+
     render() {
+         let optionTemplate = this.state.dataViews.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
+        ));
         return (
             <View style={styles.viewStyles}>
+                <h1>{this.state.selectedView}</h1>
+                <label style={{fontSize: 16, fontFamily: 'arial', textAlign: 'center'}}> Ansicht: <select value={this.state.selectedView} onChange={this.changeView}>
+                        {optionTemplate}
+                    </select>
+             </label>
                 <Text style={{height: 20}}>Dropdownliste, Set auswählen von Rennen</Text>
                 <Text style={{height: 20}}>Tabelle, alle Attribute des Sets in editierbarer Tabelle</Text>
 

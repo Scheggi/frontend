@@ -4,7 +4,7 @@ import {styles} from "./styles"
 //import { AsyncStorage } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {timeoutPromise, refreshToken, syncData, getRaceList, getFormelList, getWeatherTab} from "./tools";
-//import image from './logo.png';
+import image from './logo.png';
 import {sendBleedRequest} from "./tools_wheel";
 import {getDropdown,getWheelSetInformation,getReifendruckDetails} from "./tools_get_wheels";
 
@@ -12,7 +12,7 @@ export default class AstridScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            raceID: -1,
+            raceID: 0,
             variable1: 0,
             variable2: 0,
             variable3: 0,
@@ -37,12 +37,14 @@ export default class AstridScreen extends React.Component {
             bleedString2: "",
             anpassungsKonstante: "",
             heizTemperatur: "",
-            dataDropdown:[],
+            dataDropdown: [{'name': "erst Rennen auswählen", 'id': 0}],
+            raceList:[],
             reifenFormelDetails: [],
             wheelSetInformation: [],
             setID: 0,
         }
         this.getSetID=this.getSetID.bind(this);
+        this.getRaceID=this.getRaceID.bind(this);
         this.changeBleed=this.changeBleed.bind(this);
         this.handleTemp=this.handleTemp.bind(this);
         this.handleAirPressureChangeFL=this.handleAirPressureChangeFL.bind(this);
@@ -194,16 +196,16 @@ export default class AstridScreen extends React.Component {
 
     async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('acesstoken');
-        const raceID= await AsyncStorage.getItem('raceID');
-        console.log(raceID);
-        this.setState({raceID: raceID});
-        getDropdown(accesstoken, raceID).then(racelistDropdown => {
-            let dropdown= racelistDropdown[0];
-            dropdown[0]={'name': "", 'id':0};
-            this.setState({dataDropdown: dropdown});
+        const raceID=0;
+        getRaceList(accesstoken).then(racelistDropdown => {
+            let raceListModified=racelistDropdown;
+            raceListModified.unshift({'name': "kein Rennen ausgewählt", 'id':0});
+            console.log(raceListModified);
+            this.setState({raceList: raceListModified});
         }).catch(function (error) {
             console.log(error);
-        })
+        });
+
         //Funktion aufrufen für Formelwerte
         getReifendruckDetails(accesstoken, raceID).then(reifenFormelDetails => {
             console.log(reifenFormelDetails);
@@ -269,6 +271,23 @@ export default class AstridScreen extends React.Component {
         //this.setState({airTemperatureUpdate: airTemperatureUpdate});
         //this.setState({heizTemperatur:heizTemperatur});
 
+        }
+
+        async getRaceID(event){
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        this.setState({raceID: event.target.value});
+        if(event.target.value!=0) {
+            getDropdown(accesstoken, event.target.value).then(racelistDropdown => {
+                let dropdown = racelistDropdown[0];
+                dropdown.unshift({'name': "kein Set ausgewählt", 'id': 0});
+                this.setState({dataDropdown: dropdown});
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+        else{
+            this.setState({dataDropdown: [{'name': "erst Rennen auswählen", 'id': 0}]});
+        }
         }
 
         async getSetID(event) {
@@ -459,6 +478,9 @@ export default class AstridScreen extends React.Component {
          let optionTemplate = this.state.dataDropdown.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
         ));
+         let optionTemplate1= this.state.raceList.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
+         ));
          const airPressure= this.state.air_pressureBR1!=0;
          let button;
          if(airPressure){
@@ -484,8 +506,7 @@ export default class AstridScreen extends React.Component {
          <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
          <nav className="navbar navbar-light" style={{backgroundColor: '#d0d7de'}}>
                     <div className="container-fluid">
-                        {/*<a className="navbar-brand" href="#">  <img src={image} style={{width: '70%'}}/> </a>*/}
-                        <a className="navbar-brand" href="#"></a>
+                        <a className="navbar-brand" href="#">  <img src={image} style={{width: '70%'}}/> </a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                                 aria-expanded="false" aria-label="Toggle navigation">
@@ -535,10 +556,19 @@ export default class AstridScreen extends React.Component {
              <br/>
          <h1 className="display-4" style={{color: '#d0d7de', textAlign: 'center'}} >Berechnung Reifendruck</h1>
              <br/>
-             <label style={{fontSize: 16, fontFamily: 'arial', textAlign: 'center'}}> Reifenset auswählen: <select value={this.state.setID} onChange={this.getSetID}>
+         <div className='input-group'>
+              <label className="input-group-text" style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}>Rennen auswählen: &nbsp;
+                  <select  id='option' value={this.state.id} onChange={this.getRaceID}>{optionTemplate1}</select>
+              </label>
+         </div>
+         <br/>
+         <br/>
+         <div className='input-group'>
+             <label className='input-group-text' style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}> Reifenset auswählen: &nbsp; <select id='option' value={this.state.setID} onChange={this.getSetID}>
                         {optionTemplate}
-                    </select>
+             </select>
              </label>
+         </div>
              <br/>
              <br/>
              <div className="input-group" style={{width: 500, marginLeft: 'auto', marginRight: 'auto'}}>

@@ -4,14 +4,14 @@ import {styles} from "./styles"
 //import { AsyncStorage } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {timeoutPromise, refreshToken, syncData, getRaceList,getFormelList} from "./tools";
-//import image from './logo.png';
+import image from './logo.png';
 
 export default class NewFormelScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             raceList:[],
-            raceID: -1,
+            raceID: 0,
             variable1: 273.15,
             variable2: 273.15,
             variable3: 1.013,
@@ -83,11 +83,11 @@ export default class NewFormelScreen extends React.Component {
 
 
     validateForm() {
-        return this.state.raceID!=-1&&this.state.variable1!=""&&this.state.variable2!=""&&this.state.variable3!=""&&this.state.variable4!="";
+        return this.state.raceID!=0&&this.state.variable1!=""&&this.state.variable2!=""&&this.state.variable3!=""&&this.state.variable4!="";
 
     }
     validateForm1(){
-        return this.state.raceID!=-1&&this.state.airTemperature!=""&&this.state.trackTemperature!=""&&this.state.air_pressureFL!=""&&this.state.air_pressureFR!=""&&this.state.air_pressureBL!=""&&this.state.air_pressureBR!="";
+        return this.state.raceID!=0&&this.state.airTemperature!=""&&this.state.trackTemperature!=""&&this.state.air_pressureFL!=""&&this.state.air_pressureFR!=""&&this.state.air_pressureBL!=""&&this.state.air_pressureBR!="";
     }
     handleSubmit = event => {
         event.preventDefault();
@@ -170,11 +170,12 @@ export default class NewFormelScreen extends React.Component {
 
     async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('acesstoken');
-        const raceID = await AsyncStorage.getItem('raceID');
-        this.setState({raceID: raceID});
+        this.setState({raceID: 0});
         getRaceList(accesstoken).then(racelistDropdown => {
-            console.log(racelistDropdown);
-            this.setState({raceList: racelistDropdown});
+            let raceListModified=racelistDropdown;
+            raceListModified.unshift({'name': "kein Rennen ausgewählt", 'id':0});
+            console.log(raceListModified);
+            this.setState({raceList: raceListModified});
         }).catch(function (error) {
             console.log(error);
         });
@@ -197,7 +198,7 @@ export default class NewFormelScreen extends React.Component {
          <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
           <nav className="navbar navbar-light" style={{backgroundColor: '#d0d7de'}}>
                     <div className="container-fluid">
-                        <a className="navbar-brand" href="#"> {/*<img src={image} style={{width: '70%'}}*/}/> </a>
+                        <a className="navbar-brand" href="#"> <img src={image} style={{width: '70%'}}/> </a>
                         <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                                 aria-expanded="false" aria-label="Toggle navigation">
