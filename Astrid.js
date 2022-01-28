@@ -207,12 +207,6 @@ export default class AstridScreen extends React.Component {
         });
 
         //Funktion aufrufen für Formelwerte
-        getReifendruckDetails(accesstoken, raceID).then(reifenFormelDetails => {
-            console.log(reifenFormelDetails);
-            this.setState({reifenFormelDetails: reifenFormelDetails});
-        }).catch(function (error) {
-            console.log(error);
-        })
         //console.log(this.state.reifennFormelDetails);
         //const variable1= this.state.reifenFormelDetails['variable1'];
         //const variable2= this.state.reifenFormelDetails['variable2'];
@@ -287,6 +281,12 @@ export default class AstridScreen extends React.Component {
         const accesstoken = await AsyncStorage.getItem('acesstoken');
         this.setState({raceID: event.target.value});
         if(event.target.value!=0) {
+            getReifendruckDetails(accesstoken, event.target.value).then(reifenFormelDetails => {
+            console.log(reifenFormelDetails);
+            this.setState({reifenFormelDetails: reifenFormelDetails});
+        }).catch(function (error) {
+            console.log(error);
+        })
             getDropdown(accesstoken, event.target.value).then(racelistDropdown => {
                 let dropdown = racelistDropdown[0];
                 dropdown.unshift({'name': "kein Set ausgewählt", 'id': 0});
