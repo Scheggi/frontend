@@ -110,10 +110,10 @@ export default class AstridScreen extends React.Component {
 
 
     validateForm() {
-       return this.state.setID!=0&&this.state.airTemperatureUpdate!="";
+       return this.state.raceID!=0&&this.state.setID!=0&&this.state.airTemperatureUpdate!="";
     }
     validateForm1(){
-        return this.state.setID!=0&&this.state.heizTemperatur!=""&&this.state.anpassungsKonstante!=""&&this.state.airTemperatureUpdate!=""&&this.state.trackTemperatureUpdate!="" && this.state.air_pressureFL1!=""&&this.state.air_pressureFR1!=""&&this.state.air_pressureBL1!=""&&this.state.air_pressureBR1!="";
+        return this.state.raceID!=0&&this.state.setID!=0&&this.state.heizTemperatur!=""&&this.state.anpassungsKonstante!=""&&this.state.airTemperatureUpdate!=""&&this.state.trackTemperatureUpdate!="" && this.state.air_pressureFL1!=""&&this.state.air_pressureFR1!=""&&this.state.air_pressureBL1!=""&&this.state.air_pressureBR1!="";
 
     }
 
@@ -274,6 +274,16 @@ export default class AstridScreen extends React.Component {
         }
 
         async getRaceID(event){
+        this.setState({airTemperatureUpdate: ""});
+        this.setState({bleedString1: ""});
+        this.setState({bleedString2: ""});
+        this.setState({air_pressureFL1: ""});
+        this.setState({air_pressureFR1: ""});
+        this.setState({air_pressureBL1: ""});
+        this.setState({air_pressureBR1: ""});
+        this.setState({trackTemperatureUpdate: ""});
+        this.setState({anpassungsKonstante: ""});
+        this.setState({heizTemperatur: ""});
         const accesstoken = await AsyncStorage.getItem('acesstoken');
         this.setState({raceID: event.target.value});
         if(event.target.value!=0) {
