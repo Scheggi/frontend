@@ -272,16 +272,10 @@ export default class RaceScreen extends React.Component {
         this.saveRaceIDinState();
     }
 
-
     render() {
         let optionTemplate = this.state.raceList.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
         ));
-
-        console.log(this.state.timeWeather);
-        console.log(this.state.timeHeating);
-        console.log(this.state.timeOrder);
-
 
     const styles = StyleSheet.create ({
         mainContainer: {
@@ -307,28 +301,20 @@ export default class RaceScreen extends React.Component {
             justifyContent: 'center',
             fontFamily: 'arial',
         },
-
-
     });
 
         return (
-
-
             <View style={styles.mainContainer}>
-
                 <View style={styles.timerContainer}>
-
                 <Text style={styles.textStyle}>Wetterdaten messen:</Text>
                 <Text style={styles.textStyle}>{this.state.timeWeatherG}</Text>
                 <Text style={styles.textStyle}>Felgen werden noch geheizt für:</Text>
                 <Text style={styles.textStyle}>{this.state.timeHeatingG}</Text>
                 <Text style={styles.textStyle}>Reifen zur Abholung bereit in:</Text>
                 <Text style={styles.textStyle}>{this.state.timeOrderG}</Text>
-
                 </View>
 
                 <View style={styles.buttonContainer}>
-
                 <Text style={{fontSize: 30, fontWeight: 30}}>Reifenmanagement</Text>
                 <Text style={{height: 30}}> </Text>
                 <label style={{fontSize: 16}}> Rennen auswählen: <select value={this.state.id} onChange={this.getRaceID}>

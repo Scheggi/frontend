@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
+import {Button, Text, TextInput, ToastAndroid,ScrollView, View} from "react-native";
 import {styles} from "./styles"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from "./tools";
@@ -36,12 +36,12 @@ export default class NewOrderScreen extends React.Component {
             tyremix1: '',
             variant1: '',
             ordertime: '',
-            orderduration: '',
+            orderduration: 0,
             raceList: [],
 
             time: {},
             seconds: 1800,
-            timervalue: "",
+            timervalue: 0,
         }
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
@@ -51,9 +51,6 @@ export default class NewOrderScreen extends React.Component {
 
 
      async componentDidMount(){
-       await AsyncStorage.removeItem('setID');
-       await AsyncStorage.removeItem('orderSetID');
-       await AsyncStorage.removeItem('SetID');
         const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         getDropdown(accesstoken,raceID).then(racelistDropdown => {
@@ -64,10 +61,9 @@ export default class NewOrderScreen extends React.Component {
         }).catch(function (error) {
             console.log(error);
         })
-
-       console.log(2)
         await this.getWheelDict();
         await this.getDropdownList();
+        console.log(this.state.dictButtons)
         if (this.state.dictButtons.length==6){
             this.setState({ButtonSlicks_Cold: 'Slicks Cold  '+this.state.dictButtons[0][0].toString()});
             this.setState({ButtonSlicks_Medium: 'Slicks Medium  '+this.state.dictButtons[1][0].toString()});
@@ -117,14 +113,11 @@ export default class NewOrderScreen extends React.Component {
         console.log(setid);
     }
 
-
     getRaceID = event => {
         const id = event.target.value;
         AsyncStorage.setItem("raceIDHelper", event.target.value);
         this.saveRaceIDinState();
     }
-
-
 
     refresh_Buttons(){
         if (this.state.dictButtons.length==6) {
@@ -168,7 +161,6 @@ export default class NewOrderScreen extends React.Component {
         helper[1][0]= helper[1][0]-1;
         this.setState({setID: helper[1][1][helper[1][0]]});
         this.setState({dictButtons: helper});
-
 
     }
     handleSubmitButton3 = event => {
@@ -229,21 +221,10 @@ export default class NewOrderScreen extends React.Component {
 
         startTimer()
         {
-            var hour = 0;
-            var minute = 0;
+            var hour = this.state.timervalue /60 ;
+            var minute = this.state.timervalue % 60;
             var second = 0;
-            var atime = this.state.timervalue.split(':');
-            if (atime[0].length > 0) {
-                hour = parseInt(atime[0]);
-            }
-            if (atime[1].length > 0) {
-                minute = parseInt(atime[1]);
-            }
-            if (atime[2].length > 0) {
-                second = parseInt(atime[2]);
-            }
-            this.state.seconds = hour * 3600 + minute * 60 + second;
-
+            this.state.seconds = this.state.timervalue *60;
             if (this.state.seconds > 0) {
                 this.timer = setInterval(this.countDown, this.state.seconds);
             }
@@ -272,7 +253,7 @@ export default class NewOrderScreen extends React.Component {
 
         validateForm()
         {
-            return this.state.tyretype.length > 0 && this.state.tyremix.length > 0 && this.state.term1.length > 0 && this.state.orderduration.length > 0 && this.state.variant.length > 0;
+            return this.state.tyretype.length > 0 && this.state.tyremix.length > 0 && this.state.term1.length > 0 && this.state.orderduration > 0 && this.state.variant.length > 0;
         }
 
         validateForm1()
@@ -315,7 +296,6 @@ export default class NewOrderScreen extends React.Component {
           this.startTimer();
         }
 
-
         async getWheelData(){
             //this.setState({wheels: []});
             const accesstoken = await AsyncStorage.getItem('accesstoken');
@@ -330,7 +310,6 @@ export default class NewOrderScreen extends React.Component {
         }).catch(function (error) {
             console.log(error);
         })
-
             console.log(this.state.wheels)
         }
 
@@ -397,7 +376,7 @@ export default class NewOrderScreen extends React.Component {
                 },
                 body: JSON.stringify({
                     set_id: event.target.id,
-                    temp: event.target.value,
+                    temp_air: event.target.value,
                 })
             })
             ).then(response => response.json()).then(data => {
@@ -415,16 +394,12 @@ export default class NewOrderScreen extends React.Component {
 
 
         renderWheelTable(){
-            console.log("Render Table");
-            console.log(this.state.wheels);
             return this.state.wheels.map((wheel,) => {
-                console.log(wheel);
-                console.log(wheel.setid);
                 return (
-                    <tr  key={wheel.setid}>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.setNr}</td>
-                        <td> {wheel.status} </td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id ={wheel.cat} placeholder={wheel.cat} value={wheel.cat} /> </td>
+                    <tr bgcolor='white' style={{border: "solid", borderColor: 'grey',textAlign: "center", padding: '8px', color: 'black', fontFamily: 'arial'}}  key={wheel.setid}>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.setNr} </td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.status} </td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.cat} </td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id ={wheel.subcat} placeholder={wheel.subcat} value={wheel.subcat} /></td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.setid}  placeholder={'Temperatur'} onChange={this.handleTemp} value={wheel.temp}/></td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.fl_id} placeholder={'FL ID'} onChange={this.handleWheelIDChange} value={wheel.fl_wheel_id}/><input id={wheel.fr_id} placeholder={'FR ID'}  onChange={this.handleWheelIDChange} value={wheel.fr_wheel_id}/><input id={wheel.bl_id} placeholder={'BL ID'} onChange={this.handleWheelIDChange} value={wheel.bl_wheel_id}/><input id={wheel.br_id} placeholder={'BR ID '} onChange={this.handleWheelIDChange} value={wheel.br_wheel_id}/></td>
@@ -437,7 +412,7 @@ export default class NewOrderScreen extends React.Component {
         render()
         {
             return (
-                <View>
+                <ScrollView>
                 <View style={container1}>
                     <View style={container2}>
                          <View>
@@ -517,7 +492,7 @@ export default class NewOrderScreen extends React.Component {
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Abholdauer: </label></td>
                         <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.orderduration}
-                                   placeholder=" SS:MM:SS" onChangeText={(text) => {this.setState({orderduration: text}); this.setState({timervalue: text})}}/>
+                                   placeholder=" Zeit in Minuten" onChangeText={(text) => {this.setState({orderduration: text}); this.setState({timervalue: text})}}/>
                         </td>
                     </tr>
                 </table>
@@ -594,7 +569,7 @@ export default class NewOrderScreen extends React.Component {
                     </tbody>
                 </table>
                 </div>
-                </View>
+                </ScrollView>
             );
         }
     }
