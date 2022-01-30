@@ -186,7 +186,7 @@ export default class WheelScreen extends React.Component {
         }
     }
 
-    renderTableData(){
+    renderTableData_example(){
         console.log(this.state.list_formel)
         return this.state.list_formel.map((list_formel, index) => {
             return (
@@ -230,7 +230,7 @@ export default class WheelScreen extends React.Component {
         })
     }
 
-     renderTableData2() {
+     renderTableData() {
         console.log(this.state.list_formel)
         return this.state.list_formel.map((list_formel, index) => {
             return (
@@ -345,7 +345,7 @@ export default class WheelScreen extends React.Component {
             return (
                 <tr bgcolor='#696969'
                     style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
-                    key={'Tabelle2'}>
+                    key={'2Tabelle'}>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input
                             id={list_formel.setid} placeholder={'Setbezeichnung'} value={list_formel.description}
@@ -359,7 +359,8 @@ export default class WheelScreen extends React.Component {
                         <input id={list_formel.setid} placeholder={'Heiztemperatur'} value={list_formel.temp_heat}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
-                        <input id={list_formel.setid} placeholder={'Heizdauer'} value={list_formel.heat_duration}/></td>
+                        <input id={list_formel.setid} placeholder={'Heizdauer'} value={list_formel.heat_duration}
+                        name={'heat_duration'} onChange={this.save_changes_wheelSet}/></td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
                         <input id={list_formel.setid} placeholder={'Heizstart'} value={list_formel.heat_start}/>
                         <input type="button" id={list_formel.setid} value="HEIZEN STARTEN" onClick={this.handleHeatStart}/>
@@ -378,7 +379,6 @@ export default class WheelScreen extends React.Component {
     renderTableData3() {
         console.log(this.state.list_formel)
         return this.state.list_formel.map((list_formel, index) => {
-            //const { n, formel } =list_formel //destructuring
             return (
                 <tr bgcolor='#696969'
                     style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
@@ -392,14 +392,16 @@ export default class WheelScreen extends React.Component {
                             id={list_formel.setid} placeholder={'Datum und Uhrzeit'}
                             value={list_formel.order_start}/></td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
-                        <input id={list_formel.setid} placeholder={'Kategorie'} value={list_formel.cat}/>
+                        <input id={list_formel.setid} placeholder={'Kategorie'} value={list_formel.cat}
+                        name={'cat'} onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input id={list_formel.setid} placeholder={'Unterkategorie'} value={list_formel.subcat}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input
-                            id={list_formel.setid} placeholder={list_formel.status} value={list_formel.status}/>
+                            id={list_formel.setid} placeholder={list_formel.status} value={list_formel.status}
+                        name={'status'} onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input

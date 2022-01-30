@@ -161,32 +161,38 @@ export default class NewRaceScreen extends React.Component {
             <View style={this.order}>
                 <div style={this.container}>
                     <View>
-                        <text style={{height: 75}}> </text>
+                        <Text style={{height: 75}}> </Text>
                     </View>
                     <h1 style={{fontSize: 30, fontWeight: 'bold',color: 'black', textAlign: 'center', fontFamily: 'arial', marginLeft: 'auto', marginRight:'auto'}}>
                     Neues Rennen anlegen
                 </h1>
                 <View >
-                     <table style={{textAlign: 'center', fontFamily:'arial, sans-serif', width:'70%', marginLeft:'auto', marginRight:'auto'}}>
+
                     <tr>
+                         <table style={{textAlign: 'center', fontFamily:'arial, sans-serif', width:'70%', marginLeft:'auto', marginRight:'auto'}}>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Rennart: </label></td>
                         <td style={{border: "solid", borderColor: 'dimgrey', height: 20, padding: '8px', textAlign: 'center'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.type}
                                    onChangeText={(type) => this.setState({type:type})} placeholder='24h-Rennen'/></td>
+                         </table>
                     </tr>
                        <tr style={{height: 20}}> </tr>
                     <tr>
+                        <table style={{textAlign: 'center', fontFamily:'arial, sans-serif', width:'70%', marginLeft:'auto', marginRight:'auto'}}>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Rennstrecke: </label></td>
                         <td style={{border: "solid", borderColor: 'dimgrey', height: 20, padding: '8px', textAlign: 'center'}}> <TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.place}
                                     onChangeText={(place) => this.setState({place: place})} placeholder='Rennstrecke'/>
                         </td>
+                        </table>
                     </tr>
                        <tr style={{height: 20}}> </tr>
                     <tr>
+                        <table style={{textAlign: 'center', fontFamily:'arial, sans-serif', width:'70%', marginLeft:'auto', marginRight:'auto'}}>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white'}}><label> Startdatum: </label></td>
                         <td style={{border: "solid", borderColor: 'dimgrey', height: 20, padding: '8px', textAlign: 'center'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.date}
                                    onChangeText={(text) => this.setState({date: text})} placeholder='TT.MM.JJJJ'/></td>
+                        </table>
                     </tr>
-                     </table>
+
                 </View>
 
                 </div>
