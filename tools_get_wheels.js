@@ -300,7 +300,6 @@ function getTimerInformation(accesstoken,raceID) {
                     getWheelSetInformation(token,raceID);
                     }
                 ).catch( function (error) {
-                        console.log('Refresh failed');
                         console.log(error);
                     }
                 );
