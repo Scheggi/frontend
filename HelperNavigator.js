@@ -32,7 +32,7 @@ import image6 from "./images/team2.jpg";
 import image2 from "./images/team3.jpg";
 
 
-export default class IngenieurNav extends React.Component {
+export default class HelperNavigator extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -231,11 +231,6 @@ export default class IngenieurNav extends React.Component {
         this.props.navigation.push('Wheel');
     }
 
-    changeNewFormel = event => {
-        event.preventDefault();
-        this.props.navigation.push('NewFormel');
-    }
-
     changeAstrid = event => {
         event.preventDefault();
         this.props.navigation.push('Astrid');
@@ -320,9 +315,6 @@ export default class IngenieurNav extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeMaen}>Statistiken anzeigen</button>
-                                </li>
-                                <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewFormel}>Formel Reifendruck anlegen</button>
                                 </li>
                                 <br/>
                                 <li className="nav-item">

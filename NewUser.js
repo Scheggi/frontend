@@ -38,9 +38,23 @@ export default class NewUserScreen extends React.Component {
     }
     */
 
+    async getGroup(){
+         const group = await AsyncStorage.getItem("usergroup");
+         console.log(group)
+        if (group==="Helper"){
+            this.props.navigation.push("HelperNavigator")
+        }
+        if (group==="Ingenieur"){
+            this.props.navigation.push("Nav")
+        }
+        if (group==="Manager"){
+            this.props.navigation.push("Race")
+        }
+    }
+
     changeRace = event => {
         event.preventDefault();
-        this.props.navigation.push('Race');
+        this.getGroup();
     }
 
     changeNewRace = event => {
@@ -175,9 +189,6 @@ export default class NewUserScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewFormel}>Formel Reifendruck anlegen</button>
-                                </li>
-                                <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" onClick={this.changeNiklas}>Niklas</button>
                                 </li>
                                 <br/>
                                 <li className="nav-item">
