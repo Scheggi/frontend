@@ -77,6 +77,7 @@ async function sendWheelRequest(accesstoken,air_press = 0,id_scan='',id = '' ) {
 }
 
 
+
 //generate one wheelS and return id
 async function sendWheelsRequest(accesstoken,id_FL,id_FR,id_BL,id_BR,id = '') {
     console.log([id_FL,id_FR,id_BL,id_BR]);
@@ -359,6 +360,4 @@ async function refreshToken() {
 }
 
 
-
 export {generateAllSets,sendWheelRequest,sendNewSetRequest,sendWheelsRequest,sendStatusRequest,sendBleedRequest}
-

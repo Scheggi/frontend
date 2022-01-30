@@ -164,7 +164,7 @@ function getWheelInformations(accesstoken,raceID) {
 
 
 ///wheel_cont/getWheels_withWheel
-// geht set information
+// geht set informarion
 function getWheelSetInformation(accesstoken,id) {
     return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getIdsWheelSet', {
         method: 'POST',
@@ -621,4 +621,3 @@ async function refreshToken() {
 }
 
 export {getDropdown,get_Dict_WheelOrder,getWheelSetInformation,getWheelInformations,createReifendruckRequest,getReifendruckDetails }
-

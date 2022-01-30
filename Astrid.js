@@ -3,13 +3,16 @@ import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
 import {styles} from "./styles"
 //import { AsyncStorage } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {timeoutPromise, refreshToken, syncData, getRaceList,getFormelList} from "./tools";
+import {timeoutPromise, refreshToken, syncData, getRaceList, getFormelList, getWeatherTab} from "./tools";
+import image from './logo.png';
+import {sendBleedRequest} from "./tools_wheel";
+import {getDropdown,getWheelSetInformation,getReifendruckDetails} from "./tools_get_wheels";
 
 export default class AstridScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            raceID: -1,
+            raceID: 0,
             variable1: 0,
             variable2: 0,
             variable3: 0,
@@ -27,14 +30,27 @@ export default class AstridScreen extends React.Component {
             trackTemperature: 0,
             trackTemperatureUpdate:"",
             //Bleed der die Streckentemperatur berücksichtigt
-            bleed1: 0,
+            bleed1:0,
             bleedString1:"",
             //bleed der Streckentemperatur und Heiztemperatur berücksichtigt
-            bleed2: 0,
+            bleed2:0,
             bleedString2: "",
             anpassungsKonstante: "",
             heizTemperatur: "",
+            dataDropdown: [{'name': "erst Rennen auswählen", 'id': 0}],
+            raceList:[],
+            reifenFormelDetails: [],
+            wheelSetInformation: [],
+            setID: 0,
         }
+        this.getSetID=this.getSetID.bind(this);
+        this.getRaceID=this.getRaceID.bind(this);
+        this.changeBleed=this.changeBleed.bind(this);
+        this.handleTemp=this.handleTemp.bind(this);
+        this.handleAirPressureChangeFL=this.handleAirPressureChangeFL.bind(this);
+        this.handleAirPressureChangeFR=this.handleAirPressureChangeFR.bind(this);
+        this.handleAirPressureChangeBL=this.handleAirPressureChangeBL.bind(this);
+        this.handleAirPressureChangeBR=this.handleAirPressureChangeBR.bind(this);
     }
 
     changeRace = event => {
@@ -42,11 +58,62 @@ export default class AstridScreen extends React.Component {
         this.props.navigation.goBack();
     }
 
+    changeLogout = event => {
+        event.preventDefault();
+        this.props.navigation.replace('Logout');
+    }
+
+     changeNewUser = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewUser');
+    }
+
+    changeShowRace = event => {
+        event.preventDefault();
+        this.props.navigation.push('ShowRace');
+    }
+
+    changeNewOrder = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewOrder');
+    }
+
+    changeWeather = event => {
+        event.preventDefault();
+        this.props.navigation.push('Weather');
+    }
+
+    changeNewRace = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewRace');
+    }
+
+     changeWheel = event => {
+        event.preventDefault();
+        this.props.navigation.push('Wheel');
+    }
+
+    changeNewFormel = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewFormel');
+    }
+
+    changeNiklas = event => {
+        event.preventDefault();
+        this.props.navigation.push('Niklas');
+    }
+
+    changeMaen = event => {
+        event.preventDefault();
+        this.props.navigation.push('Maen');
+    }
+
+
     validateForm() {
-       return this.state.airTemperatureUpdate!="";
+       return this.state.raceID!=0&&this.state.setID!=0&&this.state.airTemperatureUpdate!="";
     }
     validateForm1(){
-        return this.state.heizTemperatur!=""&&this.state.anpassungsKonstante!=""&&this.state.airTemperatureUpdate!=""&&this.state.trackTemperatureUpdate!="" && this.state.air_pressureFL1!=""&&this.state.air_pressureFR1!=""&&this.state.air_pressureBL1!=""&&this.state.air_pressureBR1!="";
+        return this.state.raceID!=0&&this.state.setID!=0&&this.state.heizTemperatur!=""&&this.state.anpassungsKonstante!=""&&this.state.airTemperatureUpdate!=""&&this.state.trackTemperatureUpdate!="" && this.state.air_pressureFL1!=""&&this.state.air_pressureFR1!=""&&this.state.air_pressureBL1!=""&&this.state.air_pressureBR1!="";
 
     }
 
@@ -82,10 +149,20 @@ export default class AstridScreen extends React.Component {
        const wert2BR=parseFloat(wert1BR/(airTemperature+variable2)).toFixed(4);
        const BR=parseFloat(parseFloat(wert2BR)+parseFloat(wert5)).toFixed(3);
 
+      console.log(FL);
+      console.log(FR);
+      console.log(BL);
+      console.log(BR);
+
        this.setState({air_pressureFL1: FL});
        this.setState({air_pressureFR1: FR});
        this.setState({air_pressureBL1: BL});
        this.setState({air_pressureBR1: BR});
+       this.handleTemp();
+       this.handleAirPressureChangeFL(FL);
+       this.handleAirPressureChangeFR(FR);
+       this.handleAirPressureChangeBL(BL);
+       this.handleAirPressureChangeBR(BR);
     }
 
      handleSubmit1 = event => {
@@ -101,18 +178,48 @@ export default class AstridScreen extends React.Component {
         this.setState({bleedString1:bleedString1});
         this.setState({bleed2: bleed2});
         this.setState({bleedString2:bleedString2});
+        this.changeBleed();
 
 
+    }
+    async changeBleed(){
+          const accesstoken = await AsyncStorage.getItem('acesstoken');
+          const bleed1= this.state.bleed1;
+          const bleed2=this.state.bleed2;
+          const setID=this.state.setID;
+          console.log(bleed1);
+          console.log(bleed2);
+         sendBleedRequest(accesstoken, setID, bleed1, bleed2);
     }
 
 
 
     async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('accesstoken');
-        const raceID= await AsyncStorage.getItem('raceID');
-        console.log(raceID);
-        this.setState({raceID: raceID});
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const raceID=0;
+        getRaceList(accesstoken).then(racelistDropdown => {
+            let raceListModified=racelistDropdown;
+            raceListModified.unshift({'name': "kein Rennen ausgewählt", 'id':0});
+            console.log(raceListModified);
+            this.setState({raceList: raceListModified});
+        }).catch(function (error) {
+            console.log(error);
+        });
+
         //Funktion aufrufen für Formelwerte
+        //console.log(this.state.reifennFormelDetails);
+        //const variable1= this.state.reifenFormelDetails['variable1'];
+        //const variable2= this.state.reifenFormelDetails['variable2'];
+        //const variable3= this.state.reifenFormelDetails['variable3'];
+        //const variable4= this.state.reifenFormelDetails['variable4'];
+        //const air_pressureFL= this.state.reifenFormelDetails['air_pressureFL'];
+        //const air_pressureFR= this.state.reifenFormelDetails['air_pressureFR'];
+        //const air_pressureBL= this.state.reifenFormelDetails['air_pressureBL'];
+        //const air_pressureBR= this.state.reifenFormelDetails['air_pressureBR'];
+        //const airTemperature= this.state.reifenFormelDetails['temp_air'];
+        //const trackTemperature= this.state.reifenFormelDetails['track_temp'];
+
+
         const variable1= 273.15;
         const variable2= 273.15;
         const variable3= 1.013;
@@ -147,130 +254,437 @@ export default class AstridScreen extends React.Component {
         const airTemperatureUpdate= "";
         const heizTemperatur="";
 
-        this.setState({bleed1: bleed1});
-        this.setState({bleedString1:bleedString1});
-        this.setState({bleed2: bleed2});
-        this.setState({bleedString2:bleedString2});
-        this.setState({air_pressureFL1: air_pressureFL1});
-        this.setState({air_pressureFR1: air_pressureFR1});
-        this.setState({air_pressureBL1: air_pressureBL1});
-        this.setState({air_pressureBR1: air_pressureBR1});
-        this.setState({airTemperatureUpdate: airTemperatureUpdate});
-        this.setState({heizTemperatur:heizTemperatur});
+        //this.setState({bleed1: bleed1});
+        //this.setState({bleedString1:bleedString1});
+        //this.setState({bleed2: bleed2});
+        //this.setState({bleedString2:bleedString2});
+        //this.setState({air_pressureFL1: air_pressureFL1});
+        //this.setState({air_pressureFR1: air_pressureFR1});
+        //this.setState({air_pressureBL1: air_pressureBL1});
+        //this.setState({air_pressureBR1: air_pressureBR1});
+        //this.setState({airTemperatureUpdate: airTemperatureUpdate});
+        //this.setState({heizTemperatur:heizTemperatur});
+
+        }
+
+        async getRaceID(event){
+        this.setState({airTemperatureUpdate: ""});
+        this.setState({bleedString1: ""});
+        this.setState({bleedString2: ""});
+        this.setState({air_pressureFL1: ""});
+        this.setState({air_pressureFR1: ""});
+        this.setState({air_pressureBL1: ""});
+        this.setState({air_pressureBR1: ""});
+        this.setState({trackTemperatureUpdate: ""});
+        this.setState({anpassungsKonstante: ""});
+        this.setState({heizTemperatur: ""});
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        this.setState({raceID: event.target.value});
+        if(event.target.value!=0) {
+            getReifendruckDetails(accesstoken, event.target.value).then(reifenFormelDetails => {
+            console.log(reifenFormelDetails);
+            this.setState({reifenFormelDetails: reifenFormelDetails});
+        }).catch(function (error) {
+            console.log(error);
+        })
+            getDropdown(accesstoken, event.target.value).then(racelistDropdown => {
+                let dropdown = racelistDropdown[0];
+                dropdown.unshift({'name': "kein Set ausgewählt", 'id': 0});
+                this.setState({dataDropdown: dropdown});
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+        else{
+            this.setState({dataDropdown: [{'name': "erst Rennen auswählen", 'id': 0}]});
+        }
+        }
+
+        async getSetID(event) {
+        this.setState({airTemperatureUpdate: ""});
+        this.setState({bleedString1: ""});
+        this.setState({bleedString2: ""});
+        this.setState({air_pressureFL1: ""});
+        this.setState({air_pressureFR1: ""});
+        this.setState({air_pressureBL1: ""});
+        this.setState({air_pressureBR1: ""});
+        this.setState({trackTemperatureUpdate: ""});
+        this.setState({anpassungsKonstante: ""});
+        this.setState({heizTemperatur: ""});
+        this.setState({setID: event.target.value});
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const id=event.target.value;
+        console.log(id);
+        if(id!=0) {
+            getWheelSetInformation(accesstoken, id).then(racelistDropdown => {
+                console.log(racelistDropdown);
+                this.setState({wheelSetInformation: racelistDropdown});
+                const bleed2 = this.state.wheelSetInformation["bleed_hot"];
+                if (this.state.wheelSetInformation['bleed_hot'] != null) {
+                    this.setState({bleed2: bleed2});
+                    const bleedString2 = bleed2.toString() + " bar";
+                    this.setState({bleedString2: bleedString2});
+                }
+                const bleed1 = this.state.wheelSetInformation["bleed_initial"];
+                if (this.state.wheelSetInformation['bleed_initial'] != null) {
+                    this.setState({bleed1: bleed1});
+                    const bleedString1 = bleed1.toString() + " bar";
+                    this.setState({bleedString1: bleedString1});
+                }
+                if (this.state.wheelSetInformation['temp_air'] != null) {
+                    this.setState({airTemperatureUpdate: this.state.wheelSetInformation['temp_air']});
+                }
+                if (this.state.wheelSetInformation['fl_pressure'] != 0 && this.state.wheelSetInformation['fl_pressure'] != null) {
+                    this.setState({air_pressureFL1: this.state.wheelSetInformation['fl_pressure']})
+                }
+                if (this.state.wheelSetInformation['fr_pressure'] != 0 && this.state.wheelSetInformation['fr_pressure'] != null) {
+                    this.setState({air_pressureFR1: this.state.wheelSetInformation['fr_pressure']})
+                }
+                if (this.state.wheelSetInformation['bl_pressure'] != 0 && this.state.wheelSetInformation['bl_pressure'] != null) {
+                    this.setState({air_pressureBL1: this.state.wheelSetInformation['bl_pressure']})
+                }
+                if (this.state.wheelSetInformation['br_pressure'] != 0 && this.state.wheelSetInformation['br_pressure'] != null) {
+                    this.setState({air_pressureBR1: this.state.wheelSetInformation['br_pressure']})
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+    }
+             handleTemp () {
+          console.log(parseFloat(this.state.airTemperatureUpdate));
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel/set_temp', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    set_id: this.state.setID,
+                    temp_air: parseFloat(this.state.airTemperatureUpdate),
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("temp Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+         handleAirPressureChangeFL (FL) {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: this.state.wheelSetInformation["fl_id"],
+                    air_press: FL,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+        handleAirPressureChangeFR (FR) {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                     id: this.state.wheelSetInformation["fr_id"],
+                    air_press: FR,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+        handleAirPressureChangeBL (BL) {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                     id: this.state.wheelSetInformation["bl_id"],
+                    air_press: BL,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+        handleAirPressureChangeBR(BR) {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                     id: this.state.wheelSetInformation["br_id"],
+                     air_press: BR,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
+            })
         }
 
 
-
     render() {
+         let optionTemplate = this.state.dataDropdown.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
+        ));
+         let optionTemplate1= this.state.raceList.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
+         ));
+         const airPressure= this.state.air_pressureBR1!=0;
+         let button;
+         if(airPressure){
+             button=<button disabled={!this.validateForm()} type="button" className="btn btn-primary"
+                         onClick={this.handleSubmit}>KALTDRUCK ERNEUT BERECHNEN
+                 </button>;
+         }
+         else{
+             button=<button disabled={!this.validateForm()} type="button" className="btn btn-primary"
+                         onClick={this.handleSubmit}>KALTDRUCK BERECHNEN
+                 </button>;
+         }
+         const bleed= this.state.bleedString2!="";
+         let button1;
+         if(bleed){
+             button1=<button disabled={!this.validateForm1()} type="button" className="btn btn-primary" onClick={this.handleSubmit1}>BLEED ERNEUT BERECHNEN </button>;
+         }
+         else{
+             button1=<button disabled={!this.validateForm1()} type="button" className="btn btn-primary" onClick={this.handleSubmit1}>BLEED BERECHNEN </button>;
+         }
 
      return(
-         <View style={{ overflowY: 'scroll', flex:1}}>
-         <div className="container" >
-             <br></br>
-         <h1>Kaltdruck Berechnung</h1>
-             <br></br>
-             {this.state.air_pressureBR1 == 0 &&
-             <div className="input-group" style={{width: '70%'}}>
-                 <span className="input-group-text">Felgentemperatur: </span>
+         <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
+         <nav className="navbar navbar-light" style={{backgroundColor: '#d0d7de'}}>
+                    <div className="container-fluid">
+                        <a className="navbar-brand" href="#">  <img src={image} style={{width: '70%'}}/> </a>
+                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeRace}>Hauptmenü </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewRace}>Renndaten anlegen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeShowRace}>Renndaten anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewOrder}>Reifenbestellungen verwalten </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeMaen}>Statistiken anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewFormel}>Formel Reifendruck anlegen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewUser}>Neues Mitglied anlegen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNiklas}>Niklas </button>
+                                </li>
+                                <br/>
+                                <li className="nav-item">
+                                    <button className="btn btn-primary btn-sm" aria-current="page" onClick={this.changeLogout}>Ausloggen </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+         <div className="container" style={{marginLeft: 'auto', marginRight: 'auto'}}>
+             <br/>
+         <h1 className="display-4" style={{color: '#d0d7de', textAlign: 'center'}} >Berechnung Reifendruck</h1>
+             <br/>
+         <div className='input-group'>
+              <label className="input-group-text" style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}>Rennen auswählen: &nbsp;
+                  <select  id='option' value={this.state.id} onChange={this.getRaceID}>{optionTemplate1}</select>
+              </label>
+         </div>
+         <br/>
+         <br/>
+         <div className='input-group'>
+             <label className='input-group-text' style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}> Reifenset auswählen: &nbsp; <select id='option' value={this.state.setID} onChange={this.getSetID}>
+                        {optionTemplate}
+             </select>
+             </label>
+         </div>
+             <br/>
+             <br/>
+             <div className="input-group" style={{width: 500, marginLeft: 'auto', marginRight: 'auto'}}>
+                 <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>Felgentemperatur: </label>
                  <input type="text" className="form-control" aria-label="Server"
+                        style={{backgroundcolor: '#d0d7de', color: '#29323c'}}
                         onChange={(e) => this.setState({airTemperatureUpdate: e.target.value})}
                         value={this.state.airTemperatureUpdate}></input>
-                 <button disabled={!this.validateForm()} type="button" className="btn btn-primary"
-                         onClick={this.handleSubmit}>Kaltdruck berechnen
-                 </button>
+                 {button}
              </div>
-             }
-              <br></br>
-             {this.state.airTemperatureUpdate=="" ? <h3>An die gemessene Felgentemperatur angepasste Kaltdruckwerte:</h3> : <h3>An die gemessene Felgentemperatur von {this.state.airTemperatureUpdate} Grad angepasste Kaltdruckwerte:</h3> }
 
-             <table className="table table-striped table-hover">
+             <div>
+             <br/>
+             <br/>
+             <h3 className="display-6" style={{color: '#d0d7de', textAlign: 'center'}}>Berechnete Kaltdruckwerte</h3>
+             <table className="table table-striped table-hover table-bordered"
+                           style={{width: 500, backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto', tableLayout: 'fixed'
+                           }}>
                  <thead>
                  </thead>
                  <tbody>
                  <tr>
-                     <th scope="row">air_pressureFL</th>
-                     <td>{this.state. air_pressureFL1}</td>
+                     <th style={{width: 150}}> Linker Vorderreifen</th>
+                     <td style={{width: 100}}>{this.state. air_pressureFL1}</td>
                  </tr>
                  <tr>
-                     <th scope="row">air_pressureFR</th>
+                     <th> Rechter Vorderreifen</th>
                      <td>{this.state. air_pressureFR1}</td>
                  </tr>
                 <tr>
-                     <th scope="row">air_pressureBL</th>
+                     <th>Linker Hinterreifen</th>
                      <td>{this.state. air_pressureBL1}</td>
                  </tr>
                  <tr>
-                     <th scope="row">air_pressureBR</th>
+                     <th>Rechter Hinterreifen</th>
                      <td>{this.state. air_pressureBR1}</td>
                  </tr>
                  </tbody>
              </table>
-             <br></br>
-             {this.state.bleed2 == 0 &&
-             <div>
-                 <div className="input-group" style={{width: '70%'}}>
-                     <span className="input-group-text">Streckentemperatur: </span>
-                     <input type="text" className="form-control" aria-label="Server"
-                            onChange={(e) => this.setState({trackTemperatureUpdate: e.target.value})}
-                            value={this.state.trackTemperatureUpdate}></input>
-                     <button disabled={!this.validateForm1()} type="button" className="btn btn-primary"
-                             onClick={this.handleSubmit1}>Bleed berechnen
-                     </button>
-                 </div>
-                 <div className="input-group" style={{width: '70%'}}>
-                     <span className="input-group-text">Anpassungskonstante: </span>
-                     <input type="text" className="form-control" aria-label="Server"
-                            onChange={(e) => this.setState({anpassungsKonstante: e.target.value})}
-                            value={this.state.anpassungsKonstante}></input>
-                 </div>
-                 <div className="input-group" style={{width: '70%'}}>
-                     <span className="input-group-text">Heiztemperatur: </span>
-                     <input type="text" className="form-control" aria-label="Server"
-                            onChange={(e) => this.setState({heizTemperatur: e.target.value})}
-                            value={this.state.heizTemperatur}></input>
-                 </div>
              </div>
-             }
-              <br></br>
-             <h3>Bleed:</h3>
-             <table className="table">
+             <br/>
+             <br/>
+              <div>
+             <div className="input-group" style={{width: 500, marginLeft: 'auto', marginRight: 'auto'}}>
+                 <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>Streckentemperatur: </label>
+                 <input type="text" className="form-control"  aria-label="Server"  onChange={(e)=>this.setState({trackTemperatureUpdate:e.target.value})} value={this.state.trackTemperatureUpdate}></input>
+                 {button1}
+             </div>
+             <br/>
+              <div className="input-group" style={{width: 500, marginLeft: 'auto', marginRight: 'auto'}}>
+                 <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>Anpassungskonstante: </label>
+                 <input type="text" className="form-control"  aria-label="Server"  onChange={(e)=>this.setState({anpassungsKonstante:e.target.value})} value={this.state.anpassungsKonstante}></input>
+             </div>
+             <br/>
+             <div className="input-group" style={{width: 500, marginLeft: 'auto', marginRight: 'auto'}}>
+                 <label className="input-group-text" style={{backgroundColor: '#d0d7de'}}>Heiztemperatur: </label>
+                 <input type="text" className="form-control"  aria-label="Server"  onChange={(e)=>this.setState({heizTemperatur:e.target.value})} value={this.state.heizTemperatur}></input>
+             </div>
+              </div>
+              <div>
+             <br/>
+             <br/>
+             <h3 className="display-6" style={{color: '#d0d7de', textAlign: 'center'}}>Bleed</h3>
+             </div>
+             <div>
+             <table className="table table-striped table-hover table-bordered"
+                           style={{width: 700, backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto', tableLayout: 'fixed'}}>
                  <thead>
                  </thead>
                  <tbody>
                  <tr>
-                     <th scope="row">Bleed Initialwert:</th>
+                     <th scope="row" style={{width: 500}}>Bleed Initialwert</th>
                      <td>{this.state.bleedString1}</td>
                  </tr>
                   <tr>
-                     <th scope="row">Bleedwert mit Berücksichtigung der Heiztemperatur:</th>
+                     <th scope="row">Bleedwert mit Berücksichtigung der Heiztemperatur</th>
                      <td>{this.state.bleedString2}</td>
                  </tr>
                  </tbody>
              </table>
-             <br></br>
-             <div class="alert alert-secondary" role="alert">
-                 <h4> Verwendete Angaben des Ingenierurs: </h4>
+             </div>
+             <br/>
+             <br/>
+             <div className="alert alert-secondary" role="alert" style={{backgroundColor: '#d0d7de', width: 700, marginLeft: 'auto', marginRight: 'auto'}}>
+                 <h3 className='display-6' style={{textAlign: 'center'}}> Verwendete Angaben des Ingenieurs </h3>
                  <hr></hr>
-                 <p>Pa = angegebener Kaltdruck, Tg = gemessene Temperatur, Ta = angegebene Temperatur</p>
-                 <p>Formel: Pa*(Tg+{this.state.variable1})/(Ta+{this.state.variable2})+{this.state.variable3}*(Tg-Ta)/(Ta+{this.state.variable4})</p>
+                 <p style={{textAlign: 'center'}}>Pa = angegebener Kaltdruck, Tg = gemessene Temperatur, Ta = angegebene Temperatur</p>
+                 <p style={{textAlign: 'center'}}>Formel: Pa*(Tg+{this.state.variable1})/(Ta+{this.state.variable2})+{this.state.variable3}*(Tg-Ta)/(Ta+{this.state.variable4})</p>
                  <hr></hr>
-                 <p>Air Temperature : {this.state.airTemperature}</p>
-                  <p>Track Temperature: {this.state.trackTemperature}</p>
-                   <p>air_pressureFL: {this.state.air_pressureFL} </p>
-                   <p>air_pressureFR: {this.state.air_pressureFR}</p>
-                   <p>air_pressureBL: {this.state.air_pressureBL}</p>
-                    <p>air_pressureBR: {this.state.air_pressureBR}</p>
+                 <p>Lufttemperatur: {this.state.airTemperature}</p>
+                  <p>Streckentemperatur: {this.state.trackTemperature}</p>
+                   <p>Luftdruck linker Vorderreifen: {this.state.air_pressureFL} </p>
+                   <p>Luftdruck rechter Vorderreifen: {this.state.air_pressureFR}</p>
+                   <p>Luftdruck linker Hinterreifen: {this.state.air_pressureBL}</p>
+                    <p>Lufttdruck rechter Hinterreifen: {this.state.air_pressureBR}</p>
              </div>
              </div>
-              <Button
-                        title="zurück"
-                        onPress={this.changeRace}
-                />
+              <br/>
+                <button type='button' className='btn btn-primary'
+                        onClick={this.changeRace} style={{width: 100, marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK
+                </button>
+                <br/>
+                <br/>
           </View>
 
 
         );
     }
 }
-
-
