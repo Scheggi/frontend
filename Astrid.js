@@ -13,21 +13,21 @@ export default class AstridScreen extends React.Component {
         super(props);
         this.state = {
             raceID: 0,
-            variable1: 0,
-            variable2: 0,
-            variable3: 0,
-            variable4: 0,
-            air_pressureFL: 0,
-            air_pressureFR: 0,
-            air_pressureBL: 0,
-            air_pressureBR: 0,
+            variable1: "",
+            variable2: "",
+            variable3: "",
+            variable4: "",
+            air_pressureFL: "",
+            air_pressureFR: "",
+            air_pressureBL: "",
+            air_pressureBR: "",
             air_pressureFL1: "",
             air_pressureFR1: "",
             air_pressureBL1: "",
             air_pressureBR1: "",
-            airTemperature: 0,
+            airTemperature: "",
             airTemperatureUpdate: "",
-            trackTemperature: 0,
+            trackTemperature: "",
             trackTemperatureUpdate:"",
             //Bleed der die Streckentemperatur berücksichtigt
             bleed1:0,
@@ -110,10 +110,10 @@ export default class AstridScreen extends React.Component {
 
 
     validateForm() {
-       return this.state.raceID!=0&&this.state.setID!=0&&this.state.airTemperatureUpdate!="";
+       return this.state.variable1!=""&&this.state.raceID!=0&&this.state.setID!=0&&this.state.airTemperatureUpdate!="";
     }
     validateForm1(){
-        return this.state.raceID!=0&&this.state.setID!=0&&this.state.heizTemperatur!=""&&this.state.anpassungsKonstante!=""&&this.state.airTemperatureUpdate!=""&&this.state.trackTemperatureUpdate!="" && this.state.air_pressureFL1!=""&&this.state.air_pressureFR1!=""&&this.state.air_pressureBL1!=""&&this.state.air_pressureBR1!="";
+        return this.state.variable1!=""&&this.state.raceID!=0&&this.state.setID!=0&&this.state.heizTemperatur!=""&&this.state.anpassungsKonstante!=""&&this.state.airTemperatureUpdate!=""&&this.state.trackTemperatureUpdate!="" && this.state.air_pressureFL1!=""&&this.state.air_pressureFR1!=""&&this.state.air_pressureBL1!=""&&this.state.air_pressureBR1!="";
 
     }
 
@@ -196,7 +196,6 @@ export default class AstridScreen extends React.Component {
 
     async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('acesstoken');
-        const raceID=0;
         getRaceList(accesstoken).then(racelistDropdown => {
             let raceListModified=racelistDropdown;
             raceListModified.unshift({'name': "kein Rennen ausgewählt", 'id':0});
@@ -205,65 +204,6 @@ export default class AstridScreen extends React.Component {
         }).catch(function (error) {
             console.log(error);
         });
-
-        //Funktion aufrufen für Formelwerte
-        //console.log(this.state.reifennFormelDetails);
-        //const variable1= this.state.reifenFormelDetails['variable1'];
-        //const variable2= this.state.reifenFormelDetails['variable2'];
-        //const variable3= this.state.reifenFormelDetails['variable3'];
-        //const variable4= this.state.reifenFormelDetails['variable4'];
-        //const air_pressureFL= this.state.reifenFormelDetails['air_pressureFL'];
-        //const air_pressureFR= this.state.reifenFormelDetails['air_pressureFR'];
-        //const air_pressureBL= this.state.reifenFormelDetails['air_pressureBL'];
-        //const air_pressureBR= this.state.reifenFormelDetails['air_pressureBR'];
-        //const airTemperature= this.state.reifenFormelDetails['temp_air'];
-        //const trackTemperature= this.state.reifenFormelDetails['track_temp'];
-
-
-        const variable1= 273.15;
-        const variable2= 273.15;
-        const variable3= 1.013;
-        const variable4= 273.15;
-        const air_pressureFL= 1.36;
-        const air_pressureFR= 1.4;
-        const air_pressureBL= 1.2;
-        const air_pressureBR= 1.27;
-        const airTemperature= 20;
-        const trackTemperature= 10;
-
-        this.setState({variable1: variable1});
-        this.setState({variable2: variable2});
-        this.setState({variable3: variable3});
-        this.setState({variable4: variable4});
-        this.setState({air_pressureFL: air_pressureFL});
-        this.setState({air_pressureFR: air_pressureFR});
-        this.setState({air_pressureBL: air_pressureBL});
-        this.setState({air_pressureBR: air_pressureBR});
-        this.setState({airTemperature: airTemperature});
-        this.setState({trackTemperature: trackTemperature});
-
-        //Funktion aufrufen für möglicherweise bereits eingegeben und berechnete Werte
-        const bleed1="";
-        const bleed2="";
-        const bleedString1=bleed1.toString()+" bar";
-        const bleedString2=bleed2.toString()+" bar";
-        const air_pressureFL1= "";
-        const air_pressureFR1= "";
-        const air_pressureBL1= "";
-        const air_pressureBR1= "";
-        const airTemperatureUpdate= "";
-        const heizTemperatur="";
-
-        //this.setState({bleed1: bleed1});
-        //this.setState({bleedString1:bleedString1});
-        //this.setState({bleed2: bleed2});
-        //this.setState({bleedString2:bleedString2});
-        //this.setState({air_pressureFL1: air_pressureFL1});
-        //this.setState({air_pressureFR1: air_pressureFR1});
-        //this.setState({air_pressureBL1: air_pressureBL1});
-        //this.setState({air_pressureBR1: air_pressureBR1});
-        //this.setState({airTemperatureUpdate: airTemperatureUpdate});
-        //this.setState({heizTemperatur:heizTemperatur});
 
         }
 
@@ -278,15 +218,48 @@ export default class AstridScreen extends React.Component {
         this.setState({trackTemperatureUpdate: ""});
         this.setState({anpassungsKonstante: ""});
         this.setState({heizTemperatur: ""});
+        this.setState({variable1: ""});
+        this.setState({variable2: ""});
+        this.setState({variable3: ""});
+        this.setState({variable4: ""});
+        this.setState({air_pressureFL: ""});
+        this.setState({air_pressureFR: ""});
+        this.setState({air_pressureBL: ""});
+        this.setState({air_pressureBR: ""});
+        this.setState({airTemperature: ""});
+        this.setState({trackTemperature: ""});
         const accesstoken = await AsyncStorage.getItem('acesstoken');
         this.setState({raceID: event.target.value});
         if(event.target.value!=0) {
             getReifendruckDetails(accesstoken, event.target.value).then(reifenFormelDetails => {
             console.log(reifenFormelDetails);
             this.setState({reifenFormelDetails: reifenFormelDetails});
+            const variable1= reifenFormelDetails[0]['variable1'];
+            console.log(variable1);
+            const variable2= reifenFormelDetails[0]['variable2'];
+            const variable3= reifenFormelDetails[0]['variable3'];
+            const variable4= reifenFormelDetails[0]['variable4'];
+            const air_pressureFL= reifenFormelDetails[0]['air_pressureFL'];
+            const air_pressureFR= reifenFormelDetails[0]['air_pressureFR'];
+            const air_pressureBL= reifenFormelDetails[0]['air_pressureBL'];
+            const air_pressureBR= reifenFormelDetails[0]['air_pressureBR'];
+            const airTemperature= reifenFormelDetails[0]['air_temp'];
+            const trackTemperature= reifenFormelDetails[0]['track_temp'];
+            this.setState({variable1: variable1});
+            this.setState({variable2: variable2});
+            this.setState({variable3: variable3});
+            this.setState({variable4: variable4});
+            this.setState({air_pressureFL: air_pressureFL});
+            this.setState({air_pressureFR: air_pressureFR});
+            this.setState({air_pressureBL: air_pressureBL});
+            this.setState({air_pressureBR: air_pressureBR});
+            this.setState({airTemperature: airTemperature});
+            this.setState({trackTemperature: trackTemperature});
+
         }).catch(function (error) {
             console.log(error);
         })
+
             getDropdown(accesstoken, event.target.value).then(racelistDropdown => {
                 let dropdown = racelistDropdown[0];
                 dropdown.unshift({'name': "kein Set ausgewählt", 'id': 0});
@@ -333,6 +306,9 @@ export default class AstridScreen extends React.Component {
                 }
                 if (this.state.wheelSetInformation['temp_air'] != null) {
                     this.setState({airTemperatureUpdate: this.state.wheelSetInformation['temp_air']});
+                }
+                if (this.state.wheelSetInformation['temp_heat'] != null) {
+                    this.setState({heizTemperatur: this.state.wheelSetInformation['temp_heat']});
                 }
                 if (this.state.wheelSetInformation['fl_pressure'] != 0 && this.state.wheelSetInformation['fl_pressure'] != null) {
                     this.setState({air_pressureFL1: this.state.wheelSetInformation['fl_pressure']})
