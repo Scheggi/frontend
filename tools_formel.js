@@ -1,14 +1,35 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-
-
-
-
 // save changes AirPressure
 function changeSingleWheel( id, liste_attribute){
             timeoutPromise(2000, fetch(
             'https://api.race24.cloud/wheel_cont/change_single_wheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: id,
+                    liste_attribute:liste_attribute,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData()
+                }
+                else {console.log("failed")}
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+
+// save changes AirPressure
+function changeWheelSet( id, liste_attribute){
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_wheelSet', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -105,4 +126,4 @@ async function refreshToken() {
 
 
 
-export {sendStatusRequest,sendBleedRequest}
+export {changeWheelSet,changeSingleWheel}
