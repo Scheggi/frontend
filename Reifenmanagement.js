@@ -97,23 +97,24 @@ export default class WheelScreen extends React.Component {
             return (
             <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}} key={list_formel.setNr}>
                <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >
-                   <input id ={list_formel.setNr}  placeholder={list_formel.cat} value={list_formel.cat} />
-               <input id ={list_formel.setNr}  placeholder={list_formel.subcat} value={list_formel.subcat} />
+                   <input id ={list_formel.setNr}  placeholder={list_formel.cat} value={list_formel.cat}  />
+                    <input id ={list_formel.setNr}  placeholder={list_formel.subcat} value={list_formel.subcat} />
                     <input id={list_formel.setNr}  placeholder={list_formel.variant} value={list_formel.variant} />
                </td>
                  <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} ><input id ={list_formel.setNr}  placeholder={list_formel.status} value={list_formel.status} /></td>
                <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} > <input id ={list_formel.setNr}  placeholder={list_formel.temp} value={list_formel.temp} /> </td>
                  <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >
                      <input id ={list_formel.setNr}  placeholder={list_formel.br_pressure} value={list_formel.br_pressure}/>
-                 <input id ={list_formel.setNr}  placeholder={list_formel.bl_pressure} value={list_formel.bl_pressure}/>
+
+                     <input id ={list_formel.setNr}  placeholder={list_formel.bl_pressure} value={list_formel.bl_pressure}/>
                      <input id ={list_formel.setNr}  placeholder={list_formel.fr_pressure} value={list_formel.fr_pressure}/>
-                      <input id ={list_formel.setNr}  placeholder={list_formel.fl_pressure} value={list_formel.fl_pressure}/>
+                     <input id ={list_formel.setNr}  placeholder={list_formel.fl_pressure} value={list_formel.fl_pressure}/>
                  </td>
                <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >
-                   <input id ={list_formel.setNr}  placeholder={list_formel.bl_wheel_id} value={list_formel.bl_wheel_id}/>
-                   <input id ={list_formel.setNr}  placeholder={list_formel.br_wheel_id} value={list_formel.br_wheel_id}/>
-                   <input id ={list_formel.setNr}  placeholder={list_formel.fr_wheel_id} value={list_formel.fr_wheel_id}/>
-               <input id ={list_formel.setNr}  placeholder={list_formel.fl_wheel_id} value={list_formel.fl_wheel_id}/></td>
+                    <input id ={list_formel.setNr}  placeholder={list_formel.bl_wheel_id} value={list_formel.bl_wheel_id}/>
+                    <input id ={list_formel.setNr}  placeholder={list_formel.br_wheel_id} value={list_formel.br_wheel_id}/>
+                    <input id ={list_formel.setNr}  placeholder={list_formel.fr_wheel_id} value={list_formel.fr_wheel_id}/>
+                    <input id ={list_formel.setNr}  placeholder={list_formel.fl_wheel_id} value={list_formel.fl_wheel_id}/></td>
                 </tr>
          )
       })
