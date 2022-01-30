@@ -6,9 +6,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 // save changes AirPressure
-function changeAirPressure( id, air_press){
+function changeSingleWheel( id, liste_attribute){
             timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+            'https://api.race24.cloud/wheel_cont/change_single_wheel', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
@@ -16,13 +16,13 @@ function changeAirPressure( id, air_press){
                 },
                 body: JSON.stringify({
                     id: id,
-                    air_press:air_press,
+                    liste_attribute:liste_attribute,
                 })
             })
             ).then(response => response.json()).then(data => {
                 if (data[1]==200) {
                     console.log("Pressure Changed")
-                    this.getWheelData().then(() => {return})
+                    this.getWheelData()
                 }
                 else {console.log("failed")}
             }).catch(function (error) {
@@ -31,6 +31,30 @@ function changeAirPressure( id, air_press){
         }
 
 
+// save changes AirPressure
+function changeTimer( raceID, liste_attribute){
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_single_wheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: raceID,
+                    liste_attribute:liste_attribute,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData()
+                }
+                else {console.log("failed")}
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
 
 
 //  ----------------------------------------------------------------------------------------------
