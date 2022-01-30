@@ -61,7 +61,7 @@ export default class MaenScreen extends React.Component {
         this.getWheelsStart=this.getWheelsStart.bind(this);
     }
    async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         getRaceList(accesstoken).then(racelistDropdown => {
             console.log(racelistDropdown);
             this.setState({raceList: racelistDropdown})
@@ -155,7 +155,7 @@ export default class MaenScreen extends React.Component {
     }
 
     async getWeatherData(){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const accesstoken = await AsyncStorage.getItem('accesstoken');
        //const raceID = await AsyncStorage.getItem('raceID');
         const raceID= this.state.raceID;
        console.log(raceID)
@@ -170,7 +170,7 @@ export default class MaenScreen extends React.Component {
     }
 
     async getWheelsStart(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         AsyncStorage.setItem('raceID', this.state.raceID);
         const raceID = await AsyncStorage.getItem('raceID');
         console.log(raceID)

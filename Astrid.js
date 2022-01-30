@@ -183,7 +183,7 @@ export default class AstridScreen extends React.Component {
 
     }
     async changeBleed(){
-          const accesstoken = await AsyncStorage.getItem('acesstoken');
+          const accesstoken = await AsyncStorage.getItem('accesstoken');
           const bleed1= this.state.bleed1;
           const bleed2=this.state.bleed2;
           const setID=this.state.setID;
@@ -195,7 +195,7 @@ export default class AstridScreen extends React.Component {
 
 
     async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID=0;
         getRaceList(accesstoken).then(racelistDropdown => {
             let raceListModified=racelistDropdown;
@@ -278,7 +278,7 @@ export default class AstridScreen extends React.Component {
         this.setState({trackTemperatureUpdate: ""});
         this.setState({anpassungsKonstante: ""});
         this.setState({heizTemperatur: ""});
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         this.setState({raceID: event.target.value});
         if(event.target.value!=0) {
             getReifendruckDetails(accesstoken, event.target.value).then(reifenFormelDetails => {
@@ -312,7 +312,7 @@ export default class AstridScreen extends React.Component {
         this.setState({anpassungsKonstante: ""});
         this.setState({heizTemperatur: ""});
         this.setState({setID: event.target.value});
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const id=event.target.value;
         console.log(id);
         if(id!=0) {
