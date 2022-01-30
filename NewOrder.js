@@ -331,9 +331,7 @@ export default class NewOrderScreen extends React.Component {
                     console.log("Pressure Changed")
                     this.getWheelData().then(() => {return})
                 }
-                else {
-                    console.log("failed")
-                }
+                else {console.log("failed")}
             }).catch(function (error) {
                 console.log(error);
             })

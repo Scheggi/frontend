@@ -1,6 +1,38 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+
+
+
+
+// save changes AirPressure
+function changeAirPressure( id, air_press){
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: id,
+                    air_press:air_press,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Pressure Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {console.log("failed")}
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
+
+
+
+
 //  ----------------------------------------------------------------------------------------------
 
 function timeoutPromise(ms, promise) {
