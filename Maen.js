@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
 import { PieChart, Pie, Sector, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Line, LineChart, BarChart, Bar, XAxis, YAxis, CartesianGrid} from 'recharts';
+import image from "./logo.png";
 
 
 const COLORS = ['#0B0B61','#FF8042', '#FFBB28','#0088FE', '#00C49F', '#8884D8'];
@@ -81,7 +82,57 @@ export default class MaenScreen extends React.Component {
 
     changeRace = event => {
         event.preventDefault();
-        this.props.navigation.goBack();
+        this.props.navigation.push('Race');
+    }
+
+        changeLogout = event => {
+        event.preventDefault();
+        this.props.navigation.replace('Logout');
+    }
+
+     changeNewUser = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewUser');
+    }
+
+    changeNewOrder = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewOrder');
+    }
+
+    changeWeather = event => {
+        event.preventDefault();
+        this.props.navigation.push('Weather');
+    }
+
+    changeShowRace = event => {
+        event.preventDefault();
+        this.props.navigation.push('ShowRace');
+    }
+
+     changeWheel = event => {
+        event.preventDefault();
+        this.props.navigation.push('Wheel');
+    }
+
+    changeNewFormel = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewFormel');
+    }
+
+    changeAstrid = event => {
+        event.preventDefault();
+        this.props.navigation.push('Astrid');
+    }
+
+    changeNiklas = event => {
+        event.preventDefault();
+        this.props.navigation.push('Niklas');
+    }
+
+    changeNewRace = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewRace');
     }
 
     handleSubmit = event =>{
@@ -160,26 +211,80 @@ export default class MaenScreen extends React.Component {
             <option value={v.id} key={v.id}>{v.name}</option>
         ));
         return (
-        <View style={viewStyles1}>
-            {/*<View style={{marginLeft: 'auto', marginRight: 'auto'}}>*/}
-                <label /*style={{fontSize: 16, fontFamily: 'arial', textAlign: 'center'}}*/ > Rennen auswählen: <select
-                    value={this.state.id} onChange={this.getRaceID}>
-                    {optionTemplate}
+        <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
+                <nav className="navbar navbar-light" style={{backgroundColor: '#d0d7de'}}>
+                    <div className="container-fluid">
+                        <a className="navbar-brand" href="#"> <img src={image} style={{width: '70%'}}/> </a>
+                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeRace}>Hauptmenü</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewRace}>Neue Renndaten anlegen</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeShowRace}>Renndaten anzeigen</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewOrder}>Reifenbestellungen verwalten</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeAstrid}>Berechnung Reifendruck</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewFormel}>Formel Reifendruck anlegen</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewUser}>Neues Mitglied anlegen</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" onClick={this.changeNiklas}>Niklas</button>
+                                </li>
+                                <br/>
+                                <li className="nav-item">
+                                    <button className="btn btn-primary btn-sm" aria-current="page" onClick={this.changeLogout}>Ausloggen</button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+                <div className='container' style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                <br/>
+                <h1 className="display-4" style={{color: '#d0d7de', textAlign: 'center'}}>Statistiken anzeigen</h1>
+                <br/>
+                </div>
+                <div className='input-group'>
+                <label className='input-group-text' style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}> Rennen auswählen: &nbsp; <select
+                        id='option' value={this.state.id} onChange={this.getRaceID}>
+                        {optionTemplate}
                 </select>
                 </label>
-            {/*</View>*/}
-         <Button
-                        //disabled={!this.validateForm()}
-                        title="Daten anzeigen"
-                        onPress={this.handleSubmit}
-                    />
-                <br></br>
-            <View style={{flexDirection: 'row'}}>
+                </div>
+                <br/>
+                <button type='button' className='btn btn-primary' onClick={this.handleSubmit}
+                         style={{marginLeft: 'auto', marginRight: 'auto'}}> DATEN ANZEIGEN
+                </button>
+                <br/>
+                <br/>
+            <View>
+            <View style={{flexDirection: 'row', marginLeft: 'auto', marginRight: 'auto'}}>
          <div>
              {this.state.showText &&
-             <Text style={{fontSize: 30, fontWeight: 'bold', fontFamily: 'arial',}}>Reifendaten:</Text>
+            <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Reifendaten: </h3>
              }
-         <PieChart width={400} height={400}>
+            <PieChart width={400} height={400} >
             <Pie
             dataKey="value"
             isAnimationActive={true}
@@ -189,8 +294,7 @@ export default class MaenScreen extends React.Component {
             cy="50%"
             outerRadius={150}
             fill="#8884d8"
-            label={renderCustomizedLabel}
-          >
+            label={renderCustomizedLabel} >
           {this.state.data.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
             ))}
@@ -203,11 +307,7 @@ export default class MaenScreen extends React.Component {
         </div>
         <div>
             {this.state.showText &&
-            <Text style={styles.textStyles}>
-                Wetterdaten:
-                <br></br>
-                <br></br>
-            </Text>
+            <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Wetterdaten: </h3>
             }
             {this.state.showWeatherData &&
                 <LineChart width={600} height={400} data={this.state.dataWeather} margin={{
@@ -226,21 +326,16 @@ export default class MaenScreen extends React.Component {
                 </LineChart>
             }
           </div>
-            </View>
-        <Button
-                        title="zurück"
-                        onPress={this.changeRace}
-                />
-            <Text style={{height:50}}></Text>
+          </View>
+          <br/>
+          <br/>
+          <button type='button' className='btn btn-primary' onClick={this.changeRace}
+                  style={{marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK
+          </button>
+          <br/>
+          <br/>
+          </View>
         </View>
         );
     }
 }
-const viewStyles1= {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontFamily: 'arial',
-        overflowY: 'scroll',
-        overflowX: 'scroll',
-    };

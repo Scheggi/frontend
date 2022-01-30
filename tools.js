@@ -395,4 +395,3 @@ function TableNiklas(list) {
 
 
 export {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID,changeWheelSet}
-
