@@ -47,9 +47,23 @@ export default class ShowRaceScreen extends React.Component {
         this.getWheelsStart = this.getWheelsStart.bind(this);
     }
 
+    async getGroup(){
+         const group = await AsyncStorage.getItem("usergroup");
+         console.log(group)
+        if (group==="Helper"){
+            this.props.navigation.push("HelperNavigator")
+        }
+        if (group==="Ingenieur"){
+            this.props.navigation.push("Nav")
+        }
+        if (group==="Manager"){
+            this.props.navigation.push("Race")
+        }
+    }
+
     changeRace = event => {
         event.preventDefault();
-        this.props.navigation.push('Race');
+        this.getGroup();
     }
 
     changeLogout = event => {
@@ -90,11 +104,6 @@ export default class ShowRaceScreen extends React.Component {
     changeAstrid = event => {
         event.preventDefault();
         this.props.navigation.push('Astrid');
-    }
-
-    changeNiklas = event => {
-        event.preventDefault();
-        this.props.navigation.push('Niklas');
     }
 
     changeMaen = event => {
@@ -198,7 +207,7 @@ export default class ShowRaceScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
-                                            aria-current="page" onClick={this.changeNewRace}>Renndaten anlegen
+                                            aria-current="page" onClick={this.changeNewRace}> Neue Renndaten anlegen
                                     </button>
                                 </li>
                                 <li className="nav-item">
@@ -235,11 +244,6 @@ export default class ShowRaceScreen extends React.Component {
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
                                             aria-current="page" onClick={this.changeNewUser}>Neues Mitglied anlegen
-                                    </button>
-                                </li>
-                                <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
-                                            aria-current="page" onClick={this.changeNiklas}>Niklas
                                     </button>
                                 </li>
                                 <br/>
