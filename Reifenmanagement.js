@@ -39,19 +39,27 @@ export default class WheelScreen extends React.Component {
     }
 
     save_changes_wheel = event => {
-        this.changeSingleWheel(event.target.id, [[event.target.name, event.target.value]])
+        this.changeSingleWheel(event.target.id, [[event.target.name, event.target.value]]);
+        let copyArray = this.state.list_formel;
+        this.state.list_formel.forEach( function (element,index){if(element.setid==event.target.id){copyArray[index][event.target.type]=event.target.value}});
+        this.setState({list_formel:copyArray});
+        console.log(this.state.list_formel);
     };
 
     save_changes_wheelSet = event => {
-        this.changeWheelSet(event.target.id, [[event.target.name, event.target.value]])
+        this.changeWheelSet(event.target.id, [[event.target.name, event.target.value]]);
+        //iterieren über this.state.list_formel
+        let copyArray = this.state.list_formel;
+        this.state.list_formel.forEach( function (element,index){if(element.setid==event.target.id){copyArray[index][event.target.name]=event.target.value}});
+        this.setState({list_formel:copyArray});
+        console.log(this.state.list_formel);
     };
-
 
     // save change
     changeSingleWheel(id, liste_attribute) {
         console.log(liste_attribute);
         console.log(id);
-        timeoutPromise(2000, fetch(
+        timeoutPromise(1000, fetch(
             'https://api.race24.cloud/wheel_cont/change_single_wheel', {
                 method: 'POST',
                 headers: {
@@ -65,7 +73,7 @@ export default class WheelScreen extends React.Component {
             })
         ).then(response => response.json()).then(data => {
             if (data[1] == 200) {
-                console.log("Pressure Changed")
+                console.log("Wheel Changed")
             } else {
                 console.log("failed")
             }
@@ -77,7 +85,7 @@ export default class WheelScreen extends React.Component {
     changeWheelSet(id, liste_attribute) {
         console.log(liste_attribute);
         console.log(id);
-        timeoutPromise(2000, fetch(
+        timeoutPromise(1000, fetch(
             'https://api.race24.cloud/wheel_cont/change_wheelSet', {
                 method: 'POST',
                 headers: {
@@ -91,8 +99,7 @@ export default class WheelScreen extends React.Component {
             })
         ).then(response => response.json()).then(data => {
             if (data[1] == 200) {
-                console.log("Pressure Changed");
-                this.getWheelData().then(() => {return})
+                console.log(data[0]);
             } else {
                 console.log("failed")
             }
@@ -100,40 +107,12 @@ export default class WheelScreen extends React.Component {
             console.log(error);
         })
     }
-
-
     // end save change
-
-
-    async sendNewFormelRequest(formel) {
-        console.log(formel)
-        timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/formel/create', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    formel: formel,
-                })
-            })
-        ).then(response => response.json()).then(data => {
-            if (data[1] == 200) {
-                this.getTabularData()
-            } else {
-                console.log("failed")
-            }
-        }).catch(function (error) {
-            console.log(error);
-        })
-    }
 
     async getTabularData() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         await getWheelInformations(accesstoken, raceID).then(formellistTab => {
-            console.log(formellistTab);
             this.setState({list_formel: formellistTab});
         }).catch(function (error) {
             console.log(error);
@@ -146,7 +125,6 @@ export default class WheelScreen extends React.Component {
         this.setState({raceID: raceid});
     }
 
-
     renderTableHeader() {
         let header = ['Kategorie', 'Status', 'Temperatur',
             'Reifen Luftdruck', 'Reifen ID'];
@@ -158,36 +136,45 @@ export default class WheelScreen extends React.Component {
         })
     }
 
-
     renderTableData() {
         console.log(this.state.list_formel)
         return this.state.list_formel.map((list_formel, index) => {
-            //const { n, formel } =list_formel //destructuring
             return (
                 <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
-                    key={list_formel.setNr}>
+                    key={list_formel.setid}>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
-                        <input id={list_formel.setid} placeholder='test' value={list_formel.cat}/>
+                        <input id={list_formel.setid} placeholder='test' value={list_formel.cat}
+                               name={'cat'}  onChange={this.save_changes_wheelSet}/>
                         <input id={list_formel.setid} name={'subcat'} placeholder={list_formel.subcat}
                                value={list_formel.subcat} onChange={this.save_changes_wheelSet}/>
                         <input id={list_formel.setid} name={'variant'} placeholder={'Variante'}
                                value={list_formel.variant} onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
-                        <input id={list_formel.setNr} placeholder={list_formel.status} value={list_formel.status}/></td>
+                        <input id={list_formel.setid} placeholder={list_formel.status} value={list_formel.status}
+                        name = {'status'} onChange={this.save_changes_wheelSet}/></td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
-                        <input id={list_formel.setNr} placeholder={'Temperatur'} value={list_formel.temp}/></td>
+                        <input id={list_formel.setid} placeholder={'Temperatur'} value={list_formel.temp_air}
+                        name = {'temp_air'}  onChange={this.save_changes_wheelSet}/></td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
-                        <input id={list_formel.setNr} placeholder={'Luftdruck BR'} value={list_formel.br_pressure}/>
-                        <input id={list_formel.setNr} placeholder={'Luftdruck BL'} value={list_formel.bl_pressure}/>
-                        <input id={list_formel.setNr} placeholder={'Luftdruck FL'} value={list_formel.fr_pressure}/>
-                        <input id={list_formel.setNr} placeholder={'Luftdruck FL'} value={list_formel.fl_pressure}/>
+                        <input id={list_formel.setid} placeholder={'Luftdruck BR'} value={list_formel.br_pressure}
+                        name = {'pressure'} type={'br_pressure'} onChange={this.save_changes_wheelSet}/>
+                        <input id={list_formel.setid}  placeholder={'Luftdruck BL'} value={list_formel.bl_pressure}
+                        name = {'pressure'} type={'bl_pressure'} onChange={this.save_changes_wheelSet}/>
+                        <input id={list_formel.setid} placeholder={'Luftdruck FL'} value={list_formel.fr_pressure}
+                        name = {'pressure'} type={'fr_pressure'} onChange={this.save_changes_wheelSet}/>
+                        <input id={list_formel.setid} placeholder={'Luftdruck FL'} value={list_formel.fl_pressure}
+                        name = {'pressure'} type={'fl_pressure'} onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
-                        <input id={list_formel.setNr} placeholder={'ID BL'} value={list_formel.bl_wheel_id}/>
-                        <input id={list_formel.setNr} placeholder={'ID BR'} value={list_formel.br_wheel_id}/>
-                        <input id={list_formel.setNr} placeholder={'ID FR'} value={list_formel.fr_wheel_id}/>
-                        <input id={list_formel.setNr} placeholder={'ID FL'} value={list_formel.fl_wheel_id}/></td>
+                        <input id={list_formel.setid} placeholder={'ID BL'} value={list_formel.bl_wheel_id}
+                        name = {'wheel_id'} type={'bl_wheel_id'} onChange={this.save_changes_wheelSet}/>
+                        <input id={list_formel.setid} placeholder={'ID BR'} value={list_formel.br_wheel_id}
+                        name = {'wheel_id'} type={'br_wheel_id'} onChange={this.save_changes_wheelSet}/>
+                        <input id={list_formel.setid} placeholder={'ID FR'} value={list_formel.fr_wheel_id}
+                        name = {'wheel_id'} type={'fr_wheel_id'} onChange={this.save_changes_wheelSet}/>
+                        <input id={list_formel.setid} placeholder={'ID FL'} value={list_formel.fl_wheel_id}
+                        name = {'wheel_id'} type={'fl_wheel_id'} onChange={this.save_changes_wheelSet}/></td>
                 </tr>
             )
         })

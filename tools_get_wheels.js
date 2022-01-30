@@ -152,19 +152,17 @@ function getWheelInformations(accesstoken,raceID) {
         }
         else{
             console.log('Return Data');
-            console.log(data[0].data);
             return data[0].data;
         }
         return [];
     }).catch(function (error) {
-        console.log('fr');
         return [];
     })
 }
 
 
 ///wheel_cont/getWheels_withWheel
-// geht set information
+// get set information
 function getWheelSetInformation(accesstoken,id) {
     return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/getIdsWheelSet', {
         method: 'POST',
@@ -282,6 +280,42 @@ function getReifendruckDetails(accesstoken,raceID) {
     })
 }
 
+// get timer
+function getTimerInformation(accesstoken,raceID) {
+    return timeoutPromise(2000, fetch('https://api.race24.cloud/timer/get', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            access_token: accesstoken,
+            raceID:parseInt(raceID),
+        })
+    })).then(response => response.json()).then(data => {
+        console.log(data);
+        if ('msg' in data){
+            if (data['msg'] === 'Token has expired'){
+                refreshToken().then( token => {
+                    getWheelSetInformation(token,raceID);
+                    }
+                ).catch( function (error) {
+                        console.log('Refresh failed');
+                        console.log(error);
+                    }
+                );
+                return [];
+            }
+        }
+        else{
+            return data[0].data;
+        }
+        return [];
+    }).catch(function (error) {
+        console.log(error);
+        return [];
+    })
+}
 
 
 
