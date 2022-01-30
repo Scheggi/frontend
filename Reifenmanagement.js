@@ -81,8 +81,8 @@ export default class WheelScreen extends React.Component {
 
 
    renderTableHeader() {
-    let header = ['Kategorie', 'Unterkategorie', 'Status','Temperatur','Variante',
-        'FL_Luftdruck','FR_Luftdruck','BL_Luftdruck','BR_Luftdruck','FL_ID','FR_ID','RL_ID','RB_ID'];
+    let header = ['Kategorie', 'Status','Temperatur',
+        'Reifen Luftdruck','Reifen ID'];
       //let header = Object.keys(this.state.list_formel[0]);
       return header.map((key, index) => {
          return <th bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}} key={index}>{key.toUpperCase()}</th>
@@ -96,20 +96,25 @@ export default class WheelScreen extends React.Component {
             //const { n, formel } =list_formel //destructuring
             return (
             <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}} key={list_formel.setNr}>
-               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >{list_formel.cat}</td>
-               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{list_formel.subcat}</td>
-                 <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >{list_formel.status}</td>
-               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{list_formel.temp}</td>
-                 <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >{list_formel.variant}</td>
-               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{list_formel.fl_pressure}</td>
-                 <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >{list_formel.fr_pressure}</td>
-               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{list_formel.bl_pressure}</td>
-                 <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >{list_formel.br_pressure}</td>
-               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{list_formel.fl_wheel_id}</td>
-                 <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >{list_formel.fr_wheel_id}</td>
-               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{list_formel.bl_wheel_id}</td>
-                <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >{list_formel.br_wheel_id}</td>
-            </tr>
+               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >
+                   <input id ={list_formel.setNr}  placeholder={list_formel.cat} value={list_formel.cat} />
+               <input id ={list_formel.setNr}  placeholder={list_formel.subcat} value={list_formel.subcat} />
+                    <input id={list_formel.setNr}  placeholder={list_formel.variant} value={list_formel.variant} />
+               </td>
+                 <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} ><input id ={list_formel.setNr}  placeholder={list_formel.status} value={list_formel.status} /></td>
+               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} > <input id ={list_formel.setNr}  placeholder={list_formel.temp} value={list_formel.temp} /> </td>
+                 <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}} >
+                     <input id ={list_formel.setNr}  placeholder={list_formel.br_pressure} value={list_formel.br_pressure}/>
+                 <input id ={list_formel.setNr}  placeholder={list_formel.bl_pressure} value={list_formel.bl_pressure}/>
+                     <input id ={list_formel.setNr}  placeholder={list_formel.fr_pressure} value={list_formel.fr_pressure}/>
+                      <input id ={list_formel.setNr}  placeholder={list_formel.fl_pressure} value={list_formel.fl_pressure}/>
+                 </td>
+               <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}} >
+                   <input id ={list_formel.setNr}  placeholder={list_formel.bl_wheel_id} value={list_formel.bl_wheel_id}/>
+                   <input id ={list_formel.setNr}  placeholder={list_formel.br_wheel_id} value={list_formel.br_wheel_id}/>
+                   <input id ={list_formel.setNr}  placeholder={list_formel.fr_wheel_id} value={list_formel.fr_wheel_id}/>
+               <input id ={list_formel.setNr}  placeholder={list_formel.fl_wheel_id} value={list_formel.fl_wheel_id}/></td>
+                </tr>
          )
       })
    }
