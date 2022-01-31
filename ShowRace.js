@@ -106,6 +106,11 @@ export default class ShowRaceScreen extends React.Component {
         this.props.navigation.push('Astrid');
     }
 
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
+    }
+
     changeMaen = event => {
         event.preventDefault();
         this.props.navigation.push('Maen');
@@ -225,6 +230,9 @@ export default class ShowRaceScreen extends React.Component {
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
                                             aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen
                                     </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
