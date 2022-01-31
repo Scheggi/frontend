@@ -254,21 +254,16 @@ export default class RaceScreen extends React.Component {
 
     async saveRaceIDinState() {
         const id = await AsyncStorage.getItem("raceID");
-
         clearInterval(this.timer);
         this.timer = 0;
-
         this.setState({
-
             timeWeather: 0,
             timeWeatherG: '00:00:00',
             timeHeating: 0,
             timeHeatingG: '00:00:00',
             timeOrder: 0,
             timeOrderG: '00:00:00',
-
         });
-
         this.setState({raceID: id});
         this.getWeatherData(id);
         this.getWheelSetInformation(id);

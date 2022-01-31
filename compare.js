@@ -1,5 +1,5 @@
 import React from "react";
-import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
+import {Button, Text, TextInput, ToastAndroid,ScrollView, View} from "react-native";
 import {styles} from "./styles"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from "./tools";
@@ -10,22 +10,6 @@ export default class NewOrderScreen extends React.Component {
    constructor(props) {
         super(props);
         this.state = {
-            raceid: 0,
-            tyretype: '',
-            tyremix: '',
-            term: '',
-            variant: '',
-            tyretype1: '',
-            tyremix1: '',
-            variant1: '',
-            orderduration: 0,
-            ordertime: '',
-            ordertime1: '',
-            pickuptime: '',
-            raceList: [],
-            time: {},
-            seconds: 1800,
-            timervalue: "",
             wheels: [],
             listDropdown1:[],
             listDropdown2:[],
@@ -41,19 +25,32 @@ export default class NewOrderScreen extends React.Component {
             SetInformation:{},
             test_setid:0,
             test_list :[],
+            raceid: 0,
+            tyretype: '',
+            tyremix: '',
+            term1: '',
+            variant: '',
 
+            //für Tabelle rechts:
+            tyretype1: '',
+            tyremix1: '',
+            variant1: '',
+            ordertime: '',
+            orderduration: 0,
+            raceList: [],
+
+            time: {},
+            seconds: 1800,
+            timervalue: 0,
         }
         this.timer = 0;
         this.startTimer = this.startTimer.bind(this);
         this.countDown = this.countDown.bind(this);
+        this.fillList= this.fillList.bind(this);
     }
 
-    changeMain(){
-        this.props.navigation.goBack();
-    }
 
-    // get Data
-    async componentDidMount(){
+     async componentDidMount(){
         const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         getDropdown(accesstoken,raceID).then(racelistDropdown => {
@@ -64,10 +61,9 @@ export default class NewOrderScreen extends React.Component {
         }).catch(function (error) {
             console.log(error);
         })
-
-       console.log(2)
         await this.getWheelDict();
         await this.getDropdownList();
+        console.log(this.state.dictButtons)
         if (this.state.dictButtons.length==6){
             this.setState({ButtonSlicks_Cold: 'Slicks Cold  '+this.state.dictButtons[0][0].toString()});
             this.setState({ButtonSlicks_Medium: 'Slicks Medium  '+this.state.dictButtons[1][0].toString()});
@@ -117,14 +113,11 @@ export default class NewOrderScreen extends React.Component {
         console.log(setid);
     }
 
-
     getRaceID = event => {
         const id = event.target.value;
         AsyncStorage.setItem("raceIDHelper", event.target.value);
         this.saveRaceIDinState();
     }
-
-
 
     refresh_Buttons(){
         if (this.state.dictButtons.length==6) {
@@ -144,7 +137,8 @@ export default class NewOrderScreen extends React.Component {
     }
      handleSubmit = event => {
         event.preventDefault();
-        changeWheelSet(this.state.setID,this.state.variant,this.state.orderduration,this.state.term);
+        this.fillList();
+        changeWheelSet(this.state.setID,this.state.variant,this.state.orderduration,this.state.term1);
         AsyncStorage.setItem('orderSetID',this.state.setID);
         this.refresh_Buttons();
     }
@@ -167,7 +161,6 @@ export default class NewOrderScreen extends React.Component {
         helper[1][0]= helper[1][0]-1;
         this.setState({setID: helper[1][1][helper[1][0]]});
         this.setState({dictButtons: helper});
-
 
     }
     handleSubmitButton3 = event => {
@@ -228,21 +221,10 @@ export default class NewOrderScreen extends React.Component {
 
         startTimer()
         {
-            var hour = 0;
-            var minute = 0;
+            var hour = this.state.timervalue /60 ;
+            var minute = this.state.timervalue % 60;
             var second = 0;
-            var atime = this.state.timervalue.split(':');
-            if (atime[0].length > 0) {
-                hour = parseInt(atime[0]);
-            }
-            if (atime[1].length > 0) {
-                minute = parseInt(atime[1]);
-            }
-            if (atime[2].length > 0) {
-                second = parseInt(atime[2]);
-            }
-            this.state.seconds = stunde * 3600 + minute * 60 + sekunde;
-
+            this.state.seconds = this.state.timervalue *60;
             if (this.state.seconds > 0) {
                 this.timer = setInterval(this.countDown, this.state.seconds);
             }
@@ -271,10 +253,14 @@ export default class NewOrderScreen extends React.Component {
 
         validateForm()
         {
-            return this.state.orderduration.length > 0 && this.state.variant.length > 0 ;
+            return this.state.tyretype.length > 0 && this.state.tyremix.length > 0 && this.state.term1.length > 0 && this.state.orderduration > 0 && this.state.variant.length > 0;
         }
 
-        validateFormButton1(){
+        validateForm1()
+        {
+            return this.state.timervalue.length > 0;
+        }
+       validateFormButton1(){
        return this.state.dictButtons.length==6 && this.state.dictButtons[0][0]>0;
         }
         validateFormButton2(){
@@ -292,29 +278,40 @@ export default class NewOrderScreen extends React.Component {
         }
 
 
-
-        validateForm1()
-        {
-            return this.state.timervalue.length > 0;
+        fillList(){
+          var date=new Date();
+          let hour= date.getHours();
+          let minutes=date.getMinutes();
+          if((String(hour)).length==1)
+             hour='0'+hour;
+          if((String(minutes)).length==1)
+              minutes='0'+minutes;
+          const time=hour+ ':' + minutes;
+          //alert(time);
+          this.setState({ordertime: time});
+          this.setState({variant1: this.state.variant});
+          this.setState({tyremix1: this.state.tyremix});
+          this.setState({tyretype1: this.state.tyretype});
+          this.setState({timervalue: time});
+          this.startTimer();
         }
 
         async getWheelData(){
             //this.setState({wheels: []});
             const accesstoken = await AsyncStorage.getItem('accesstoken');
-        const setID = await AsyncStorage.getItem('orderSetID');
-        //const raceID = await AsyncStorage.getItem('raceID');
-        console.log(setID)
-        await getWheelSetInformation(accesstoken, setID).then(DataTabular => {
-            console.log(DataTabular);
-            this.setState({SetInformation: DataTabular});
-            this.setState({wheels: [this.state.SetInformation]});
-            //this.state.wheels.push(this.state.SetInformation);
-        }).catch(function (error) {
-            console.log(error);
-        })
-
-            console.log(this.state.wheels)
-        }
+            const setID = await AsyncStorage.getItem('orderSetID');
+            //const raceID = await AsyncStorage.getItem('raceID');
+            console.log(setID)
+            await getWheelSetInformation(accesstoken, setID).then(DataTabular => {
+                console.log(DataTabular);
+                this.setState({SetInformation: DataTabular});
+                this.setState({wheels: [this.state.SetInformation]});
+                //this.state.wheels.push(this.state.SetInformation);
+            }).catch(function (error) {
+                console.log(error);
+            })
+                console.log(this.state.wheels)
+            }
 
         handleAirPressureChange = event => {
             timeoutPromise(2000, fetch(
@@ -334,9 +331,7 @@ export default class NewOrderScreen extends React.Component {
                     console.log("Pressure Changed")
                     this.getWheelData().then(() => {return})
                 }
-                else {
-                    console.log("failed")
-                }
+                else {console.log("failed")}
             }).catch(function (error) {
                 console.log(error);
             })
@@ -379,7 +374,7 @@ export default class NewOrderScreen extends React.Component {
                 },
                 body: JSON.stringify({
                     set_id: event.target.id,
-                    temp: event.target.value,
+                    temp_air: event.target.value,
                 })
             })
             ).then(response => response.json()).then(data => {
@@ -397,17 +392,13 @@ export default class NewOrderScreen extends React.Component {
 
 
         renderWheelTable(){
-            console.log("Render Table");
-            console.log(this.state.wheels);
             return this.state.wheels.map((wheel,) => {
-                console.log(wheel);
-                console.log(wheel.setid);
                 return (
-                    <tr  key={wheel.setid}>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.setNr}</td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.status}</td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.cat}</td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>{wheel.subcat}</td>
+                    <tr bgcolor='white' style={{border: "solid", borderColor: 'grey',textAlign: "center", padding: '8px', color: 'black', fontFamily: 'arial'}}  key={wheel.setid}>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.setNr} </td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.status} </td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.cat} </td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id ={wheel.subcat} placeholder={wheel.subcat} value={wheel.subcat} /></td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.setid}  placeholder={'Temperatur'} onChange={this.handleTemp} value={wheel.temp}/></td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.fl_id} placeholder={'FL ID'} onChange={this.handleWheelIDChange} value={wheel.fl_wheel_id}/><input id={wheel.fr_id} placeholder={'FR ID'}  onChange={this.handleWheelIDChange} value={wheel.fr_wheel_id}/><input id={wheel.bl_id} placeholder={'BL ID'} onChange={this.handleWheelIDChange} value={wheel.bl_wheel_id}/><input id={wheel.br_id} placeholder={'BR ID '} onChange={this.handleWheelIDChange} value={wheel.br_wheel_id}/></td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.fl_id} placeholder={'FL Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.fl_pressure}/><input id={wheel.fr_id} placeholder={'FR Luftdruck'} onChange={this.handleAirPressureChange}  value={wheel.fr_pressure}/><input id={wheel.bl_id} placeholder={'BL Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.bl_pressure}/><input id={wheel.br_id}  placeholder={'BR Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.br_pressure}/></td>
@@ -418,17 +409,21 @@ export default class NewOrderScreen extends React.Component {
 
         render()
         {
-            let optionTemplate = this.state.raceList.map(v => (
-            <option value={v.id} key={v.id}>{v.name}</option>
-            ));
-
             return (
-                <View style={container2}>
-                    <View style={container3}>
-                        <View style={container5}>
-                        <Text style={{fontSize: 40, fontWeight: 'bold', textAlign: 'center'}}>
+                <ScrollView>
+                <View style={container1}>
+                    <View style={container2}>
+                         <View>
+                        <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
                         Neue Reifenbestellung anlegen
                     </Text>
+                        </View>
+                        <View style={{textAlign: 'center'}}>
+                            <Text> </Text>
+                            <Text stlye={{fontfamily: 'arial', fontSize: 16}}>
+                            Reifentyp auswählen:
+                            </Text>
+                            <Text style={{height: 5}}> </Text>
                         </View>
                         <View style={container4}>
                             <Button
@@ -446,6 +441,11 @@ export default class NewOrderScreen extends React.Component {
                             title= {this.state.ButtonSlicks_Hot}
                             onPress={this.handleSubmitButton3}
                         />
+                        </View>
+                        <View>
+                            <Text style={{height: 5}}> </Text>
+                        </View>
+                        <View style={container4}>
                         <Button
                             disabled={!this.validateFormButton4()}
                             title={this.state.ButtonInter}
@@ -462,48 +462,43 @@ export default class NewOrderScreen extends React.Component {
                             onPress={this.handleSubmitButton6}
                         />
                         </View>
-                    </View>
-                <View style={container1}>
-                <View style={{justifyContent: 'flex-start'}}>
-                    <Text style={{height: 10}}> </Text>
+                <View >
+                    <Text style={{height: 20}}> </Text>
                     <table >
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.tyretype}
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.tyretype}
                                    onChangeText={(text) => this.setState({tyretype: text})}/></td>
                     </tr>
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Mischung: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.tyremix}
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}> <TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.tyremix}
                                     onChangeText={(text) => this.setState({tyremix: text})}/>
                         </td>
                     </tr>
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bezeichnung: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.term}
-                                  onChangeText={(text) => this.setState({term: text})}/></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.term1}
+                                  onChangeText={(text) => this.setState({term1: text})}/></td>
                     </tr>
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bearbeitungsvariante: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.variant}
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.variant}
                                    onChangeText={(text) => this.setState({variant: text})}/>
                         </td>
                     </tr>
                     <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestelldauer: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.orderduration}
-                                   placeholder='TT.MM.JJJJ' onChangeText={(date) => this.setState({orderduration: date})}/></td>
-                    </tr>
-                   <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.ordertime}
-                                   placeholder='SS:MM' onChangeText={(time) => this.setState({ordertime: time})}/></td>
+                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Abholdauer: </label></td>
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.orderduration}
+                                   placeholder=" Zeit in Minuten" onChangeText={(text) => {this.setState({orderduration: text}); this.setState({timervalue: text})}}/>
+                        </td>
                     </tr>
                 </table>
-                        <Text> </Text>
+                        <View style={{marginLeft: 'auto', marginRight: 'auto', width: 200}}>
+                        <Text style={{height: 20}}> </Text>
                         <Button
                             disabled={!this.validateForm()}
-                            title="Reifenbestellung bestätigen"
+                            title="Bestellung bestätigen"
                             onPress={this.handleSubmit}
                         />
                         <Text> </Text>
@@ -511,11 +506,18 @@ export default class NewOrderScreen extends React.Component {
                             title="zurück"
                             onPress={this.changeRace}
                             />
+                        </View>
                     </View>
+                        </View>
                 <View style={{justifyContent: 'flex-start'}}>
+                    <View style={container3}>
+                    <View>
                     <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
-                        Reifensatz aktuell in Bearbeitung
+                        Reifensatz in Bearbeitung
                     </Text>
+                     <Text> </Text>
+                    </View>
+                    <View>
                      <table>
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>
@@ -532,27 +534,26 @@ export default class NewOrderScreen extends React.Component {
                     </tr>
                     <tr>
                         <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.ordertime1}
+                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.ordertime}
                         </td>
                     </tr>
+                    <tr style={{height: 50}}>
+                        <td> </td>
+                        <td></td>
+                    </tr>
                      </table>
-                    <Text style={{height: '10'}}></Text>
-                    <Text style={bigStyle}>
-                        Timer
+                    </View>
+                     <View >
+                    <Text style={{color: 'black', fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
+                        Reifen abholbereit in:
                     </Text>
-                        <Text style={orderHeaderStyle}> Reifenbestellung abholbereit in: </Text>
-                        <TextInput
-                            style={orderTextStyle}
-                            placeholder=" SS:MM:SS"
-                            onChangeText={(time) => this.setState({timervalue: time})}
-                        />
-                        <button style={{width:300}}
-
-                            disabled={!this.validateForm1()}
-                            onClick={this.startTimer}>Start
-                        </button>
+                     <Text> </Text>
+                     </View>
+                        <View style={{textAlign: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
                         <Text style={orderFeedbackStyle}>
-                            Stunden: {this.state.time.h} Minuten: {this.state.time.m} Sekunden: {this.state.time.s} </Text>
+                            {this.state.time.h} Stunden {this.state.time.m} Minuten {this.state.time.s} Sekunden </Text>
+                     </View>
+                </View>
                     </View>
             </View>
 
@@ -566,7 +567,7 @@ export default class NewOrderScreen extends React.Component {
                     </tbody>
                 </table>
                 </div>
-                </View>
+                </ScrollView>
             );
         }
     }

@@ -25,12 +25,11 @@ export default class NewOrderScreen extends React.Component {
             SetInformation:{},
             test_setid:0,
             test_list :[],
-            raceid: 0,
+            raceID: 0,
             tyretype: '',
             tyremix: '',
             term1: '',
             variant: '',
-
             //für Tabelle rechts:
             tyretype1: '',
             tyremix1: '',
@@ -38,17 +37,8 @@ export default class NewOrderScreen extends React.Component {
             ordertime: '',
             orderduration: 0,
             raceList: [],
-
-            time: {},
-            seconds: 1800,
-            timervalue: 0,
         }
-        this.timer = 0;
-        this.startTimer = this.startTimer.bind(this);
-        this.countDown = this.countDown.bind(this);
-        this.fillList= this.fillList.bind(this);
     }
-
 
      async componentDidMount(){
         const accesstoken = await AsyncStorage.getItem('accesstoken');
@@ -82,7 +72,6 @@ export default class NewOrderScreen extends React.Component {
     async getWheelDict(){
        const accesstoken = await AsyncStorage.getItem('accesstoken');
        const raceID = await AsyncStorage.getItem('raceID');
-       //const raceID = await AsyncStorage.getItem('raceID');
        console.log(raceID)
        await get_Dict_WheelOrder(accesstoken, raceID).then(DataTabular => {
                 console.log(DataTabular);
@@ -96,7 +85,6 @@ export default class NewOrderScreen extends React.Component {
     async getDropdownList(){
        const accesstoken = await AsyncStorage.getItem('accesstoken');
        const raceID = await AsyncStorage.getItem('raceID');
-       //const raceID = await AsyncStorage.getItem('raceID');
        console.log(raceID)
        await getDropdown(accesstoken, raceID).then(DataTabular => {
                 console.log(DataTabular);
@@ -204,52 +192,6 @@ export default class NewOrderScreen extends React.Component {
         this.setState({dictButtons:helper});
     }
 
-        secondsToTime(secs)
-        {
-            let hours = Math.floor(secs / (60 * 60));
-            let divisor_for_minutes = secs % (60 * 60);
-            let minutes = Math.floor(divisor_for_minutes / 60);
-            let divisor_for_seconds = divisor_for_minutes % 60;
-            let seconds = Math.ceil(divisor_for_seconds);
-            let obj = {
-                "h": hours,
-                "m": minutes,
-                "s": seconds
-            };
-            return obj;
-        }
-
-        startTimer()
-        {
-            var hour = this.state.timervalue /60 ;
-            var minute = this.state.timervalue % 60;
-            var second = 0;
-            this.state.seconds = this.state.timervalue *60;
-            if (this.state.seconds > 0) {
-                this.timer = setInterval(this.countDown, this.state.seconds);
-            }
-        }
-
-        countDown()
-        {
-            let seconds = this.state.seconds - 1;
-            this.setState({
-                time: this.secondsToTime(seconds),
-                seconds: seconds,
-            });
-            // Check if  zero.
-            if (seconds == 0) {
-                clearInterval(this.timer);
-            }
-        }
-
-        getTime()
-        {
-            var today = new Date();
-            var h = today.getHours();
-            var m = today.getMinutes();
-            return h + ":" + m;
-        }
 
         validateForm()
         {
@@ -277,131 +219,40 @@ export default class NewOrderScreen extends React.Component {
        return this.state.dictButtons.length==6 && this.state.dictButtons[5][0]>0;
         }
 
-
-        fillList(){
-          var date=new Date();
-          let hour= date.getHours();
-          let minutes=date.getMinutes();
-          if((String(hour)).length==1)
-             hour='0'+hour;
-          if((String(minutes)).length==1)
-              minutes='0'+minutes;
-          const time=hour+ ':' + minutes;
-          //alert(time);
-          this.setState({ordertime: time});
-          this.setState({variant1: this.state.variant});
-          this.setState({tyremix1: this.state.tyremix});
-          this.setState({tyretype1: this.state.tyretype});
-          this.setState({timervalue: time});
-          this.startTimer();
-        }
-
         async getWheelData(){
             //this.setState({wheels: []});
             const accesstoken = await AsyncStorage.getItem('accesstoken');
-        const setID = await AsyncStorage.getItem('orderSetID');
-        //const raceID = await AsyncStorage.getItem('raceID');
-        console.log(setID)
-        await getWheelSetInformation(accesstoken, setID).then(DataTabular => {
-            console.log(DataTabular);
-            this.setState({SetInformation: DataTabular});
-            this.setState({wheels: [this.state.SetInformation]});
-            //this.state.wheels.push(this.state.SetInformation);
-        }).catch(function (error) {
-            console.log(error);
-        })
-            console.log(this.state.wheels)
-        }
-
-        handleAirPressureChange = event => {
-            timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheel_cont/change_air_pressWheel', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: event.target.id,
-                    air_press: event.target.value,
-                })
-            })
-            ).then(response => response.json()).then(data => {
-                if (data[1]==200) {
-                    console.log("Pressure Changed")
-                    this.getWheelData().then(() => {return})
-                }
-                else {console.log("failed")}
+            const setID = await AsyncStorage.getItem('orderSetID');
+            //const raceID = await AsyncStorage.getItem('raceID');
+            console.log(setID)
+            await getWheelSetInformation(accesstoken, setID).then(DataTabular => {
+                console.log(DataTabular);
+                this.setState({SetInformation: DataTabular});
+                this.setState({wheels: [this.state.SetInformation]});
+                //this.state.wheels.push(this.state.SetInformation);
             }).catch(function (error) {
                 console.log(error);
             })
-        }
-
-        handleWheelIDChange = event => {
-            timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheel/set_id_tag', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    wheel_id: event.target.id,
-                    wheel_id_tag: event.target.value,
-                })
-            })
-            ).then(response => response.json()).then(data => {
-                if (data[1]==200) {
-                    console.log("ID Changed")
-                    this.getWheelData().then(() => {return})
-                }
-                else {
-                    console.log("failed")
-                }
-            }).catch(function (error) {
-                console.log(error);
-            })
-        }
-
-
-        handleTemp = event => {
-            timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheel/set_temp', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    set_id: event.target.id,
-                    temp_air: event.target.value,
-                })
-            })
-            ).then(response => response.json()).then(data => {
-                if (data[1]==200) {
-                    console.log("temp Changed")
-                    this.getWheelData().then(() => {return})
-                }
-                else {
-                    console.log("failed")
-                }
-            }).catch(function (error) {
-                console.log(error);
-            })
-        }
-
+                console.log(this.state.wheels)
+            }
 
         renderWheelTable(){
             return this.state.wheels.map((wheel,) => {
                 return (
-                    <tr bgcolor='white' style={{border: "solid", borderColor: 'grey',textAlign: "center", padding: '8px', color: 'black', fontFamily: 'arial'}}  key={wheel.setid}>
+                    <tr bgcolor='#696969' style={{border: "solid", borderColor: 'grey',textAlign: "center", padding: '8px', color: 'black', fontFamily: 'arial'}}  key={'irgendwas'}>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.setNr} </td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.status} </td>
                         <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.cat} </td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id ={wheel.subcat} placeholder={wheel.subcat} value={wheel.subcat} /></td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.setid}  placeholder={'Temperatur'} onChange={this.handleTemp} value={wheel.temp}/></td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.fl_id} placeholder={'FL ID'} onChange={this.handleWheelIDChange} value={wheel.fl_wheel_id}/><input id={wheel.fr_id} placeholder={'FR ID'}  onChange={this.handleWheelIDChange} value={wheel.fr_wheel_id}/><input id={wheel.bl_id} placeholder={'BL ID'} onChange={this.handleWheelIDChange} value={wheel.bl_wheel_id}/><input id={wheel.br_id} placeholder={'BR ID '} onChange={this.handleWheelIDChange} value={wheel.br_wheel_id}/></td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}><input id={wheel.fl_id} placeholder={'FL Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.fl_pressure}/><input id={wheel.fr_id} placeholder={'FR Luftdruck'} onChange={this.handleAirPressureChange}  value={wheel.fr_pressure}/><input id={wheel.bl_id} placeholder={'BL Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.bl_pressure}/><input id={wheel.br_id}  placeholder={'BR Luftdruck'} onChange={this.handleAirPressureChange} value={wheel.br_pressure}/></td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>
+                            <input id ={wheel.subcat} placeholder={wheel.subcat} value={wheel.subcat} /></td>
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>
+                            <input id={wheel.setid}  placeholder={'Temperatur'}  value={wheel.temp}/></td>
+
+                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>
+                            <input id={wheel.fl_id} placeholder={'FL Luftdruck'}  value={wheel.fl_pressure}/>
+                            <input id={wheel.fr_id} placeholder={'FR Luftdruck'} value={wheel.fr_pressure}/>
+                            <input id={wheel.bl_id} placeholder={'BL Luftdruck'} value={wheel.bl_pressure}/>
+                            <input id={wheel.br_id}  placeholder={'BR Luftdruck'}value={wheel.br_pressure}/></td>
                     </tr>
                 )
             })
@@ -543,29 +394,20 @@ export default class NewOrderScreen extends React.Component {
                     </tr>
                      </table>
                     </View>
-                     <View >
-                    <Text style={{color: 'black', fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
-                        Reifen abholbereit in:
-                    </Text>
-                     <Text> </Text>
-                     </View>
-                        <View style={{textAlign: 'center', marginLeft: 'auto', marginRight: 'auto'}}>
-                        <Text style={orderFeedbackStyle}>
-                            {this.state.time.h} Stunden {this.state.time.m} Minuten {this.state.time.s} Sekunden </Text>
-                     </View>
+
                 </View>
                     </View>
             </View>
 
                     <div>
                 <h1 id='title'>Reifen bearbeiten</h1>
+                        <tr>
                 <table  id='list_formel'>
                    <tbody>
-                        <tr>
                         {this.renderWheelTable()}
-                        </tr>
                     </tbody>
                 </table>
+                </tr>
                 </div>
                 </ScrollView>
             );
