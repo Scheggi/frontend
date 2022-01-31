@@ -25,9 +25,23 @@ export default class NewFormelScreen extends React.Component {
         }
     }
 
+    async getGroup(){
+         const group = await AsyncStorage.getItem("usergroup");
+         console.log(group)
+        if (group==="Helper"){
+            this.props.navigation.push("HelperNavigator")
+        }
+        if (group==="Ingenieur"){
+            this.props.navigation.push("Nav")
+        }
+        if (group==="Manager"){
+            this.props.navigation.push("Race")
+        }
+    }
+
     changeRace = event => {
         event.preventDefault();
-        this.props.navigation.push('Race');
+        this.getGroup();
     }
 
 
@@ -71,14 +85,14 @@ export default class NewFormelScreen extends React.Component {
         this.props.navigation.push('Astrid');
     }
 
-    changeNiklas = event => {
-        event.preventDefault();
-        this.props.navigation.push('Niklas');
-    }
-
     changeMaen = event => {
         event.preventDefault();
         this.props.navigation.push('Maen');
+    }
+
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
     }
 
 
@@ -210,7 +224,7 @@ export default class NewFormelScreen extends React.Component {
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeRace}>Hauptmenü </button>
                                 </li>
                                 <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewRace}>Renndaten anlegen </button>
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewRace}>Neue Renndaten anlegen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeShowRace}>Renndaten anzeigen </button>
@@ -225,6 +239,9 @@ export default class NewFormelScreen extends React.Component {
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
                                 </li>
                                 <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
+                                </li>
+                                <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
                                 </li>
                                 <li className="nav-item">
@@ -232,9 +249,6 @@ export default class NewFormelScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewUser}>Neues Mitglied anlegen </button>
-                                </li>
-                                <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNiklas}>Niklas </button>
                                 </li>
                                 <br/>
                                 <li className="nav-item">
