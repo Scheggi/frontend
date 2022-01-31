@@ -235,7 +235,7 @@ export default class WheelScreen extends React.Component {
         return this.state.list_formel.map((list_formel, index) => {
             return (
                 <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
-                    key={'tabular2'}>
+                    key={'renderTabelle12'}>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input
                             id={list_formel.setid} placeholder={'Setbezeichnung'} value={list_formel.description}
