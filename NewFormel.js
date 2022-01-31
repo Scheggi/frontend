@@ -11,7 +11,7 @@ export default class NewFormelScreen extends React.Component {
         super(props);
         this.state = {
             raceList:[],
-            raceID: -1,
+            raceID: 0,
             variable1: 273.15,
             variable2: 273.15,
             variable3: 1.013,
@@ -90,13 +90,18 @@ export default class NewFormelScreen extends React.Component {
         this.props.navigation.push('Maen');
     }
 
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
+    }
+
 
     validateForm() {
-        return this.state.raceID!=-1&&this.state.variable1!=""&&this.state.variable2!=""&&this.state.variable3!=""&&this.state.variable4!="";
+        return this.state.raceID!=0&&this.state.variable1!=""&&this.state.variable2!=""&&this.state.variable3!=""&&this.state.variable4!="";
 
     }
     validateForm1(){
-        return this.state.raceID!=-1&&this.state.airTemperature!=""&&this.state.trackTemperature!=""&&this.state.air_pressureFL!=""&&this.state.air_pressureFR!=""&&this.state.air_pressureBL!=""&&this.state.air_pressureBR!="";
+        return this.state.raceID!=0&&this.state.airTemperature!=""&&this.state.trackTemperature!=""&&this.state.air_pressureFL!=""&&this.state.air_pressureFR!=""&&this.state.air_pressureBL!=""&&this.state.air_pressureBR!="";
     }
     handleSubmit = event => {
         event.preventDefault();
@@ -120,7 +125,7 @@ export default class NewFormelScreen extends React.Component {
 
     }
     async sendDataReifenFormel(){
-        const accesstoken = await AsyncStorage.getItem('accesstoken');
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
         this.createReifendruckRequest(accesstoken, this.state.raceID, this.state.variable1, this.state.variable2, this.state.variable3, this.state.variable4, this.state.airTemperature, this.state.trackTemperature, this.state.air_pressureFL, this.state.air_pressureFR, this.state.air_pressureBL, this.state.air_pressureBR)
 
     }
@@ -178,12 +183,13 @@ export default class NewFormelScreen extends React.Component {
 
 
     async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('accesstoken');
-        const raceID = await AsyncStorage.getItem('raceID');
-        this.setState({raceID: raceID});
+        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        this.setState({raceID: 0});
         getRaceList(accesstoken).then(racelistDropdown => {
-            console.log(racelistDropdown);
-            this.setState({raceList: racelistDropdown});
+            let raceListModified=racelistDropdown;
+            raceListModified.unshift({'name': "kein Rennen ausgewählt", 'id':0});
+            console.log(raceListModified);
+            this.setState({raceList: raceListModified});
         }).catch(function (error) {
             console.log(error);
         });
@@ -231,6 +237,9 @@ export default class NewFormelScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
