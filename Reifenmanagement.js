@@ -69,6 +69,10 @@ export default class WheelScreen extends React.Component {
         })
     };
 
+    handleKaltdruck= event =>{
+        return 5;
+    }
+
     save_changes_wheelSet = event => {
         this.changeWheelSet(event.target.id, [[event.target.name, event.target.value]]);
         //iterieren über this.state.list_formel
@@ -150,9 +154,9 @@ export default class WheelScreen extends React.Component {
     }
 
     renderTableHeader() {
-        let header = ['Bezeichnung', 'Datum und Uhrzeit', 'Kategorie', 'Status',
+        let header = ['Bezeichnung und Datum', 'Kategorie', 'Status',
             'Kaltdruck', 'Bleed', 'Heizdaten', 'Warmdruck', 'Target Warmdruck', 'Bleed', 'Reifen ID'];
-        let header2 = ['Bezeichnung', 'Datum und Uhrzeit', 'Heiztemperatur', 'Heizdauer', 'Heizstart', 'Heizende'];
+        let header2 = ['Bezeichnung und Datum', 'Kategorie','Heiztemperatur', 'Heizdauer', 'Heizstart', 'Heizende'];
         let header3 = ['Bezeichnung', 'Datum und Uhrzeit', 'Kategorie', 'Unterkategorie', 'Status', 'Laufzeit'];
         let header4 = ['Bezeichnung und Datum', 'Kaltdruck', 'bleed', 'Kaltdruck final', 'Warmdruck', 'Target Warmdruck ', 'Bleed Warmdruck'];
         //let header = Object.keys(this.state.list_formel[0]);
@@ -208,13 +212,13 @@ export default class WheelScreen extends React.Component {
                         name = {'temp_air'}  onChange={this.save_changes_wheelSet}/></td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input id={list_formel.br_id} placeholder={'Luftdruck BR'} value={list_formel.br_pressure}
-                        name = {'pressure'} className={'br_pressure'} onChange={this.save_changes_wheel}/>
+                        name = {'air_press'} className={'br_pressure'} onChange={this.save_changes_wheel}/>
                         <input id={list_formel.bl_id}  placeholder={'Luftdruck BL'} value={list_formel.bl_pressure}
-                        name = {'pressure'} className={'bl_pressure'} onChange={this.save_changes_wheel}/>
+                        name = {'air_press'} className={'bl_pressure'} onChange={this.save_changes_wheel}/>
                         <input id={list_formel.fr_id} placeholder={'Luftdruck FL'} value={list_formel.fr_pressure}
-                        name = {'pressure'} className={'fr_pressure'} onChange={this.save_changes_wheel}/>
+                        name = {'air_press'} className={'fr_pressure'} onChange={this.save_changes_wheel}/>
                         <input id={list_formel.fl_id} placeholder={'Luftdruck FL'} value={list_formel.fl_pressure}
-                        name = {'pressure'} className={'fl_pressure'} onChange={this.save_changes_wheel}/>
+                        name = {'air_press'} className={'fl_pressure'} onChange={this.save_changes_wheel}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
                         <input id={list_formel.bl_id} placeholder={'ID BL'} value={list_formel.bl_id_scan}
@@ -237,14 +241,14 @@ export default class WheelScreen extends React.Component {
                 <tr bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
                     key={'renderTabelle12'}>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        {'Setbezeichnung'}
                         <input
-                            id={list_formel.setid} placeholder={'Setbezeichnung'} value={list_formel.description}
+                            id={list_formel.setid}  value={list_formel.description}
                             name={'description'} onChange={this.save_changes_wheelSet}/>
-                    </td>
-                    <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
-                        <input
-                            id={list_formel.setid} placeholder={'Datum und Uhrzeit'}
-                            value={list_formel.order_start} name={'order_start'} onChange={this.save_changes_wheelSet}/>
+                        {'Datum und Uhrzeit'}
+                         <input
+                            id={list_formel.setid}
+                            value={list_formel.order_start} />
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input id={list_formel.setid} placeholder={'Kategorie'} value={list_formel.cat} name={'cat'}
@@ -263,19 +267,21 @@ export default class WheelScreen extends React.Component {
                         <input id={list_formel.setid} placeholder={'Felgentemperatur'}
                                value={list_formel.temp_air} name={'temp_air'} onChange={this.save_changes_wheelSet}/>
                         <input id={list_formel.fl_id} placeholder={'Kaltdruck FL'} value={list_formel.fl_pressure}
-                               name={'pressure'} className={'fl_pressure'} onChange={this.save_changes_wheel}/>
+                               name={'air_press'} className={'fl_pressure'} onChange={this.save_changes_wheel}/>
                         <input id={list_formel.fr_id} placeholder={'Kaltdruck FR'} value={list_formel.fr_pressure}
-                               name={'pressure'} className={'fr_pressure'} onChange={this.save_changes_wheel}/>
+                               name={'air_press'} className={'fr_pressure'} onChange={this.save_changes_wheel}/>
                         <input id={list_formel.bl_id} placeholder={'Kaltdruck BL'} value={list_formel.bl_pressure}
-                               name={'pressure'} className={'bl_pressure'} onChange={this.save_changes_wheel}/>
+                               name={'air_press'} className={'bl_pressure'} onChange={this.save_changes_wheel}/>
                         <input id={list_formel.br_id} placeholder={'Kaltdruck BR'} value={list_formel.br_pressure}
-                               name={'pressure'} className={'fl_pressure'} onChange={this.save_changes_wheel}/>
+                               name={'air_press'} className={'br_pressure'} onChange={this.save_changes_wheel}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
-                        <input id={list_formel.setid} placeholder={'bleed initial'}
+                        {'bleed initial'}
+                        <input id={list_formel.setid}
                                value={list_formel.bleed_initial} name={'bleed_initial'}
                                onChange={this.save_changes_wheelSet}/>
-                        <input id={list_formel.setid} placeholder={'bleed hot'} value={list_formel.bleed_hot}
+                        {'bleed hot'}
+                        <input id={list_formel.setid}  value={list_formel.bleed_hot}
                                name={'bleed_hot'} onChange={this.save_changes_wheelSet}/></td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}
                         onChange={this.save_changes_wheelSet}>
@@ -305,10 +311,12 @@ export default class WheelScreen extends React.Component {
                                onChange={this.save_changes_wheel}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
-                        <input id={list_formel.setid} placeholder={'Target vorne'}
+                        {'Target vorne'}
+                        <input id={list_formel.setid}
                                value={list_formel.heat_press_front} name={'heat_press_front'}
                                onChange={this.save_changes_wheelSet}/>
-                        <input id={list_formel.setid} placeholder={'Target hinten'}
+                        {'Target hinten'}
+                        <input id={list_formel.setid}
                                value={list_formel.heat_press_back} name={'heat_press_back'}
                                onChange={this.save_changes_wheelSet}/>
                     </td>
@@ -326,7 +334,7 @@ export default class WheelScreen extends React.Component {
                     </td>
 
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
-                        <input id={list_formel.setid} placeholder={'ID FL'} value={list_formel.fl_id_scan}
+                        <input id={list_formel.fl_id} placeholder={'ID FL'} value={list_formel.fl_id_scan}
                                name={'id_scan'} className={'fl_id_scan'} onChange={this.save_changes_wheel}/>
                         <input id={list_formel.fr_id} placeholder={'ID FR'} value={list_formel.fr_id_scan}
                                name={'id_scan'} className={'fr_id_scan'} onChange={this.save_changes_wheel}/>
@@ -347,16 +355,25 @@ export default class WheelScreen extends React.Component {
                     style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}
                     key={'2Tabelle'}>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        {'Setbezeichnung'}
                         <input
-                            id={list_formel.setid} placeholder={'Setbezeichnung'} value={list_formel.description}
-                        name={'description'} onChange={this.save_changes_wheelSet} />
+                            id={list_formel.setid}  value={list_formel.description}
+                            name={'description'} onChange={this.save_changes_wheelSet}/>
+                        {'Datum und Uhrzeit'}
+                         <input
+                            id={list_formel.setid}
+                            value={list_formel.order_start} />
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
-                        <input
-                            id={list_formel.setid} placeholder={'Datum und Uhrzeit'}
-                            value={list_formel.order_start}  /></td>
+                        {'Kategorie'}
+                        <input id={list_formel.setid}  value={list_formel.cat} name={'cat'}
+                               onChange={this.save_changes_wheelSet}/>
+                        {'Unterkategorie'}
+                        <input id={list_formel.setid} placeholder={'Unterkategorie'} value={list_formel.subcat}
+                               name={'subcat'} onChange={this.save_changes_wheelSet}/>
+                    </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
-                        <input id={list_formel.setid} placeholder={'Heiztemperatur'} value={list_formel.temp_heat}/>
+                        <input id={list_formel.setid} placeholder={'Heiztemperatur'} value={list_formel.temp_heat} name={'temp_heat'} onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
                         <input id={list_formel.setid} placeholder={'Heizdauer'} value={list_formel.heat_duration}
@@ -374,6 +391,7 @@ export default class WheelScreen extends React.Component {
 
         })
 
+
     }
 
     renderTableData3() {
@@ -385,7 +403,7 @@ export default class WheelScreen extends React.Component {
                     key={'tabelle3'}>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input
-                            id={list_formel.setid} placeholder={'Setbezeichnung'} value={list_formel.description}/>
+                            id={list_formel.setid} placeholder={'Setbezeichnung'} value={list_formel.description} name={'description'} onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input
@@ -396,7 +414,7 @@ export default class WheelScreen extends React.Component {
                         name={'cat'} onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
-                        <input id={list_formel.setid} placeholder={'Unterkategorie'} value={list_formel.subcat}/>
+                        <input id={list_formel.setid} placeholder={'Unterkategorie'} value={list_formel.subcat} name={'subcat'} onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input
@@ -436,15 +454,15 @@ export default class WheelScreen extends React.Component {
 
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input id={list_formel.setid} placeholder={'Felgentemperatur'}
-                               value={list_formel.temp_air} name={'temp_air'}  onChange={this.save_changes_wheel} />
+                               value={list_formel.temp_air} name={'temp_air'}  onChange={this.save_changes_wheelSet} />
                         <input id={list_formel.fl_id} placeholder={'Kaltdruck FL'} value={list_formel.fl_pressure}
-                        name={'pressure'} className={'fl_pressure'}  onChange={this.save_changes_wheel}/>
+                        name={'air_press'} className={'fl_pressure'}  onChange={this.save_changes_wheel}/>
                         <input id={list_formel.fr_id} placeholder={'Kaltdruck FR'} value={list_formel.fr_pressure}
-                        name={'pressure'} className={'fr_pressure'}  onChange={this.save_changes_wheel}/>
+                        name={'air_press'} className={'fr_pressure'}  onChange={this.save_changes_wheel}/>
                         <input id={list_formel.bl_id} placeholder={'Kaltdruck BL'} value={list_formel.bl_pressure}
-                        name={'pressure'} className={'bl_pressure'}  onChange={this.save_changes_wheel}/>
+                        name={'air_press'} className={'bl_pressure'}  onChange={this.save_changes_wheel}/>
                         <input id={list_formel.br_id} placeholder={'Kaltdruck BR'} value={list_formel.br_pressure}
-                        name={'pressure'} className={'br_pressure'}  onChange={this.save_changes_wheel}/>
+                        name={'air_press'} className={'br_pressure'}  onChange={this.save_changes_wheel}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
                         {'bleed initial'}
@@ -457,22 +475,22 @@ export default class WheelScreen extends React.Component {
                     </td>
 
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
-                        <input id={list_formel.setid} placeholder={'Kaltdruck FL'} value={list_formel.fl_pressure}/>
-                        <input id={list_formel.setid} placeholder={'Kaltdruck FR'} value={list_formel.fr_pressure}/>
-                        <input id={list_formel.setid} placeholder={'Kaltdruck BL'} value={list_formel.bl_pressure}/>
-                        <input id={list_formel.setid} placeholder={'Kaltdruck BR'} value={list_formel.br_pressure}/>
+                        <input  id={list_formel.fl_id} placeholder={'Kaltdruck final FL'} value={this.handleKaltdruck()}/>
+                        <input  id={list_formel.fl_id} placeholder={'Kaltdruck final FR'} value={list_formel.fr_pressure} value={this.handleKaltdruck()}/>
+                        <input  id={list_formel.fl_id} placeholder={'Kaltdruck final BL'} value={list_formel.bl_pressure} value={this.handleKaltdruck()}/>
+                        <input  id={list_formel.fl_id} placeholder={'Kaltdruck final BR'} value={list_formel.br_pressure} value={this.handleKaltdruck()}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         <input id={list_formel.setid} placeholder={'Zeit der Messung'}
-                               value={list_formel.heat_press_timestamp}/>
-                        <input id={list_formel.setid} placeholder={'Warmdruck FL'}
-                               value={list_formel.fl_hot_air_press}/>
-                        <input id={list_formel.setid} placeholder={'Warmdruck FR'}
-                               value={list_formel.fr_hot_air_press}/>
-                        <input id={list_formel.setid} placeholder={'Warmdruck BL'}
-                               value={list_formel.bl_hot_air_press}/>
-                        <input id={list_formel.setid} placeholder={'Warmdruck BR'}
-                               value={list_formel.br_hot_air_press}/>
+                               value={list_formel.heat_press_timestamp} name={'heat_press_timestamp'} onChange={this.save_changes_wheelSet}/>
+                        <input id={list_formel.fl_id} placeholder={'Warmdruck FL'}
+                               value={list_formel.fl_hot_air_press} name={'hot_air_press'} className={'fl_hot_air_press'} onChange={this.save_changes_wheel}/>
+                        <input id={list_formel.fr_id} placeholder={'Warmdruck FR'}
+                               value={list_formel.fr_hot_air_press} name={'hot_air_press'} className={'fr_hot_air_press'} onChange={this.save_changes_wheel}/>
+                        <input id={list_formel.bl_id} placeholder={'Warmdruck BL'}
+                               value={list_formel.bl_hot_air_press} name={'hot_air_press'} className={'bl_hot_air_press'} onChange={this.save_changes_wheel}/>
+                        <input id={list_formel.br_id} placeholder={'Warmdruck BR'}
+                               value={list_formel.br_hot_air_press} name={'hot_air_press'} className={'br_hot_air_press'} onChange={this.save_changes_wheel}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
                         {'Target vorne'}
@@ -483,11 +501,11 @@ export default class WheelScreen extends React.Component {
                                value={list_formel.heat_press_back} name={'heat_press_back'} onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
-                        <input id={list_formel.setid} placeholder={'nicht gebleedet'} value={list_formel.gebleedet} />
-                        <input id={list_formel.setid} placeholder={'Bleed FL'} value={list_formel.fl_bleed_press}/>
-                        <input id={list_formel.setid} placeholder={'Bleed FR'} value={list_formel.fr_bleed_press}/>
-                        <input id={list_formel.setid} placeholder={'Bleed BL'} value={list_formel.bl_bleed_press}/>
-                        <input id={list_formel.setid} placeholder={'Bleed BR'} value={list_formel.br_bleed_press}/>
+                        <input id={list_formel.setid} placeholder={'nicht gebleedet'} value={list_formel.gebleedet} name={'gebleedet'} onChange={this.save_changes_wheelSet} />
+                        <input id={list_formel.fl_id} placeholder={'Bleed FL'} value={list_formel.fl_bleed_press} name={'bleed_press'} className={'fl_bleed_press'} onChange={this.save_changes_wheel}/>
+                        <input id={list_formel.fr_id} placeholder={'Bleed FR'} value={list_formel.fr_bleed_press} name={'bleed_press'} className={'fr_bleed_press'} onChange={this.save_changes_wheel}/>
+                        <input id={list_formel.bl_id} placeholder={'Bleed BL'} value={list_formel.bl_bleed_press} name={'bleed_press'} className={'bl_bleed_press'} onChange={this.save_changes_wheel}/>
+                        <input id={list_formel.br_id} placeholder={'Bleed BR'} value={list_formel.br_bleed_press} name={'bleed_press'} className={'br_bleed_press'} onChange={this.save_changes_wheel}/>
                     </td>
 
                 </tr>
@@ -507,14 +525,11 @@ export default class WheelScreen extends React.Component {
         ));
         return (
             <View style={{overflowY: 'scroll', overflowX: 'scroll', flex: 1}}>
-                <h1>{this.state.selectedView}</h1>
                 <label style={{fontSize: 16, fontFamily: 'arial', textAlign: 'center'}}> Ansicht: <select
                     value={this.state.selectedView} onChange={this.changeView}>
                     {optionTemplate}
                 </select>
                 </label>
-                <Text style={{height: 20}}>Dropdownliste, Set auswählen von Rennen</Text>
-                <Text style={{height: 20}}>Tabelle, alle Attribute des Sets in editierbarer Tabelle</Text>
 
 
                 <div>
