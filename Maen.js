@@ -143,6 +143,11 @@ async getGroup(){
         this.props.navigation.push('NewRace');
     }
 
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
+    }
+
     handleSubmit = event =>{
         event.preventDefault();
         this.getWeatherData();
@@ -247,6 +252,9 @@ async getGroup(){
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen</button>

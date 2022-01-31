@@ -117,6 +117,10 @@ export default class AstridScreen extends React.Component {
         this.props.navigation.push('Maen');
     }
 
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
+    }
 
     validateForm() {
        return this.state.variable1!=""&&this.state.raceID!=0&&this.state.setID!=0&&this.state.airTemperatureUpdate!="";
@@ -523,6 +527,9 @@ export default class AstridScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>

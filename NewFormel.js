@@ -90,6 +90,10 @@ export default class NewFormelScreen extends React.Component {
         this.props.navigation.push('Maen');
     }
 
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
+    }
 
     validateForm() {
         return this.state.raceID!=-1&&this.state.variable1!=""&&this.state.variable2!=""&&this.state.variable3!=""&&this.state.variable4!="";
@@ -231,6 +235,9 @@ export default class NewFormelScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
