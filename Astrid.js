@@ -117,8 +117,12 @@ export default class AstridScreen extends React.Component {
         this.props.navigation.push('Maen');
     }
 
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
+    }
 
-    validateForm() {
+     validateForm() {
        return this.state.variable1!=""&&this.state.raceID!=0&&this.state.setID!=0&&this.state.airTemperatureUpdate!="";
     }
     validateForm1(){
@@ -525,6 +529,9 @@ export default class AstridScreen extends React.Component {
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
                                 </li>
                                 <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
+                                </li>
+                                <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
                                 </li>
                                 <li className="nav-item">
@@ -553,7 +560,6 @@ export default class AstridScreen extends React.Component {
                   <select  id='option' value={this.state.id} onChange={this.getRaceID}>{optionTemplate1}</select>
               </label>
          </div>
-         <br/>
          <br/>
          <div className='input-group'>
              <label className='input-group-text' style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}> Reifenset auswählen: &nbsp; <select id='option' value={this.state.setID} onChange={this.getSetID}>
