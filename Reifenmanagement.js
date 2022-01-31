@@ -489,10 +489,8 @@ export default class WheelScreen extends React.Component {
                         <input id={list_formel.setid} placeholder={'Bleed BL'} value={list_formel.bl_bleed_press}/>
                         <input id={list_formel.setid} placeholder={'Bleed BR'} value={list_formel.br_bleed_press}/>
                     </td>
-
                 </tr>
             )
-
         })
     }
 
