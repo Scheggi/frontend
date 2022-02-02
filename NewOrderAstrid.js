@@ -48,7 +48,7 @@ export default class NewOrderScreen extends React.Component {
      async componentDidMount(){
         await AsyncStorage.removeItem('setID');
         await AsyncStorage.removeItem('orderSetID')
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         getDropdown(accesstoken,raceID).then(racelistDropdown => {
             console.log(racelistDropdown);
@@ -78,7 +78,7 @@ export default class NewOrderScreen extends React.Component {
 
     //get Wheel Data
     async getWheelDict(){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const accesstoken = await AsyncStorage.getItem('accesstoken');
        const raceID = await AsyncStorage.getItem('raceID');
        //const raceID = await AsyncStorage.getItem('raceID');
        console.log(raceID)
@@ -92,7 +92,7 @@ export default class NewOrderScreen extends React.Component {
     }
     // get Dropdown list free,order,used
     async getDropdownList(){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const accesstoken = await AsyncStorage.getItem('accesstoken');
        const raceID = await AsyncStorage.getItem('raceID');
        //const raceID = await AsyncStorage.getItem('raceID');
        console.log(raceID)
@@ -312,7 +312,7 @@ export default class NewOrderScreen extends React.Component {
 
         async getWheelData(){
             //this.setState({wheels: []});
-            const accesstoken = await AsyncStorage.getItem('acesstoken');
+            const accesstoken = await AsyncStorage.getItem('accesstoken');
         const setID = await AsyncStorage.getItem('orderSetID');
         //const raceID = await AsyncStorage.getItem('raceID');
         console.log(setID)
