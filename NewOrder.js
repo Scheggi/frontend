@@ -125,18 +125,16 @@ export default class NewOrderScreen extends React.Component {
 
 
     save_order = event =>{
-         console.log(this.state.setData)
-         this.state.setData.forEach(function (element,index){if(element.setid==event.target.id){copyArray[index][event.target.name]=event.target.value}});
-         changeSetData(this.state.setID)
-
-
+         console.log(this.state.setData[0])
+         //this.state.setData.forEach(function (element,index){if(element.setid==event.target.id){copyArray[index][event.target.name]=event.target.value}});
+         changeSetData(this.state.setData[0])
     }
       // end save change
 
 
      renderTableHeader(number) {
          let header = ['Slicks Cold', 'Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'];
-         let headerOrder = ['Art', 'Bestellung', 'Status'];
+         let headerOrder = ['Art', 'Bestellung','Abholdauer', 'Status'];
          let headerOrder2 = ['Kaltdruck', 'Bleed', 'Heizdaten', 'Warmdruck', 'Target Warmdruck', 'Bleed', 'Reifen ID'];
          if (number ==1){
              return header.map((key, index) => {
@@ -289,6 +287,7 @@ export default class NewOrderScreen extends React.Component {
                            value={setData.variant} name ={'variant'} onChange={this.change_state_in_tabular_set}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 100, padding: '8px'}}>
+                        {'automatisch '}
                         <input
                             id={setData.setid} placeholder={'Datum und Uhrzeit'}
                             value={setData.order_start} name={'order_start'} onChange={this.change_state_in_tabular_set}/>
@@ -323,7 +322,7 @@ export default class NewOrderScreen extends React.Component {
                         <input id={setData.bl_id} placeholder={'Kaltdruck BL'} value={setData.bl_pressure}
                                className={'pressure'} name={'bl_pressure'} onChange={this.change_state_in_tabular_set}/>
                         <input id={setData.br_id} placeholder={'Kaltdruck BR'} value={setData.br_pressure}
-                               className={'pressure'} name={'fl_pressure'} onChange={this.change_state_in_tabular_set}/>
+                               className={'pressure'} name={'br_pressure'} onChange={this.change_state_in_tabular_set}/>
                     </td>
                     <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>
                         <input id={setData.setid} placeholder={'bleed initial'}
@@ -429,7 +428,7 @@ export default class NewOrderScreen extends React.Component {
                 </div>
                 <Button
                         title="Bestellung abschicken"
-                        onPress={this.changeRace}
+                        onPress={this.save_order}
                 />
 
 

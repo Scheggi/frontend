@@ -491,7 +491,6 @@ export default class WheelScreen extends React.Component {
                     </td>
                 </tr>
             )
-
         })
     }
 
