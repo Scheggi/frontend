@@ -43,7 +43,7 @@ export default class NewOrderScreen extends React.Component {
             console.log(error);
         })
     };
-
+    
 
     handle_choosen_order = event =>{
         console.log(event)
@@ -160,7 +160,7 @@ export default class NewOrderScreen extends React.Component {
              })
          }
      }
-
+     
      renderTableHeaderChoosen() {
          let header = ['Slicks Cold', 'Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'];
          return header.map((key, index) => {
@@ -270,7 +270,7 @@ export default class NewOrderScreen extends React.Component {
                 </tr>
             )})
      }
-
+     
      renderTableData() {
         console.log(this.state.setData)
         return this.state.setData.map((setData, index) => {

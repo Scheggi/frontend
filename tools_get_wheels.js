@@ -121,6 +121,44 @@ function getDropdown(accesstoken,raceID) {
 }
 
 
+function getOrderDropdown(accesstoken,raceID) {
+  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/OrderWheelDropdown', {
+      method: 'POST',
+      headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+          access_token: accesstoken,
+          raceID:raceID,
+      })
+      })).then(response => response.json()).then(data => {
+              console.log(data);
+              if ('msg' in data){
+                            if (data['msg'] === 'Token has expired'){
+                                refreshToken().then( token => {
+                                        getOrderDropdown(token,raceID);
+                                    }
+                                ).catch( function (error) {
+                                        console.log('Refresh failed');
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  console.log('Return Data');
+                  console.log(data[0].data);
+                  return data[0].data;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
 //get all info
 ///wheel_cont/getWheels_withWheel
 // geht set informarion
@@ -653,4 +691,4 @@ async function refreshToken() {
   )
 }
 
-export {getDropdown,get_Dict_WheelOrder,getWheelSetInformation,getWheelInformations,createReifendruckRequest,getReifendruckDetails }
+export {getDropdown,getOrderDropdown,get_Dict_WheelOrder,getWheelSetInformation,getWheelInformations,createReifendruckRequest,getReifendruckDetails }
