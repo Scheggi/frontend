@@ -477,10 +477,8 @@ export default class WheelScreen extends React.Component {
                         <input id={list_formel.setid} placeholder={'Heizstart'} value={list_formel.heat_start}/>
                         <input type="button" id={list_formel.setid} value="HEIZEN STARTEN" onClick={this.handleHeatStart}/>
                     </td>
-
                     <td>
                         <input id={list_formel.setid} placeholder={'Heizende'} value={list_formel.heat_end}/></td>
-
                 </tr>
             )
 

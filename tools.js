@@ -76,6 +76,49 @@ async function createNewRaceRequest(accesstoken,type,place,date) {
 
 
 
+async function saveChangesOrderSet(accesstoken,type,place,date) {
+    console.log([accesstoken,type,place,date]);
+    return await timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/race/create', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    access_token:accesstoken,
+                    type:type,
+                    place:place,
+                    date:date,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                console.log(data)
+                if ("msg" in data){
+                            if (data["msg"] === "Token has expired"){
+                                refreshToken().then( token => {
+                                    createNewRaceRequest(token,type,place,date);
+                                    }
+                                ).catch( function (error) {
+                                        console.log("Refresh failed");
+                                        console.log(error);
+                                    }
+                                );
+                                return [];
+                            }
+                        }
+              else{
+                  return data[0].id;
+              }
+              return [];
+      }).catch(function (error) {
+            console.log(error);
+            return [];
+        })
+}
+
+
+
 async function sendNewWeatherRequest(id,temp_air,temp_ground,weather_des) {
    timeoutPromise(2000, fetch(
         'https://api.race24.cloud/user/weather/create', {
