@@ -25,6 +25,7 @@ export default class WheelScreen extends React.Component {
             }, {'name': "Kalt- und Warmdruckwerte", 'id': 4}],
             selectedView: 1,
             heat_start: 0,
+            raceList: []
         }
     }
 
@@ -103,7 +104,7 @@ export default class WheelScreen extends React.Component {
         console.log(event.target.className)
         const wheel_id = event.target.className.toString().substring(0,2)+'_id'
         console.log(wheel_id)
-        this.state.list_formel.forEach( function (element,index){if(element.wheel_id==event.target.id){copyArray[index][event.target.className]=event.target.value}});
+        this.state.list_formel.forEach( function (element,index){if(element[wheel_id]==event.target.id){copyArray[index][event.target.className]=event.target.value}});
         this.setState({list_formel:copyArray});
         console.log(this.state.list_formel);
     };
@@ -134,9 +135,6 @@ export default class WheelScreen extends React.Component {
         })
     };
 
-    handleKaltdruck= event =>{
-        return 5;
-    }
 
     save_changes_wheelSet = event => {
         this.changeWheelSet(event.target.id, [[event.target.name, event.target.value]]);
@@ -201,6 +199,49 @@ export default class WheelScreen extends React.Component {
     }
     // end save change
 
+    //Berechnung Bleed Warmdruck
+    handleBleed = (position, id) =>{
+         let zahl="";
+         const wheel_id = position.toString()+'_id';
+         const wheel_hot_air_press = position+'_hot_air_press';
+         const wheel_frontOrback= position.substring(0,1);
+         let difference=0;
+         let hot_air_press="";
+         let heat_press="";
+         if(wheel_frontOrback=='f'){
+                 this.state.list_formel.forEach( function (element,index){
+                     if(element[wheel_id]==id){
+                     hot_air_press = element[wheel_hot_air_press];
+                     heat_press=element['heat_press_front'];
+                     if(hot_air_press!=null&&heat_press!=null){
+                         difference=hot_air_press-heat_press;
+                         zahl= difference;}
+                         else {
+                         zahl= "";
+                     }
+                 }
+                 });
+             }
+             else if(wheel_frontOrback=='b'){
+                  this.state.list_formel.forEach( function (element,index){
+                     if(element[wheel_id]==id){
+                     hot_air_press = element[wheel_hot_air_press];
+                     heat_press=element['heat_press_back'];
+                     if(hot_air_press!=null&&heat_press!=null){
+                         difference=hot_air_press-heat_press;
+                         zahl= difference;}
+                         else {
+                         zahl= "";
+                     }
+                 }
+                 });
+
+
+             }
+             return zahl;
+
+    }
+
     async getTabularData() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
@@ -223,7 +264,7 @@ export default class WheelScreen extends React.Component {
             'Kaltdruck', 'Bleed', 'Heizdaten', 'Warmdruck', 'Target Warmdruck', 'Bleed', 'Reifen ID'];
         let header2 = ['Bezeichnung und Datum', 'Kategorie','Heiztemperatur', 'Heizdauer', 'Heizstart', 'Heizende'];
         let header3 = ['Bezeichnung', 'Datum und Uhrzeit', 'Kategorie', 'Unterkategorie', 'Status', 'Laufzeit'];
-        let header4 = ['Bezeichnung und Datum', 'Kaltdruck', 'bleed', 'Kaltdruck final', 'Warmdruck', 'Target Warmdruck ', 'Bleed Warmdruck'];
+        let header4 = ['Bezeichnung und Datum', 'Kaltdruck', 'bleed',  'Warmdruck', 'Target Warmdruck ', 'Bleed Warmdruck'];
         //let header = Object.keys(this.state.list_formel[0]);
         if (this.state.selectedView == 1) {
             return header.map((key, index) => {
@@ -326,13 +367,13 @@ export default class WheelScreen extends React.Component {
                         <input id={list_formel.setid} placeholder={'Felgentemperatur'}
                                value={list_formel.temp_air} name={'temp_air'} onChange={this.save_changes_wheelSet}/>
                         <input id={list_formel.fl_id} placeholder={'Kaltdruck FL'} value={list_formel.fl_pressure}
-                               name={'air_press'} className={'fl_pressure'} onChange={this.save_changes_wheel}/>
+                               name={'pressure'} className={'fl_pressure'} onChange={this.save_changes_wheel}/>
                         <input id={list_formel.fr_id} placeholder={'Kaltdruck FR'} value={list_formel.fr_pressure}
-                               name={'air_press'} className={'fr_pressure'} onChange={this.save_changes_wheel}/>
+                               name={'pressure'} className={'fr_pressure'} onChange={this.save_changes_wheel}/>
                         <input id={list_formel.bl_id} placeholder={'Kaltdruck BL'} value={list_formel.bl_pressure}
-                               name={'air_press'} className={'bl_pressure'} onChange={this.save_changes_wheel}/>
+                               name={'pressure'} className={'bl_pressure'} onChange={this.save_changes_wheel}/>
                         <input id={list_formel.br_id} placeholder={'Kaltdruck BR'} value={list_formel.br_pressure}
-                               name={'air_press'} className={'br_pressure'} onChange={this.save_changes_wheel}/>
+                               name={'pressure'} className={'br_pressure'} onChange={this.save_changes_wheel}/>
                     </td>
                     <td>
                         {'bleed initial'}
@@ -380,16 +421,14 @@ export default class WheelScreen extends React.Component {
                                onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td>
-                        <input id={list_formel.setid} placeholder={'nicht gebleedet'} value={list_formel.gebleedet}
-                               name={'gebleedet'} onChange={this.save_changes_wheelSet}/>
-                        <input id={list_formel.fl_id} placeholder={'Bleed FL'} value={list_formel.fl_bleed_press}
-                               name={'bleed_press'} className={'fl_bleed_press'}  onChange={this.save_changes_wheel}/>
-                        <input id={list_formel.fr_id} placeholder={'Bleed FR'} value={list_formel.fr_bleed_press}
-                               name={'bleed_press'} className={'fr_bleed_press'}  onChange={this.save_changes_wheel}/>
-                        <input id={list_formel.bl_id} placeholder={'Bleed BL'} value={list_formel.bl_bleed_press}
-                               name={'bleed_press'} className={'bl_bleed_press'}  onChange={this.save_changes_wheel}/>
-                        <input id={list_formel.br_id} placeholder={'Bleed BR'} value={list_formel.br_bleed_press}
-                               name={'bleed_press'} className={'br_bleed_press'} onChange={this.save_changes_wheel}/>
+                       <input id={list_formel.setid} placeholder={'nicht gebleedet'} value={list_formel.gebleedet} name={'gebleeded'} onChange={this.save_changes_wheelSet} />
+                        {'Bleed FL: '}{this.handleBleed('fl',list_formel.fl_id )}
+                         <br></br>
+                         {'Bleed FR: '}{this.handleBleed('fr',list_formel.fr_id )}
+                         <br></br>
+                         {'Bleed BL: '}{this.handleBleed('bl',list_formel.bl_id )}
+                         <br></br>
+                         {'Bleed BR: '}{this.handleBleed('br',list_formel.br_id )}
                     </td>
 
                     <td>
@@ -510,13 +549,13 @@ export default class WheelScreen extends React.Component {
                         <input id={list_formel.setid} placeholder={'Felgentemperatur'}
                                value={list_formel.temp_air} name={'temp_air'}  onChange={this.save_changes_wheelSet} />
                         <input id={list_formel.fl_id} placeholder={'Kaltdruck FL'} value={list_formel.fl_pressure}
-                        name={'air_press'} className={'fl_pressure'}  onChange={this.save_changes_wheel}/>
+                        name={'pressure'} className={'fl_pressure'}  onChange={this.save_changes_wheel}/>
                         <input id={list_formel.fr_id} placeholder={'Kaltdruck FR'} value={list_formel.fr_pressure}
-                        name={'air_press'} className={'fr_pressure'}  onChange={this.save_changes_wheel}/>
+                        name={'pressure'} className={'fr_pressure'}  onChange={this.save_changes_wheel}/>
                         <input id={list_formel.bl_id} placeholder={'Kaltdruck BL'} value={list_formel.bl_pressure}
-                        name={'air_press'} className={'bl_pressure'}  onChange={this.save_changes_wheel}/>
+                        name={'pressure'} className={'bl_pressure'}  onChange={this.save_changes_wheel}/>
                         <input id={list_formel.br_id} placeholder={'Kaltdruck BR'} value={list_formel.br_pressure}
-                        name={'air_press'} className={'br_pressure'}  onChange={this.save_changes_wheel}/>
+                        name={'pressure'} className={'br_pressure'}  onChange={this.save_changes_wheel}/>
                     </td>
                     <td>
                         {'bleed initial'}
@@ -526,13 +565,6 @@ export default class WheelScreen extends React.Component {
                     {'bleed hot'}
                      <input id={list_formel.setid} placeholder={'bleed hot'} value={list_formel.bleed_hot}
                     name={'bleed_hot'} onChange={this.save_changes_wheelSet}/>
-                    </td>
-
-                    <td>
-                        <input  id={list_formel.fl_id} placeholder={'Kaltdruck final FL'} value={this.handleKaltdruck()}/>
-                        <input  id={list_formel.fl_id} placeholder={'Kaltdruck final FR'} value={list_formel.fr_pressure} value={this.handleKaltdruck()}/>
-                        <input  id={list_formel.fl_id} placeholder={'Kaltdruck final BL'} value={list_formel.bl_pressure} value={this.handleKaltdruck()}/>
-                        <input  id={list_formel.fl_id} placeholder={'Kaltdruck final BR'} value={list_formel.br_pressure} value={this.handleKaltdruck()}/>
                     </td>
                     <td>
                         <input id={list_formel.setid} placeholder={'Zeit der Messung'}
@@ -555,11 +587,14 @@ export default class WheelScreen extends React.Component {
                                value={list_formel.heat_press_back} name={'heat_press_back'} onChange={this.save_changes_wheelSet}/>
                     </td>
                     <td>
-                        <input id={list_formel.setid} placeholder={'nicht gebleedet'} value={list_formel.gebleedet} name={'gebleedet'} onChange={this.save_changes_wheelSet} />
-                        <input id={list_formel.fl_id} placeholder={'Bleed FL'} value={list_formel.fl_bleed_press} name={'bleed_press'} className={'fl_bleed_press'} onChange={this.save_changes_wheel}/>
-                        <input id={list_formel.fr_id} placeholder={'Bleed FR'} value={list_formel.fr_bleed_press} name={'bleed_press'} className={'fr_bleed_press'} onChange={this.save_changes_wheel}/>
-                        <input id={list_formel.bl_id} placeholder={'Bleed BL'} value={list_formel.bl_bleed_press} name={'bleed_press'} className={'bl_bleed_press'} onChange={this.save_changes_wheel}/>
-                        <input id={list_formel.br_id} placeholder={'Bleed BR'} value={list_formel.br_bleed_press} name={'bleed_press'} className={'br_bleed_press'} onChange={this.save_changes_wheel}/>
+                        <input id={list_formel.setid} placeholder={'nicht gebleedet'} value={list_formel.gebleedet} name={'gebleeded'} onChange={this.save_changes_wheelSet} />
+                       {'Bleed FL: '}{this.handleBleed('fl',list_formel.fl_id )}
+                        <br></br>
+                         {'Bleed FR: '}{this.handleBleed('fr',list_formel.fr_id )}
+                         <br></br>
+                         {'Bleed BL: '}{this.handleBleed('bl',list_formel.bl_id )}
+                         <br></br>
+                         {'Bleed BR: '}{this.handleBleed('br',list_formel.br_id )}
                     </td>
 
                 </tr>
@@ -577,6 +612,10 @@ export default class WheelScreen extends React.Component {
         let optionTemplate = this.state.dataViews.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
         ));
+        let optionTemplate1 = this.state.raceList.map(v => (
+            <option value={v.id} key={v.id}>{v.name}</option>
+        ));
+
         return (
            <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
          <nav className="navbar navbar-light" style={{backgroundColor: '#d0d7de'}}>
@@ -627,11 +666,18 @@ export default class WheelScreen extends React.Component {
                         </div>
                     </div>
                 </nav>
-               <br/>
-               <div className="container" style={{marginLeft: 'auto', marginRight: 'auto'}}>
+               <div style={{marginLeft: 'auto', marginRight: 'auto'}}>
                <br/>
                <h1 className="display-4" style={{color: '#d0d7de', textAlign: 'center'}} >Angelegte Reifensets</h1>
                <br/>
+               <div className='input-group'>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}> Rennen auswählen: &nbsp; <select
+                        id='option' value={this.state.id} onChange={this.getRaceID}>
+                        {optionTemplate1}
+                    </select>
+                    </label>
+                </div>
+                <br/>
                <div className='input-group'>
               <label className="input-group-text" style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}>Ansicht auswählen: &nbsp;
                   <select  id='option' value={this.state.selectedView} onChange={this.changeView}>{optionTemplate}</select>
@@ -639,9 +685,9 @@ export default class WheelScreen extends React.Component {
                </div>
                <br/>
                <br/>
-               <div>
+               <div >
                <table  id='list_formel' className="table table-striped table-hover table-bordered"
-                          style={{backgroundColor: '#d0d7de', verticalAlign: 'middle'}}>
+                          style={{backgroundColor: '#d0d7de', verticalAlign: 'middle', width: 500}}>
                         <tbody>
                         {this.renderTableHeader()}
                         {this.state.selectedView == 1 && this.renderTableData()}
