@@ -61,7 +61,7 @@ export default class MaenScreen extends React.Component {
         this.getWheelsStart=this.getWheelsStart.bind(this);
     }
    async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         getRaceList(accesstoken).then(racelistDropdown => {
             console.log(racelistDropdown);
             this.setState({raceList: racelistDropdown})
@@ -168,7 +168,7 @@ async getGroup(){
     }
 
     async getWeatherData(){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const accesstoken = await AsyncStorage.getItem('accesstoken');
        //const raceID = await AsyncStorage.getItem('raceID');
         const raceID= this.state.raceID;
        console.log(raceID)
@@ -183,7 +183,7 @@ async getGroup(){
     }
 
     async getWheelsStart(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         AsyncStorage.setItem('raceID', this.state.raceID);
         const raceID = await AsyncStorage.getItem('raceID');
         console.log(raceID)
@@ -254,7 +254,7 @@ async getGroup(){
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen</button>
                                 </li>
                                 <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen</button>

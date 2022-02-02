@@ -117,7 +117,7 @@ export default class ShowRaceScreen extends React.Component {
     }
 
     async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         getRaceList(accesstoken).then(racelistDropdown => {
             console.log(racelistDropdown);
             this.setState({raceList: racelistDropdown})
@@ -134,7 +134,7 @@ export default class ShowRaceScreen extends React.Component {
     }
 
     async getRaceDetails() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         AsyncStorage.setItem('raceID', this.state.raceID);
         const raceID = await AsyncStorage.getItem('raceID');
         console.log([raceID])
@@ -154,7 +154,7 @@ export default class ShowRaceScreen extends React.Component {
 
     //get ReifenData
     async getWheelsStart() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         AsyncStorage.setItem('raceID', this.state.raceID);
         const raceID = await AsyncStorage.getItem('raceID');
         console.log(raceID)
@@ -276,6 +276,12 @@ export default class ShowRaceScreen extends React.Component {
                     </select>
                     </label>
                 </div>
+                <br/>
+                <button type='button' className='btn btn-primary' onClick={this.Action}
+                        style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                    RENNDATEN ANZEIGEN
+                </button>
+                <br/>
                 <div>
                     <br/>
                     <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Rennen</h3>
@@ -284,7 +290,7 @@ export default class ShowRaceScreen extends React.Component {
                     <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Renn-ID: </label>
                     <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 214}}> {this.state.raceID} </label>
                 </div>
-                <br/>
+               <br/>
                 <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
                     <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennart: </label>
                     <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 216}}> {this.state.type} </label>
@@ -370,11 +376,6 @@ export default class ShowRaceScreen extends React.Component {
                     </table>
                 </div>
                 <br/>
-                <br/>
-                <button type='button' className='btn btn-primary' onClick={this.Action}
-                        style={{marginLeft: 'auto', marginRight: 'auto'}}>
-                    RENNDATEN ANZEIGEN
-                </button>
                 <br/>
                 <button type='button' className='btn btn-primary' onClick={this.changeRace}
                         style={{marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK

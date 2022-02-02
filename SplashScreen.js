@@ -11,7 +11,7 @@ export class SplashScreen extends React.Component {
     }
 
     async checkLogin(){
-            const accesstoken = await AsyncStorage.getItem('acesstoken');
+            const accesstoken = await AsyncStorage.getItem('accesstoken');
             const refreshtoken = await AsyncStorage.getItem('refreshtoken');
             if (accesstoken == null) {
                 this.props.navigation.replace('Login');
