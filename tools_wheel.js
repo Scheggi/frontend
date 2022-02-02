@@ -123,7 +123,29 @@ async function sendWheelsRequest(accesstoken,id_FL,id_FR,id_BL,id_BR,id = '') {
         })
 }
 
-
+//saveSet
+async function changeSetData(setData) {
+        timeoutPromise(1000, fetch(
+            'https://api.race24.cloud/wheel_cont/change_Set', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    setData: setData,
+                })
+            })
+        ).then(response => response.json()).then(data => {
+            if (data[1] == 200) {
+                console.log("Set Changed")
+            } else {
+                console.log("failed")
+            }
+        }).catch(function (error) {
+            console.log(error);
+        })
+    }
 
 // save changes AirPressure
 async function changeSingleWheel( id, liste_attribute){
@@ -415,4 +437,4 @@ async function refreshToken() {
 }
 
 
-export {generateAllSets,sendWheelRequest,sendNewSetRequest,sendWheelsRequest,sendStatusRequest,sendBleedRequest}
+export {generateAllSets,sendWheelRequest,sendNewSetRequest,sendWheelsRequest,sendStatusRequest,sendBleedRequest,changeSetData}
