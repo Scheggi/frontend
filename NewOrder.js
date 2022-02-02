@@ -6,7 +6,7 @@ import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 import {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from "./tools";
 import {get_Dict_WheelOrder, getDropdown,getWheelSetInformation,getOrderDropdown,getWheelInformations} from "./tools_get_wheels";
-import {changeSetData} from "./tools_wheels"
+import {changeSetData} from "./tools_wheel"
 
 export default class NewOrderScreen extends React.Component {
    constructor(props) {
