@@ -27,6 +27,8 @@ export default class WheelScreen extends React.Component {
             heat_start: 0,
             raceList: []
         }
+        this.getRaceID=this.getRaceID.bind(this);
+        this.getTabularData=this.getTabularData.bind(this);
     }
 
      async getGroup(){
@@ -244,18 +246,36 @@ export default class WheelScreen extends React.Component {
 
     async getTabularData() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
-        const raceID = await AsyncStorage.getItem('raceID');
+        const raceID = this.state.raceID;
         await getWheelInformations(accesstoken, raceID).then(formellistTab => {
             this.setState({list_formel: formellistTab});
         }).catch(function (error) {
             console.log(error);
         })
     }
+    async getRaceID(event){
+        const raceID=event.target.value;
+        this.setState({raceID: raceID});
+        await this.getTabularData()
+    }
 
     async componentDidMount() {
-        await this.getTabularData()
-        const raceid = await AsyncStorage.getItem('raceItem');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
+        const raceid = await AsyncStorage.getItem('raceID');
         this.setState({raceID: raceid});
+        await this.getTabularData();
+        getRaceList(accesstoken).then(racelistDropdown => {
+            let raceList=racelistDropdown;
+            let liste = raceList.filter(entry => entry.id == raceid);
+            let name=liste[0].name;
+            var raceListfiltered = raceList.filter(function(value, index, arr){
+            return value.id!=raceid;
+            });
+            raceListfiltered.unshift({'name': name, 'id':raceid});
+            this.setState({raceList: raceListfiltered});
+        }).catch(function (error) {
+            console.log(error);
+        });
         this.setState({selectedView: 1});
     }
 
@@ -672,7 +692,7 @@ export default class WheelScreen extends React.Component {
                <br/>
                <div className='input-group'>
                     <label className='input-group-text' style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}> Rennen auswählen: &nbsp; <select
-                        id='option' value={this.state.id} onChange={this.getRaceID}>
+                        id='option' value={this.state.raceID} onChange={this.getRaceID}>
                         {optionTemplate1}
                     </select>
                     </label>
