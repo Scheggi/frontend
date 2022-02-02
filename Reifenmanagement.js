@@ -37,24 +37,15 @@ export default class WheelScreen extends React.Component {
          const wheel_id = position.toString()+'_id';
          const wheel_hot_air_press = position+'_hot_air_press';
          const wheel_frontOrback= position.substring(0,1);
-         console.log(wheel_hot_air_press);
-         console.log(wheel_id);
-         console.log(wheel_frontOrback);
          let difference=0;
          let hot_air_press="";
          let heat_press="";
          if(wheel_frontOrback=='f'){
-                 console.log('Hallo');
                  this.state.list_formel.forEach( function (element,index){
-                     console.log(element.fl_id);
-                     console.log(id);
-                     if(element.fl_id==id){
+                     if(element[wheel_id]==id){
                      hot_air_press = element[wheel_hot_air_press];
                      heat_press=element['heat_press_front'];
-                     console.log(hot_air_press);
-                     console.log(heat_press);
                      if(hot_air_press!=null&&heat_press!=null){
-                         console.log('Hallo3');
                          difference=hot_air_press-heat_press;
                          zahl= difference;}
                          else {
@@ -64,14 +55,20 @@ export default class WheelScreen extends React.Component {
                  });
              }
              else if(wheel_frontOrback=='b'){
-                 this.state.list_formel.forEach( function (element,index){if(element.wheel_id==id){ hot_air_press = element[wheel_hot_air_press];
-                                                                                                                            heat_press=element['heat_press_back'];
-                                                                                                                            if(hot_air_press!=""&&heat_press!=""){
-                                                                                                                                difference=hot_air_press-heat_press;
-                                                                                                                                return difference;}
-                                                                                                                            else return "";
+                  this.state.list_formel.forEach( function (element,index){
+                     if(element[wheel_id]==id){
+                     hot_air_press = element[wheel_hot_air_press];
+                     heat_press=element['heat_press_back'];
+                     if(hot_air_press!=null&&heat_press!=null){
+                         difference=hot_air_press-heat_press;
+                         zahl= difference;}
+                         else {
+                         zahl= "";
+                     }
                  }
                  });
+
+
              }
              return zahl;
 
@@ -83,7 +80,7 @@ export default class WheelScreen extends React.Component {
         console.log(event.target.className)
         const wheel_id = event.target.className.toString().substring(0,2)+'_id'
         console.log(wheel_id)
-        this.state.list_formel.forEach( function (element,index){if(element.wheel_id==event.target.id){copyArray[index][event.target.className]=event.target.value
+        this.state.list_formel.forEach( function (element,index){if(element[wheel_id]==event.target.id){copyArray[index][event.target.className]=event.target.value
 
         }});
         this.setState({list_formel:copyArray});
@@ -549,10 +546,12 @@ export default class WheelScreen extends React.Component {
                         <input id={list_formel.setid} placeholder={'nicht gebleedet'} value={list_formel.gebleedet} name={'gebleedet'} onChange={this.save_changes_wheelSet} />
                         <input id={list_formel.fl_id} placeholder={'Bleed FL'} value={list_formel.fl_bleed_press} name={'bleed_press'} className={'fl_bleed_press'} onChange={this.save_changes_wheel}/>
                         {this.handleBleed('fl', list_formel.fl_id)}
-                        {500}
                         <input id={list_formel.fr_id} placeholder={'Bleed FR'} value={list_formel.fr_bleed_press} name={'bleed_press'} className={'fr_bleed_press'} onChange={this.save_changes_wheel}/>
+                        {this.handleBleed('fr', list_formel.fr_id)}
                         <input id={list_formel.bl_id} placeholder={'Bleed BL'} value={list_formel.bl_bleed_press} name={'bleed_press'} className={'bl_bleed_press'} onChange={this.save_changes_wheel}/>
+                        {this.handleBleed('bl', list_formel.bl_id)}
                         <input id={list_formel.br_id} placeholder={'Bleed BR'} value={list_formel.br_bleed_press} name={'bleed_press'} className={'br_bleed_press'} onChange={this.save_changes_wheel}/>
+                        {this.handleBleed('br', list_formel.br_id)}
                     </td>
 
                 </tr>
