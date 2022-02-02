@@ -165,9 +165,10 @@ export default class NewRaceScreen extends React.Component {
         console.log(id)
         this.setState({raceID: id});
         console.log(this.state.raceID);
-        this.sendNewContigentRequest(this.state.raceID, 1, "Slicks", "Cold", this.state.identifierSlicksCold, this.state.contingentSlicksCold);
+        this.sendNewContigentRequest(this.state.raceID, 1, "Slicks", "Cold", this.state.identifierSlicksCold, parseInt(this.state.contingentSlicksCold));
         // raceID,set,cat,subcat,numberOfSets
-        this.generateAllSets(this.state.raceID, "Slicks", "Cold", this.state.contingentSlicksCold)
+        console.log(parseInt(this.state.contingentSlicksCold))
+        this.generateAllSets(this.state.raceID, 1,"Slicks", "Cold", this.state.contingentSlicksCold)
         this.sendNewContigentRequest(this.state.raceID, 2, "Slicks", "Medium", this.state.identifierSlicksMedium, parseInt(this.state.contingentSlicksMedium));
         this.generateAllSets(this.state.raceID, 2, "Slicks", "Medium", parseInt(this.state.contingentSlicksMedium));
         this.sendNewContigentRequest(this.state.raceID, 3, "Slicks", "Hot", this.state.identifierSlicksHot, parseInt(this.state.contingentSlicksHot));
