@@ -106,6 +106,11 @@ export default class ShowRaceScreen extends React.Component {
         this.props.navigation.push('Astrid');
     }
 
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
+    }
+
     changeMaen = event => {
         event.preventDefault();
         this.props.navigation.push('Maen');
@@ -122,16 +127,17 @@ export default class ShowRaceScreen extends React.Component {
     }
 
 
-    getRaceID = event => {
-        this.setState({raceID: event.target.value});
+    async getRaceID(event) {
         AsyncStorage.setItem('raceID', event.target.value);
-        this.getRaceDetails();
+        const id = await AsyncStorage.getItem('raceID');
+        this.setState({raceID: id});
     }
 
     async getRaceDetails() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
+        AsyncStorage.setItem('raceID', this.state.raceID);
         const raceID = await AsyncStorage.getItem('raceID');
-        console.log(raceID)
+        console.log([raceID])
         getRaceDetails_by_ID(accesstoken, raceID).then(liste => {
             console.log(liste);
             console.log(liste[0]["date"]);
@@ -142,14 +148,14 @@ export default class ShowRaceScreen extends React.Component {
             console.log(this.state.RaceDetails);
         }).catch(function (error) {
             console.log(error);
-        });
-        this.getWheelsStart();
+        })
 
     }
 
     //get ReifenData
     async getWheelsStart() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
+        AsyncStorage.setItem('raceID', this.state.raceID);
         const raceID = await AsyncStorage.getItem('raceID');
         console.log(raceID)
         getWheelsList(accesstoken, raceID).then(liste => {
@@ -226,6 +232,9 @@ export default class ShowRaceScreen extends React.Component {
                                     </button>
                                 </li>
                                 <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
+                                </li>
+                                <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm"
                                             aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen
                                     </button>
@@ -267,6 +276,12 @@ export default class ShowRaceScreen extends React.Component {
                     </select>
                     </label>
                 </div>
+                <br/>
+                <button type='button' className='btn btn-primary' onClick={this.Action}
+                        style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                    RENNDATEN ANZEIGEN
+                </button>
+                <br/>
                 <div>
                     <br/>
                     <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Rennen</h3>
@@ -275,7 +290,7 @@ export default class ShowRaceScreen extends React.Component {
                     <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Renn-ID: </label>
                     <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 214}}> {this.state.raceID} </label>
                 </div>
-                <br/>
+               <br/>
                 <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
                     <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennart: </label>
                     <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 216}}> {this.state.type} </label>
@@ -361,11 +376,6 @@ export default class ShowRaceScreen extends React.Component {
                     </table>
                 </div>
                 <br/>
-                <br/>
-                <button type='button' className='btn btn-primary' onClick={this.Action}
-                        style={{marginLeft: 'auto', marginRight: 'auto'}}>
-                    RENNDATEN ANZEIGEN
-                </button>
                 <br/>
                 <button type='button' className='btn btn-primary' onClick={this.changeRace}
                         style={{marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK

@@ -11,7 +11,7 @@ export default class NewFormelScreen extends React.Component {
         super(props);
         this.state = {
             raceList:[],
-            raceID: 0,
+            raceID: -1,
             variable1: 273.15,
             variable2: 273.15,
             variable3: 1.013,
@@ -95,13 +95,12 @@ export default class NewFormelScreen extends React.Component {
         this.props.navigation.push('Helper')
     }
 
-
     validateForm() {
-        return this.state.raceID!=0&&this.state.variable1!=""&&this.state.variable2!=""&&this.state.variable3!=""&&this.state.variable4!="";
+        return this.state.raceID!=-1&&this.state.variable1!=""&&this.state.variable2!=""&&this.state.variable3!=""&&this.state.variable4!="";
 
     }
     validateForm1(){
-        return this.state.raceID!=0&&this.state.airTemperature!=""&&this.state.trackTemperature!=""&&this.state.air_pressureFL!=""&&this.state.air_pressureFR!=""&&this.state.air_pressureBL!=""&&this.state.air_pressureBR!="";
+        return this.state.raceID!=-1&&this.state.airTemperature!=""&&this.state.trackTemperature!=""&&this.state.air_pressureFL!=""&&this.state.air_pressureFR!=""&&this.state.air_pressureBL!=""&&this.state.air_pressureBR!="";
     }
     handleSubmit = event => {
         event.preventDefault();
@@ -184,12 +183,11 @@ export default class NewFormelScreen extends React.Component {
 
     async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
-        this.setState({raceID: 0});
+        const raceID = await AsyncStorage.getItem('raceID');
+        this.setState({raceID: raceID});
         getRaceList(accesstoken).then(racelistDropdown => {
-            let raceListModified=racelistDropdown;
-            raceListModified.unshift({'name': "kein Rennen ausgewählt", 'id':0});
-            console.log(raceListModified);
-            this.setState({raceList: raceListModified});
+            console.log(racelistDropdown);
+            this.setState({raceList: racelistDropdown});
         }).catch(function (error) {
             console.log(error);
         });
