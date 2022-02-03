@@ -139,7 +139,6 @@ export default class RaceScreen extends React.Component {
        getWeatherTab(accesstoken, raceID).then(DataTabular => {
                 this.setState({dataWeather: DataTabular});
                 this.getSecondsToNextMeasurement(this.state.dataWeather[this.state.dataWeather.length-1])
-
             }).catch(function (error) {
                 console.log(error);
             })
@@ -152,6 +151,7 @@ export default class RaceScreen extends React.Component {
              }).catch(function (error) {
                  console.log(error);
              })
+        console.log(this.state.timer_info)
      }
 
 
@@ -176,7 +176,7 @@ export default class RaceScreen extends React.Component {
                 var timestemp = this.state.list_formel.slice(0,1)[0].heat_start
                 var duration = this.state.list_formel.slice(0,1)[0].heat_duration
             }catch(e) {
-                console.log(error)
+                console.log('error')
             }
 
             this.setState({
@@ -203,7 +203,7 @@ export default class RaceScreen extends React.Component {
                this.setState({raceID: raceid});
                this.getWeatherData(this.state.raceID);
                this.getWheelSetInformation(this.state.raceID);
-               //this.getTimerInformation(this.state.raceID)
+               this.getTimerInformation(this.state.raceID)
                this.getTabularData(this.state.raceID)
                this.startTimer();
            }).catch(function (error) {
@@ -232,7 +232,6 @@ export default class RaceScreen extends React.Component {
        const accesstoken = await AsyncStorage.getItem('accesstoken');
        getWheelSetInformation(accesstoken, raceID).then(DataTabular => {
             this.setState({ReturnedWheelInformations: DataTabular});
-
 
             var orderStart;
             var orderDuration;

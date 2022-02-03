@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
 import ScrollViewBase from "react-native-web/dist/exports/ScrollView/ScrollViewBase";
 import image from "./logo.png";
+import {changeTimer} from "./tools_wheel";
 
 export default class WheelScreen extends React.Component {
     constructor(props) {
@@ -112,9 +113,7 @@ export default class WheelScreen extends React.Component {
     };
 
     handleHeatStart = event => {
-
         console.log(event.target.id)
-
         event.preventDefault();
         //save to db
         timeoutPromise(1000, fetch(
@@ -138,6 +137,14 @@ export default class WheelScreen extends React.Component {
         }).catch(function (error) {
             console.log(error);
         })
+
+        // save time to timer
+        var duration = 0;
+        this.state.list_formel.forEach( function (element,index){if(element[setid]==event.target.id){copyArray[index][event.target.className]=event.target.value}});
+        this.state.setData.forEach( function (element,index){if(element.order_duration != null){duration =element.order_duration}});
+        console.log(parseInt(duration));
+        changeTimer(this.state.raceID,[['heat_duration',parseInt(duration)]]);
+        this.changeRace();
     };
 
 

@@ -38,7 +38,7 @@ export default class NewOrderScreen extends React.Component {
     }
 
     changeRace = event => {
-        event.preventDefault();
+        //event.preventDefault();
         this.getGroup();
     }
 
@@ -112,7 +112,6 @@ export default class NewOrderScreen extends React.Component {
             console.log(error);
         })
     };
-
 
     handle_choosen_order = event =>{
         console.log(event)
