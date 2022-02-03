@@ -290,7 +290,7 @@ export default class NewRaceScreen extends React.Component {
                 <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
                     <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennstrecke: </label>
                     <input type='text' className='form-control' aria-label='Server' value={this.state.place}
-                           onChange={(place) => this.setState({place: place.target.value})} placeholder='Rennstrecke'/>
+                           onChange={(place) => this.setState({place: place.target.value})} placeholder='Ort'/>
                 </div>
                 <br/>
                 <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>

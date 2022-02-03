@@ -291,7 +291,7 @@ export default class ShowRaceScreen extends React.Component {
                 </div>
                 <br/>
                 <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
-                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennstrecke: </label>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Ort: </label>
                     <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 186}}> {this.state.place} </label>
                 </div>
                 <br/>

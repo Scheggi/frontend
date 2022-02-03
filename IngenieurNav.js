@@ -138,20 +138,41 @@ export default class IngenieurNav extends React.Component {
     }
 
     async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('accesstoken');
-        getRaceList(accesstoken).then(racelistDropdown => {
-            this.setState({raceList: racelistDropdown});
-            this.setState({raceID: this.state.raceList[0].id})
+         const accesstoken = await AsyncStorage.getItem('accesstoken');
+        const raceid = await AsyncStorage.getItem('raceID');
+        this.setState({raceID: raceid});
+       if(raceid!=null) {
+           getRaceList(accesstoken).then(racelistDropdown => {
+               let raceList = racelistDropdown;
+               let liste = raceList.filter(entry => entry.id == raceid);
+               let name = liste[0].name;
+               var raceListfiltered = raceList.filter(function (value, index, arr) {
+                   return value.id != raceid;
+               });
+               raceListfiltered.unshift({'name': name, 'id': raceid});
+               this.setState({raceList: raceListfiltered});
+               this.setState({raceID: raceid});
+               this.getWeatherData(this.state.raceID);
+               this.getWheelSetInformation(this.state.raceID);
+               this.startTimer();
+           }).catch(function (error) {
+               console.log(error);
+           });
+       }
+       else {
+           getRaceList(accesstoken).then(racelistDropdown => {
+               this.setState({raceList: racelistDropdown});
+               this.setState({raceID: this.state.raceList[0].id})
 
-            if(this.state.raceID != false) {
-                this.getWeatherData(this.state.raceID)
-                this.getWheelSetInformation(this.state.raceID)
-                this.startTimer()
-            }
+               this.getWeatherData(this.state.raceID)
+               this.getWheelSetInformation(this.state.raceID)
+               this.startTimer()
+               AsyncStorage.setItem("raceID",this.state.raceList[0].id);
 
-        }).catch(function (error) {
-            console.log(error);
-        })
+           }).catch(function (error) {
+               console.log(error);
+           })
+       }
 
     }
 
