@@ -145,23 +145,6 @@ export default class WeatherScreen extends React.Component {
     }
 
 
-    /*
-    renderTableData() {
-        console.log(this.state.dataWeather)
-        return this.state.dataWeather.map((dataWeather, index) => {
-            const { temp_ground,temp_air,datetime,weather_des } =dataWeather //destructuring
-            return (
-            <tr key={datetime}>
-               <td>{datetime}</td>
-               <td>{temp_ground}</td>
-                <td>{temp_air}</td>
-                <td>{weather_des}</td>
-            </tr>
-         )
-      })
-   }
-     */
-
     //Tabular Weather Data
     renderTableData() {
         console.log(this.state.dataWeather)
