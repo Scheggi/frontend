@@ -90,6 +90,10 @@ export default class NewFormelScreen extends React.Component {
         this.props.navigation.push('Maen');
     }
 
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
+    }
 
     validateForm() {
         return this.state.raceID!=-1&&this.state.variable1!=""&&this.state.variable2!=""&&this.state.variable3!=""&&this.state.variable4!="";
@@ -120,7 +124,7 @@ export default class NewFormelScreen extends React.Component {
 
     }
     async sendDataReifenFormel(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         this.createReifendruckRequest(accesstoken, this.state.raceID, this.state.variable1, this.state.variable2, this.state.variable3, this.state.variable4, this.state.airTemperature, this.state.trackTemperature, this.state.air_pressureFL, this.state.air_pressureFR, this.state.air_pressureBL, this.state.air_pressureBR)
 
     }
@@ -178,7 +182,7 @@ export default class NewFormelScreen extends React.Component {
 
 
     async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         this.setState({raceID: raceID});
         getRaceList(accesstoken).then(racelistDropdown => {
@@ -231,6 +235,9 @@ export default class NewFormelScreen extends React.Component {
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
