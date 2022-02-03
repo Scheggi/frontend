@@ -19,10 +19,6 @@ export default class NewOrderScreen extends React.Component {
             dropdownlist : [[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]]],
             ButtonsList : ['Slicks Cold','Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'],
         }
-        this.timer = 0;
-        this.startTimer = this.startTimer.bind(this);
-        this.countDown = this.countDown.bind(this);
-        this.fillList= this.fillList.bind(this);
     }
 
 
@@ -94,11 +90,6 @@ export default class NewOrderScreen extends React.Component {
         event.preventDefault();
         this.props.navigation.push('Helper')
     }
-
-
-   //  changeRace = event => {
-   //  this.props.navigation.goBack();
-   //  }
 
      async getTabularData() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
@@ -202,10 +193,7 @@ export default class NewOrderScreen extends React.Component {
 
     save_order = event =>{
          console.log(this.state.setData)
-         this.state.setData.forEach(function (element,index){if(element.setid==event.target.id){copyArray[index][event.target.name]=event.target.value}});
-         changeSetData(this.state.setID)
-
-
+         changeSetData(this.state.setData[0])
     }
       // end save change
 
@@ -317,7 +305,7 @@ export default class NewOrderScreen extends React.Component {
        const coloumns = ['all'];
        return coloumns.map((buttons, index) => {
             return (
-                <tr key={'3Tabelle'}>
+                <tr key={'3Tabelle32'}>
                     <td>
                     <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Sets in Bearbeitung" />
                     </td>
@@ -344,7 +332,7 @@ export default class NewOrderScreen extends React.Component {
         console.log(this.state.setData)
         return this.state.setData.map((setData, index) => {
             return (
-                <tr key={'renderTabelle12'}>
+                <tr key={'renderTabelle22'}>
                     <td>
                         <input id={setData.setid} placeholder={'Kategorie'} value={setData.cat} name={'cat'}
                                onChange={this.change_state_in_tabular_set}/>
@@ -357,6 +345,7 @@ export default class NewOrderScreen extends React.Component {
                            value={setData.variant} name ={'variant'} onChange={this.change_state_in_tabular_set}/>
                     </td>
                     <td>
+                        {'automatisch erzeugt'}
                         <input
                             id={setData.setid} placeholder={'Datum und Uhrzeit'}
                             value={setData.order_start} name={'order_start'} onChange={this.change_state_in_tabular_set}/>
@@ -389,7 +378,7 @@ export default class NewOrderScreen extends React.Component {
                         <input id={setData.bl_id} placeholder={'Kaltdruck BL'} value={setData.bl_pressure}
                                className={'pressure'} name={'bl_pressure'} onChange={this.change_state_in_tabular_set}/>
                         <input id={setData.br_id} placeholder={'Kaltdruck BR'} value={setData.br_pressure}
-                               className={'pressure'} name={'fl_pressure'} onChange={this.change_state_in_tabular_set}/>
+                               className={'pressure'} name={'br_pressure'} onChange={this.change_state_in_tabular_set}/>
                     </td>
                     <td>
                         <input id={setData.setid} placeholder={'bleed initial'}
@@ -432,20 +421,20 @@ export default class NewOrderScreen extends React.Component {
                                onChange={this.change_state_in_tabular_set}/>
                     </td>
                     <td>
-                        <input id={setData.setid} placeholder={'nicht gebleedet'} value={setData.gebleedet}
-                               name={'gebleedet'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'nicht gebleedet'} value={setData.gebleeded}
+                               name={'gebleeded'} onChange={this.change_state_in_tabular_set}/>
                         <input id={setData.fl_id} placeholder={'Bleed FL'} value={setData.fl_bleed_press}
                                className={'bleed_press'} name={'fl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
                         <input id={setData.fr_id} placeholder={'Bleed FR'} value={setData.fr_bleed_press}
                                className={'bleed_press'} name={'fr_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
                         <input id={setData.bl_id} placeholder={'Bleed BL'} value={setData.bl_bleed_press}
-                               name={'bleed_press'} className={'bl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
+                               className={'bleed_press'} name={'bl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
                         <input id={setData.br_id} placeholder={'Bleed BR'} value={setData.br_bleed_press}
                                className={'bleed_press'} name={'br_bleed_press'} onChange={this.change_state_in_tabular_set}/>
                     </td>
 
                     <td>
-                        <input id={setData.setid} placeholder={'ID FL'} value={setData.fl_id_scan}
+                        <input id={setData.fl_id} placeholder={'ID FL'} value={setData.fl_id_scan}
                                className={'id_scan'} name={'fl_id_scan'} onChange={this.change_state_in_tabular_set}/>
                         <input id={setData.fr_id} placeholder={'ID FR'} value={setData.fr_id_scan}
                                className={'id_scan'} name={'fr_id_scan'} onChange={this.change_state_in_tabular_set}/>
@@ -549,7 +538,7 @@ export default class NewOrderScreen extends React.Component {
                 </div>
                </div>
                 <br/>
-                <button type='button' className='btn btn-primary' onClick={this.changeRace}
+                <button type='button' className='btn btn-primary' onClick={this.save_order}
                         style={{marginLeft: 'auto', marginRight: 'auto'}}> BESTELLUNG ABSCHICKEN
                 </button>
                 <br/>
