@@ -2,495 +2,563 @@ import React from "react";
 import {Button, Text, TextInput, ToastAndroid,ScrollView, View} from "react-native";
 import {styles} from "./styles"
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 import {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from "./tools";
-import {get_Dict_WheelOrder, getDropdown,getWheelSetInformation} from "./tools_get_wheels";
-
+import {get_Dict_WheelOrder, getDropdown,getWheelSetInformation,getOrderDropdown,getWheelInformations} from "./tools_get_wheels";
+import {changeSetData} from "./tools_wheel"
+import image from "./logo.png";
 
 export default class NewOrderScreen extends React.Component {
    constructor(props) {
         super(props);
         this.state = {
-            wheels: [],
-            listDropdown1:[],
-            listDropdown2:[],
-            listDropdown3:[],
-            dictButtons:[],
-            ButtonSlicks_Cold: 'Slicks Cold',
-            ButtonSlicks_Medium: 'Slicks Medium',
-            ButtonSlicks_Hot: 'Slicks Hot',
-            ButtonInter: 'Inters Intermediate',
-            ButtonRainDryWet: 'Rain DryWet',
-            ButtonRainHeavy: 'Rain HeavyWet',
-            setID :0,
-            SetInformation:{},
-            test_setid:0,
-            test_list :[],
-            raceID: 0,
-            tyretype: '',
-            tyremix: '',
-            term1: '',
-            variant: '',
-            //für Tabelle rechts:
-            tyretype1: '',
-            tyremix1: '',
-            variant1: '',
-            ordertime: '',
-            orderduration: 0,
-            raceList: [],
+            setID:0,
+            setData:[],
+            list_wheels : [],
+            dropdownlist : [[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]]],
+            ButtonsList : ['Slicks Cold','Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'],
+        }
+        this.timer = 0;
+        this.startTimer = this.startTimer.bind(this);
+        this.countDown = this.countDown.bind(this);
+        this.fillList= this.fillList.bind(this);
+    }
+
+
+    async getGroup(){
+         const group = await AsyncStorage.getItem("usergroup");
+         console.log(group)
+        if (group==="Helper"){
+            this.props.navigation.push("HelperNavigator")
+        }
+        if (group==="Ingenieur"){
+            this.props.navigation.push("Nav")
+        }
+        if (group==="Manager"){
+            this.props.navigation.push("Race")
         }
     }
-
-     async componentDidMount(){
-        const accesstoken = await AsyncStorage.getItem('accesstoken');
-        const raceID = await AsyncStorage.getItem('raceID');
-        getDropdown(accesstoken,raceID).then(racelistDropdown => {
-            console.log(racelistDropdown);
-            this.setState({listDropdown1: racelistDropdown[0]});
-            this.setState({listDropdown2: racelistDropdown[1]});
-            this.setState({listDropdown3: racelistDropdown[2]});
-        }).catch(function (error) {
-            console.log(error);
-        })
-        await this.getWheelDict();
-        await this.getDropdownList();
-        console.log(this.state.dictButtons)
-        if (this.state.dictButtons.length==6){
-            this.setState({ButtonSlicks_Cold: 'Slicks Cold  '+this.state.dictButtons[0][0].toString()});
-            this.setState({ButtonSlicks_Medium: 'Slicks Medium  '+this.state.dictButtons[1][0].toString()});
-            this.setState({ButtonSlicks_Hot: 'Slicks Hot  '+this.state.dictButtons[2][0].toString()});
-            this.setState({ButtonInter: 'Inters Intermediate  '+this.state.dictButtons[3][0].toString()});
-            this.setState({ButtonRainDryWet: 'Rain DryWet  '+this.state.dictButtons[4][0].toString()});
-            this.setState({ButtonRainHeavy: 'Rain HeavyWet  '+this.state.dictButtons[5][0].toString()});
-
-            console.log(this.state.ButtonSlicks_Cold)
-
-        }
-        await this.getWheelData()
-    }
-
-    //get Wheel Data
-    async getWheelDict(){
-       const accesstoken = await AsyncStorage.getItem('accesstoken');
-       const raceID = await AsyncStorage.getItem('raceID');
-       console.log(raceID)
-       await get_Dict_WheelOrder(accesstoken, raceID).then(DataTabular => {
-                console.log(DataTabular);
-                this.setState({dictButtons: DataTabular});
-            }).catch(function (error) {
-                console.log(error);
-            })
-        console.log(this.state.dictButtons)
-    }
-    // get Dropdown list free,order,used
-    async getDropdownList(){
-       const accesstoken = await AsyncStorage.getItem('accesstoken');
-       const raceID = await AsyncStorage.getItem('raceID');
-       console.log(raceID)
-       await getDropdown(accesstoken, raceID).then(DataTabular => {
-                console.log(DataTabular);
-                this.setState({listDropdown: DataTabular});
-            }).catch(function (error) {
-                console.log(error);
-            })
-        console.log(this.state.listDropdown)
-    }
-
-    async getSetID(event){
-        AsyncStorage.setItem("SetIDDropdown",event.target.value);
-        const setid = await AsyncStorage.getItem("SetID");
-        console.log(setid);
-    }
-
-    getRaceID = event => {
-        const id = event.target.value;
-        AsyncStorage.setItem("raceIDHelper", event.target.value);
-        this.saveRaceIDinState();
-    }
-
-    refresh_Buttons(){
-        if (this.state.dictButtons.length==6) {
-            this.setState({ButtonSlicks_Cold: 'Slicks Cold  ' + this.state.dictButtons[0][0].toString()});
-            this.setState({ButtonSlicks_Medium: 'Slicks Medium  ' + this.state.dictButtons[1][0].toString()});
-            this.setState({ButtonSlicks_Hot: 'Slicks Hot  ' + this.state.dictButtons[2][0].toString()});
-            this.setState({ButtonInter: 'Inters Intermediate  ' + this.state.dictButtons[3][0].toString()});
-            this.setState({ButtonRainDryWet: 'Rain DryWet  ' + this.state.dictButtons[4][0].toString()});
-            this.setState({ButtonRainHeavy: 'Rain HeavyWet  ' + this.state.dictButtons[5][0].toString()});
-        }
-        }
-
 
     changeRace = event => {
         event.preventDefault();
-        this.props.navigation.replace('Race');
+        this.getGroup();
     }
-     handleSubmit = event => {
+
+        changeLogout = event => {
         event.preventDefault();
-        this.fillList();
-        changeWheelSet(this.state.setID,this.state.variant,this.state.orderduration,this.state.term1);
-        AsyncStorage.setItem('orderSetID',this.state.setID);
-        this.refresh_Buttons();
+        this.props.navigation.replace('Logout');
+    }
+
+     changeNewUser = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewUser');
+    }
+
+    changeWheel = event => {
+        event.preventDefault();
+        this.props.navigation.push('Wheel');
+    }
+
+    changeWeather = event => {
+        event.preventDefault();
+        this.props.navigation.push('Weather');
+    }
+
+    changeShowRace = event => {
+        event.preventDefault();
+        this.props.navigation.push('ShowRace');
+    }
+
+     changeNewRace = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewRace');
+    }
+
+    changeNewFormel = event => {
+        event.preventDefault();
+        this.props.navigation.push('NewFormel');
+    }
+
+    changeAstrid = event => {
+        event.preventDefault();
+        this.props.navigation.push('Astrid');
+    }
+
+    changeMaen = event => {
+        event.preventDefault();
+        this.props.navigation.push('Maen');
+    }
+
+    changeHelper = event => {
+        event.preventDefault();
+        this.props.navigation.push('Helper')
     }
 
 
-    handleSubmitButton1 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Slicks"});
-        this.setState({tyremix: "Cold"});
-        let helper = this.state.dictButtons;
-        helper[0][0]= helper[0][0]-1;
-        this.setState({setID:helper[0][0]});
-        this.setState({dictButtons:helper});
-    }
-    handleSubmitButton2 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Slicks"});
-        this.setState({tyremix: "Medium"});
-        let helper = this.state.dictButtons;
-        helper[1][0]= helper[1][0]-1;
-        this.setState({setID: helper[1][1][helper[1][0]]});
-        this.setState({dictButtons: helper});
+   //  changeRace = event => {
+   //  this.props.navigation.goBack();
+   //  }
 
-    }
-    handleSubmitButton3 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Slicks"});
-        this.setState({tyremix: "Hot"});
-        let helper = this.state.dictButtons;
-        helper[2][0]= helper[2][0]-1;
-        const index = helper[2][0]
-        this.setState({setID:helper[2][1][index]});
-        this.setState({dictButtons:helper});
-    }
-    handleSubmitButton4 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Inters"});
-        this.setState({tyremix: "Intermediate"});
-        let helper = this.state.dictButtons;
-        helper[3][0]= helper[3][0]-1;
-        const index = helper[3][0]
-        this.setState({setID:helper[3][1][index]});
-        this.setState({dictButtons:helper});
-    }
-    handleSubmitButton5 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Rain"});
-        this.setState({tyremix: "Dry Wet"});
-        let helper = this.state.dictButtons;
-        helper[4][0]= helper[4][0]-1;
-        const index = helper[4][0]
-        this.setState({setID:helper[4][1][index]});
-        this.setState({dictButtons:helper});
-    }
-    handleSubmitButton6 = event => {
-        event.preventDefault();
-        this.setState({tyretype: "Rain"});
-        this.setState({tyremix: "Heavy Wet"});
-        let helper = this.state.dictButtons;
-        helper[5][0]= helper[5][0]-1;
-        const index = helper[5][0]
-        this.setState({setID:helper[5][1][index]});
-        this.setState({dictButtons:helper});
+     async getTabularData() {
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
+        const raceID = await AsyncStorage.getItem('raceID');
+        await getWheelInformations(accesstoken, raceID).then(Tab => {
+            this.setState({list_wheels: Tab});
+        }).catch(function (error) {
+            console.log(error);
+        })
     }
 
+    async getDropdownData() {
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
+        const raceID = await AsyncStorage.getItem('raceID');
+        await getOrderDropdown(accesstoken, raceID).then(Tab => {
+            this.setState({dropdownlist: Tab});
+        }).catch(function (error) {
+            console.log(error);
+        })
+    };
 
-        validateForm()
-        {
-            return this.state.tyretype.length > 0 && this.state.tyremix.length > 0 && this.state.term1.length > 0 && this.state.orderduration > 0 && this.state.variant.length > 0;
-        }
 
-        validateForm1()
-        {
-            return this.state.timervalue.length > 0;
-        }
-       validateFormButton1(){
-       return this.state.dictButtons.length==6 && this.state.dictButtons[0][0]>0;
-        }
-        validateFormButton2(){
-       return this.state.dictButtons.length==6 &&this.state.dictButtons[1][0]>0;
-        }
-        validateFormButton3(){
-       return this.state.dictButtons.length==6 && this.state.dictButtons[2][0]>0;
-        }
-        validateFormButton4(){
-       return this.state.dictButtons.length==6 && this.state.dictButtons[3][0]>0;
-        }validateFormButton5(){
-       return this.state.dictButtons.length==6 && this.state.dictButtons[4][0]>0;
-        }validateFormButton6(){
-       return this.state.dictButtons.length==6 && this.state.dictButtons[5][0]>0;
-        }
+    handle_choosen_order = event =>{
+        console.log(event)
+        let copyArray = []
+        this.setState({setID:event.value})
+       this.state.list_wheels.forEach( function (element,index){if(element.setid==event.value){copyArray=[element]}});
+        console.log(copyArray)
+        copyArray[0]['status']='order';
+        this.setState({setData:copyArray});
+        console.log(this.state.setData);
+    };
 
-        async getWheelData(){
-            //this.setState({wheels: []});
-            const accesstoken = await AsyncStorage.getItem('accesstoken');
-            const setID = await AsyncStorage.getItem('orderSetID');
-            //const raceID = await AsyncStorage.getItem('raceID');
-            console.log(setID)
-            await getWheelSetInformation(accesstoken, setID).then(DataTabular => {
-                console.log(DataTabular);
-                this.setState({SetInformation: DataTabular});
-                this.setState({wheels: [this.state.SetInformation]});
-                //this.state.wheels.push(this.state.SetInformation);
+    change_state_in_tabular_set = event =>{
+       let copyArray = this.state.setData;
+        this.state.setData.forEach( function (element,index){copyArray[index][event.target.name]=event.target.value});
+        this.setState({setData:copyArray});
+        console.log(this.state.setData);
+    };
+
+     async componentDidMount(){
+        await this.getTabularData();
+        console.log(this.state.list_wheels)
+        await this.getDropdownData();
+        console.log(this.state.dropdownlist)
+    }
+
+        handleWheelIDChange = event => {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel/set_id_tag', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    wheel_id: event.target.id,
+                    wheel_id_tag: event.target.value,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("ID Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
             }).catch(function (error) {
                 console.log(error);
             })
-                console.log(this.state.wheels)
-            }
+        }
 
-        renderWheelTable(){
-            return this.state.wheels.map((wheel,) => {
-                return (
-                    <tr bgcolor='#696969' style={{border: "solid", borderColor: 'grey',textAlign: "center", padding: '8px', color: 'black', fontFamily: 'arial'}}  key={'irgendwas'}>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.setNr} </td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.status} </td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}> {wheel.cat} </td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>
-                            <input id ={wheel.subcat} placeholder={wheel.subcat} value={wheel.subcat} /></td>
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>
-                            <input id={wheel.setid}  placeholder={'Temperatur'}  value={wheel.temp}/></td>
 
-                        <td style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>
-                            <input id={wheel.fl_id} placeholder={'FL Luftdruck'}  value={wheel.fl_pressure}/>
-                            <input id={wheel.fr_id} placeholder={'FR Luftdruck'} value={wheel.fr_pressure}/>
-                            <input id={wheel.bl_id} placeholder={'BL Luftdruck'} value={wheel.bl_pressure}/>
-                            <input id={wheel.br_id}  placeholder={'BR Luftdruck'}value={wheel.br_pressure}/></td>
-                    </tr>
-                )
+        handleTemp = event => {
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/wheel/set_temp', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    set_id: event.target.id,
+                    temp: event.target.value,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("temp Changed")
+                    this.getWheelData().then(() => {return})
+                }
+                else {
+                    console.log("failed")
+                }
+            }).catch(function (error) {
+                console.log(error);
             })
         }
 
-        render()
-        {
+
+    save_order = event =>{
+         console.log(this.state.setData)
+         this.state.setData.forEach(function (element,index){if(element.setid==event.target.id){copyArray[index][event.target.name]=event.target.value}});
+         changeSetData(this.state.setID)
+
+
+    }
+      // end save change
+
+
+     renderTableHeader(number) {
+         let header = ['Slicks Cold', 'Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'];
+         let headerOrder = ['Art', 'Bestellung', 'Dauer', 'Status'];
+         let headerOrder2 = ['Kaltdruck', 'Bleed', 'Heizdaten', 'Warmdruck', 'Target Warmdruck', 'Bleed', 'Reifen ID'];
+         if (number ==1){
+             return header.map((key, index) => {
+                 return <th style={{backgroundColor: '#72869d', textAlign: 'center', verticalAlign: 'middle', fontSize: 'bold'}}
+                            key={index}>{key.toUpperCase()}</th>
+             })
+         }
+         if (number ==2){
+             return headerOrder.map((key, index) => {
+                 return <th style={{backgroundColor: '#72869d', textAlign: 'center', verticalAlign: 'middle', fontSize: 'bold'}}
+                            key={index}>{key.toUpperCase()}</th>
+             })
+         }
+         if (number ==3){
+             return headerOrder2.map((key, index) => {
+                 return <th style={{backgroundColor: '#72869d', textAlign: 'center', verticalAlign: 'middle', fontSize: 'bold'}}
+                            key={index}>{key.toUpperCase()}</th>
+             })
+         }
+     }
+
+     renderTableHeaderChoosen() {
+         let header = ['Slicks Cold', 'Slicks Medium', 'Slicks Hot', 'Inters Intermediate', 'Rain DryWet', 'Rain HeavyWet'];
+         return header.map((key, index) => {
+             return <th style={{backgroundColor: '#72869d', textAlign: 'center', verticalAlign: 'middle', fontSize: 'bold'}}
+                        key={index}>{key.toUpperCase()}</th>
+         })
+     }
+
+     renderTableOrderCat1(){
+       const optiondropdown1 = this.state.dropdownlist[0][0]
+       const optiondropdown2 = this.state.dropdownlist[1][0]
+       const optiondropdown3 = this.state.dropdownlist[2][0]
+       const optiondropdown4 = this.state.dropdownlist[3][0]
+       const optiondropdown5 = this.state.dropdownlist[4][0]
+       const optiondropdown6 = this.state.dropdownlist[5][0]
+       const coloumns = ['all'];
+       return coloumns.map((buttons, index) => {
             return (
-                <ScrollView>
-                <View style={container1}>
-                    <View style={container2}>
-                         <View>
-                        <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
-                        Neue Reifenbestellung anlegen
-                    </Text>
-                        </View>
-                        <View style={{textAlign: 'center'}}>
-                            <Text> </Text>
-                            <Text stlye={{fontfamily: 'arial', fontSize: 16}}>
-                            Reifentyp auswählen:
-                            </Text>
-                            <Text style={{height: 5}}> </Text>
-                        </View>
-                        <View style={container4}>
-                            <Button
-                            disabled={!this.validateFormButton1()}
-                            title= {this.state.ButtonSlicks_Cold}
-                            onPress={this.handleSubmitButton1}
-                        />
-                        <Button
-                            disabled={!this.validateFormButton2()}
-                            title= {this.state.ButtonSlicks_Medium}
-                            onPress={this.handleSubmitButton2}
-                        />
-                        <Button
-                            disabled={!this.validateFormButton3()}
-                            title= {this.state.ButtonSlicks_Hot}
-                            onPress={this.handleSubmitButton3}
-                        />
-                        </View>
-                        <View>
-                            <Text style={{height: 5}}> </Text>
-                        </View>
-                        <View style={container4}>
-                        <Button
-                            disabled={!this.validateFormButton4()}
-                            title={this.state.ButtonInter}
-                            onPress={this.handleSubmitButton4}
-                        />
-                        <Button
-                            disabled={!this.validateFormButton5()}
-                            title= {this.state.ButtonRainDryWet}
-                            onPress={this.handleSubmitButton5}
-                        />
-                        <Button
-                            disabled={!this.validateFormButton6()}
-                            title={this.state.ButtonRainHeavy}
-                            onPress={this.handleSubmitButton6}
-                        />
-                        </View>
-                <View >
-                    <Text style={{height: 20}}> </Text>
-                    <table >
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.tyretype}
-                                   onChangeText={(text) => this.setState({tyretype: text})}/></td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Mischung: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}> <TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.tyremix}
-                                    onChangeText={(text) => this.setState({tyremix: text})}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bezeichnung: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.term1}
-                                  onChangeText={(text) => this.setState({term1: text})}/></td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bearbeitungsvariante: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.variant}
-                                   onChangeText={(text) => this.setState({variant: text})}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Abholdauer: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 300, padding: '8px'}}><TextInput style={{textAlign: 'left', height: 20, width: 250, fontFamily: 'arial'}} value={this.state.orderduration}
-                                   placeholder=" Zeit in Minuten" onChangeText={(text) => {this.setState({orderduration: text}); this.setState({timervalue: text})}}/>
-                        </td>
-                    </tr>
-                </table>
-                        <View style={{marginLeft: 'auto', marginRight: 'auto', width: 200}}>
-                        <Text style={{height: 20}}> </Text>
-                        <Button
-                            disabled={!this.validateForm()}
-                            title="Bestellung bestätigen"
-                            onPress={this.handleSubmit}
-                        />
-                        <Text> </Text>
-                        <Button
-                            title="zurück"
-                            onPress={this.changeRace}
-                            />
-                        </View>
-                    </View>
-                        </View>
-                <View style={{justifyContent: 'flex-start'}}>
-                    <View style={container3}>
-                    <View>
-                    <Text style={{fontSize: 30, fontWeight: 'bold', textAlign: 'center'}}>
-                        Reifensatz in Bearbeitung
-                    </Text>
-                     <Text> </Text>
-                    </View>
-                    <View>
-                     <table>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Reifenart: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.tyretype1}</td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Mischung: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.tyremix1}</td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bearbeitungsvariante: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.variant1}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', fontWeight: 'bold', color: 'white', fontFamily: 'arial'}}><label> Bestellzeit: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}>{this.state.ordertime}
-                        </td>
-                    </tr>
-                    <tr style={{height: 50}}>
-                        <td> </td>
-                        <td></td>
-                    </tr>
-                     </table>
-                    </View>
-
-                </View>
-                    </View>
-            </View>
-
-                    <div>
-                <h1 id='title'>Reifen bearbeiten</h1>
-                        <tr>
-                <table  id='list_formel'>
-                   <tbody>
-                        {this.renderWheelTable()}
-                    </tbody>
-                </table>
+                <tr key={'1Tabelle'}>
+                    <td>
+                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Alle Sets" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder="Alle Sets" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder="Alle Sets" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder="Alle Sets" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder="Alle Sets" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder="Alle Sets" />
+                    </td>
                 </tr>
+            )})
+     }
+     renderTableOrderCat2(){
+       const optiondropdown1 = this.state.dropdownlist[0][1]
+       const optiondropdown2 = this.state.dropdownlist[1][1]
+       const optiondropdown3 = this.state.dropdownlist[2][1]
+       const optiondropdown4 = this.state.dropdownlist[3][1]
+       const optiondropdown5 = this.state.dropdownlist[4][1]
+       const optiondropdown6 = this.state.dropdownlist[5][1]
+       const coloumns = ['all'];
+       return coloumns.map((buttons, index) => {
+            return (
+                <tr key={'2Tabelle'}>
+                    <td>
+                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder="Wähle ein freies Set aus" />
+                    </td>
+                </tr>
+            )})
+     }
+
+     renderTableOrderCat3(){
+       const optiondropdown1 = this.state.dropdownlist[0][2]
+       const optiondropdown2 = this.state.dropdownlist[1][2]
+       const optiondropdown3 = this.state.dropdownlist[2][2]
+       const optiondropdown4 = this.state.dropdownlist[3][2]
+       const optiondropdown5 = this.state.dropdownlist[4][2]
+       const optiondropdown6 = this.state.dropdownlist[5][2]
+       const coloumns = ['all'];
+       return coloumns.map((buttons, index) => {
+            return (
+                <tr key={'3Tabelle'}>
+                    <td>
+                    <Dropdown options={optiondropdown1} onChange={this.handle_choosen_order} id ={optiondropdown1.id} value={optiondropdown1.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown2} onChange={this.handle_choosen_order} id ={optiondropdown2.id} value={optiondropdown2.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown3} onChange={this.handle_choosen_order} id ={optiondropdown3.id} value={optiondropdown3.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown4} onChange={this.handle_choosen_order} id ={optiondropdown4.id} value={optiondropdown4.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown5} onChange={this.handle_choosen_order} id ={optiondropdown5.id} value={optiondropdown5.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                    <td>
+                    <Dropdown options={optiondropdown6} onChange={this.handle_choosen_order} id ={optiondropdown6.id} value={optiondropdown6.name} placeholder="Sets in Bearbeitung" />
+                    </td>
+                </tr>
+            )})
+     }
+
+     renderTableData() {
+        console.log(this.state.setData)
+        return this.state.setData.map((setData, index) => {
+            return (
+                <tr key={'renderTabelle12'}>
+                    <td>
+                        <input id={setData.setid} placeholder={'Kategorie'} value={setData.cat} name={'cat'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'Unterkategorie'} value={setData.subcat}
+                               name={'subcat'} onChange={this.change_state_in_tabular_set}/>
+                        <input
+                            id={setData.setid} placeholder={'Setbezeichnung'} value={setData.description}
+                            name={'description'} onChange={this.change_state_in_tabular_set}/>
+                         <input id={setData.setid} placeholder={'Bearbeitungsvariante'}
+                           value={setData.variant} name ={'variant'} onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td>
+                        <input
+                            id={setData.setid} placeholder={'Datum und Uhrzeit'}
+                            value={setData.order_start} name={'order_start'} onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td>
+                        <input id={setData.setid} placeholder={'Abholdauer'} value={setData.order_duration} name={'order_duration'}
+                               onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td>
+                        <input
+                            id={setData.setid} placeholder={setData.status} value={setData.status}
+                            name={'status'} onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                </tr>
+            )
+        })
+    }
+    renderTableData2() {
+        console.log(this.state.setData)
+        return this.state.setData.map((setData, index) => {
+            return (
+                <tr key={'renderTabelle12'}>
+                    <td>
+                        <input id={setData.setid} placeholder={'Felgentemperatur'}
+                               value={setData.temp_air} name={'temp_air'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fl_id} placeholder={'Kaltdruck FL'} value={setData.fl_pressure}
+                               className={'pressure'} name={'fl_pressure'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fr_id} placeholder={'Kaltdruck FR'} value={setData.fr_pressure}
+                               className={'pressure'} name={'fr_pressure'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.bl_id} placeholder={'Kaltdruck BL'} value={setData.bl_pressure}
+                               className={'pressure'} name={'bl_pressure'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.br_id} placeholder={'Kaltdruck BR'} value={setData.br_pressure}
+                               className={'pressure'} name={'fl_pressure'} onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td>
+                        <input id={setData.setid} placeholder={'bleed initial'}
+                               value={setData.bleed_initial} name={'bleed_initial'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'bleed hot'} value={setData.bleed_hot}
+                               name={'bleed_hot'} onChange={this.change_state_in_tabular_set}/></td>
+                    <td onChange={this.change_state_in_tabular_set}>
+                        <input id={setData.setid} placeholder={'Heiztemperatur'} value={setData.temp_heat}
+                               name={'temp_heat'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'Heizdauer'} value={setData.heat_duration}
+                               name={'heat_duration'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'Heizstart'} value={setData.heat_start}
+                               name={'heat_start'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'Heizende'} value={setData.heat_end}
+                               name={'heat_end'} onChange={this.change_state_in_tabular_set}/></td>
+                    <td>
+                        <input id={setData.setid} placeholder={'Zeit der Messung'}
+                               value={setData.heat_press_timestamp} name={'heat_press_timestamp'}
+                               onChange={this.schange_state_in_tabular_set}/>
+                        <input id={setData.fl_id} placeholder={'Warmdruck FL'}
+                               value={setData.fl_hot_air_press} name={'fl_hot_air_press'} className={'hot_air_press'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fr_id} placeholder={'Warmdruck FR'}
+                               value={setData.fr_hot_air_press} name={'fr_hot_air_press'} className={'hot_air_press'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.bl_id} placeholder={'Warmdruck BL'}
+                               value={setData.bl_hot_air_press} name={'bl_hot_air_press'} className={'hot_air_press'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.br_id} placeholder={'Warmdruck BR'}
+                               value={setData.br_hot_air_press} name={'br_hot_air_press'} className={'hot_air_press'}
+                               onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td>
+                        <input id={setData.setid} placeholder={'Target vorne'}
+                               value={setData.heat_press_front} name={'heat_press_front'}
+                               onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.setid} placeholder={'Target hinten'}
+                               value={setData.heat_press_back} name={'heat_press_back'}
+                               onChange={this.change_state_in_tabular_set}/>
+                    </td>
+                    <td>
+                        <input id={setData.setid} placeholder={'nicht gebleedet'} value={setData.gebleedet}
+                               name={'gebleedet'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fl_id} placeholder={'Bleed FL'} value={setData.fl_bleed_press}
+                               className={'bleed_press'} name={'fl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fr_id} placeholder={'Bleed FR'} value={setData.fr_bleed_press}
+                               className={'bleed_press'} name={'fr_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.bl_id} placeholder={'Bleed BL'} value={setData.bl_bleed_press}
+                               name={'bleed_press'} className={'bl_bleed_press'}  onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.br_id} placeholder={'Bleed BR'} value={setData.br_bleed_press}
+                               className={'bleed_press'} name={'br_bleed_press'} onChange={this.change_state_in_tabular_set}/>
+                    </td>
+
+                    <td>
+                        <input id={setData.setid} placeholder={'ID FL'} value={setData.fl_id_scan}
+                               className={'id_scan'} name={'fl_id_scan'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.fr_id} placeholder={'ID FR'} value={setData.fr_id_scan}
+                               className={'id_scan'} name={'fr_id_scan'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.bl_id} placeholder={'ID BL'} value={setData.bl_id_scan}
+                               className={'id_scan'} name={'bl_id_scan'} onChange={this.change_state_in_tabular_set}/>
+                        <input id={setData.br_id} placeholder={'ID BR'} value={setData.br_id_scan}
+                               className={'id_scan'} name={'br_id_scan'}  onChange={this.change_state_in_tabular_set}/></td>
+                </tr>
+            )
+        })
+    }
+
+
+
+        render() {
+        return (
+              <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
+         <nav className="navbar navbar-light" style={{backgroundColor: '#d0d7de'}}>
+                    <div className="container-fluid">
+                        <a className="navbar-brand" href="#">  <img src={image} style={{width: '70%'}}/> </a>
+                        <button className="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                                aria-expanded="false" aria-label="Toggle navigation">
+                            <span className="navbar-toggler-icon"></span>
+                        </button>
+                        <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeRace}>Hauptmenü </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewRace}>Neue Renndaten anlegen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeShowRace}>Renndaten anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeAstrid}>Berechnung Reifendruck </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen</button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeMaen}>Statistiken anzeigen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewFormel}>Formel Reifendruck anlegen </button>
+                                </li>
+                                <li className="nav-item">
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeNewUser}>Neues Mitglied anlegen </button>
+                                </li>
+                                <br/>
+                                <li className="nav-item">
+                                    <button className="btn btn-primary btn-sm" aria-current="page" onClick={this.changeLogout}>Ausloggen </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+               <div style={{marginLeft: 'auto', marginRight: 'auto'}}>
+               <br/>
+               <h1 className="display-4" style={{color: '#d0d7de', textAlign: 'center'}} >Reifenbestellungen verwalten</h1>
+               <br/>
+                <br/>
+                <div>
+                    <h3 className="display-6" id='title' style={{color: '#d0d7de', textAlign: 'center'}} >Neue Reifenbestellung anlegen</h3>
+                    <table id='order' className="table table-striped table-hover table-bordered"
+                          style={{backgroundColor: '#d0d7de', verticalAlign: 'middle'}}>
+                        <tbody>
+                        {this.renderTableHeader(1)}
+                        {this.renderTableOrderCat1()}
+                        {this.renderTableOrderCat2()}
+                        {this.renderTableOrderCat3()}
+                        </tbody>
+                    </table>
                 </div>
-                </ScrollView>
-            );
-        }
+                <div>
+                <br/>
+                <br/>
+                    <h3 className="display-6" id='title' style={{color: '#d0d7de', textAlign: 'center'}} >Ausgewähltes Reifenset bearbeiten</h3>
+                    <table id='choosen' className="table table-striped table-hover table-bordered"
+                          style={{backgroundColor: '#d0d7de', verticalAlign: 'middle', width: 500}}>
+                        <tbody>
+                        {this.renderTableHeader(2)}
+                        {this.renderTableData()}
+                        </tbody>
+                    </table>
+                    <table id='choosen2' className="table table-striped table-hover table-bordered"
+                          style={{backgroundColor: '#d0d7de', verticalAlign: 'middle', width: 500}}>
+                    <tbody>
+                      {this.renderTableHeader(3)}
+                      {this.renderTableData2()}
+                    </tbody>
+                    </table>
+                </div>
+               </div>
+                <br/>
+                <button type='button' className='btn btn-primary' onClick={this.changeRace}
+                        style={{marginLeft: 'auto', marginRight: 'auto'}}> BESTELLUNG ABSCHICKEN
+                </button>
+                <br/>
+                <button type='button' className='btn btn-primary' onClick={this.changeRace}
+                        style={{marginLeft: 'auto', marginRight: 'auto'}}> ZURÜCK
+                </button>
+                <br/>
+                <br/>
+              </View>
+        );
     }
-
-
-    const
-    bigStyle = {
-        color: 'black',
-        fontSize: 30,
-        fontWeight: 'bold'
-    }
-
-    const
-    subStyle = {
-        fontSize: 20,
-        height: 40
-    }
-
-    const
-    emptylineStyle = {
-        height: 20,
-    }
-
-    const
-    orderHeaderStyle = {
-        height: 40,
-        width: 300,
-        margin: 3,
-        borderWidth: 1,
-        padding: 10,
-        backgroundColor: '#696969',
-        color: '#ffffff',
-        fontweight: 'bold',
-        fontSize: 16,
-        lineHeight: 16,
-        fontfamily: 'arial',
-    };
-
-    const
-    orderTextStyle = {
-        height: 30,
-        width: 300,
-        margin: 3,
-        borderWidth: 1,
-        padding: 10,
-        backgroundColor: '#d3d3d3',
-        fontSize: 14,
-        fontfamily: 'arial',
-        textAlign: 'center'
-    };
-
-    const
-    orderFeedbackStyle = {
-        height: 40,
-        width: 300,
-        margin: 3,
-        textAlign: 'center',
-        borderWidth: 1,
-        padding: 10,
-        backgroundColor: '#d3d3d3',
-        fontSize: 14
-    };
-    const container1 ={
-        padding: '50px',
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-    };
-    const container2={
-
-    };
-    const container3={
-
-
-    };
-    const container4={
-        flexDirection: 'row',
-        justifyContent: 'space-evenly',
-
-    };
-    const container5={
-        textAlign: 'center',
-        padding: '20px',
-
-    };
+}

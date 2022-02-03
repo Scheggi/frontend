@@ -122,7 +122,7 @@ export default class AstridScreen extends React.Component {
         this.props.navigation.push('Helper')
     }
 
-    validateForm() {
+     validateForm() {
        return this.state.variable1!=""&&this.state.raceID!=0&&this.state.setID!=0&&this.state.airTemperatureUpdate!="";
     }
     validateForm1(){
@@ -196,7 +196,7 @@ export default class AstridScreen extends React.Component {
 
     }
     async changeBleed(){
-          const accesstoken = await AsyncStorage.getItem('acesstoken');
+          const accesstoken = await AsyncStorage.getItem('accesstoken');
           const bleed1= this.state.bleed1;
           const bleed2=this.state.bleed2;
           const setID=this.state.setID;
@@ -208,7 +208,7 @@ export default class AstridScreen extends React.Component {
 
 
     async componentDidMount() {
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         getRaceList(accesstoken).then(racelistDropdown => {
             let raceListModified=racelistDropdown;
             raceListModified.unshift({'name': "kein Rennen ausgewählt", 'id':0});
@@ -241,7 +241,7 @@ export default class AstridScreen extends React.Component {
         this.setState({air_pressureBR: ""});
         this.setState({airTemperature: ""});
         this.setState({trackTemperature: ""});
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         this.setState({raceID: event.target.value});
         if(event.target.value!=0) {
             getReifendruckDetails(accesstoken, event.target.value).then(reifenFormelDetails => {
@@ -298,7 +298,7 @@ export default class AstridScreen extends React.Component {
         this.setState({anpassungsKonstante: ""});
         this.setState({heizTemperatur: ""});
         this.setState({setID: event.target.value});
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const id=event.target.value;
         console.log(id);
         if(id!=0) {
@@ -529,7 +529,7 @@ export default class AstridScreen extends React.Component {
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWheel}>Reifendetails anzeigen </button>
                                 </li>
                                 <li className="nav-item">
-                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
+                                    <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeHelper}>Wetterdaten erfassen </button>
                                 </li>
                                 <li className="nav-item">
                                     <button style={{backgroundColor: '#d0d7de'}} className="btn btn-sm" aria-current="page" onClick={this.changeWeather}>Wetterdaten anzeigen </button>
@@ -560,7 +560,6 @@ export default class AstridScreen extends React.Component {
                   <select  id='option' value={this.state.id} onChange={this.getRaceID}>{optionTemplate1}</select>
               </label>
          </div>
-         <br/>
          <br/>
          <div className='input-group'>
              <label className='input-group-text' style={{backgroundColor: '#d0d7de', marginLeft: 'auto', marginRight: 'auto'}}> Reifenset auswählen: &nbsp; <select id='option' value={this.state.setID} onChange={this.getSetID}>
