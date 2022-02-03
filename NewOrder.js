@@ -6,7 +6,7 @@ import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
 import {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from "./tools";
 import {get_Dict_WheelOrder, getDropdown,getWheelSetInformation,getOrderDropdown,getWheelInformations} from "./tools_get_wheels";
-import {changeSetData} from "./tools_wheel"
+import {changeSetData,changeTimer} from "./tools_wheel"
 import image from "./logo.png";
 
 export default class NewOrderScreen extends React.Component {
@@ -137,63 +137,17 @@ export default class NewOrderScreen extends React.Component {
         console.log(this.state.dropdownlist)
     }
 
-        handleWheelIDChange = event => {
-            timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheel/set_id_tag', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    wheel_id: event.target.id,
-                    wheel_id_tag: event.target.value,
-                })
-            })
-            ).then(response => response.json()).then(data => {
-                if (data[1]==200) {
-                    console.log("ID Changed")
-                    this.getWheelData().then(() => {return})
-                }
-                else {
-                    console.log("failed")
-                }
-            }).catch(function (error) {
-                console.log(error);
-            })
-        }
-
-
-        handleTemp = event => {
-            timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheel/set_temp', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    set_id: event.target.id,
-                    temp: event.target.value,
-                })
-            })
-            ).then(response => response.json()).then(data => {
-                if (data[1]==200) {
-                    console.log("temp Changed")
-                    this.getWheelData().then(() => {return})
-                }
-                else {
-                    console.log("failed")
-                }
-            }).catch(function (error) {
-                console.log(error);
-            })
-        }
 
 
     save_order = event =>{
          console.log(this.state.setData)
          changeSetData(this.state.setData[0])
+        //
+        var duration = 0;
+         this.state.setData.forEach( function (element,index){if(element.order_duration != null){duration =element.order_duration}});
+         // timer p
+
+
     }
       // end save change
 

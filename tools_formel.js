@@ -126,4 +126,4 @@ async function refreshToken() {
 
 
 
-export {changeWheelSet,changeSingleWheel}
+export {changeWheelSet,changeSingleWheel,changeTimer}
