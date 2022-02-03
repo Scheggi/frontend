@@ -284,10 +284,6 @@ export default class ShowRaceScreen extends React.Component {
                     <br/>
                     <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Rennen</h3>
                 </div>
-                <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
-                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Renn-ID: </label>
-                    <label className='input-group-text' style={{backgroundColor: '#f1f3f5', width: 214}}> {this.state.raceID} </label>
-                </div>
                <br/>
                 <div className='input-group' style={{width: 300, marginLeft: 'auto', marginRight: 'auto'}}>
                     <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Rennart: </label>
