@@ -14,6 +14,7 @@ export default class NewOrderScreen extends React.Component {
         super(props);
         this.state = {
             setID:0,
+            raceID :0,
             setData:[],
             list_wheels : [],
             dropdownlist : [[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]],[[],[],[]]],
@@ -94,6 +95,7 @@ export default class NewOrderScreen extends React.Component {
      async getTabularData() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
+        this.setState({raceID:raceID})
         await getWheelInformations(accesstoken, raceID).then(Tab => {
             this.setState({list_wheels: Tab});
         }).catch(function (error) {
@@ -127,7 +129,6 @@ export default class NewOrderScreen extends React.Component {
        let copyArray = this.state.setData;
         this.state.setData.forEach( function (element,index){copyArray[index][event.target.name]=event.target.value});
         this.setState({setData:copyArray});
-        console.log(this.state.setData);
     };
 
      async componentDidMount(){
@@ -137,17 +138,13 @@ export default class NewOrderScreen extends React.Component {
         console.log(this.state.dropdownlist)
     }
 
-
-
     save_order = event =>{
-         console.log(this.state.setData)
          changeSetData(this.state.setData[0])
-        //
         var duration = 0;
-         this.state.setData.forEach( function (element,index){if(element.order_duration != null){duration =element.order_duration}});
-         // timer p
-
-
+        this.state.setData.forEach( function (element,index){if(element.order_duration != null){duration =element.order_duration}});
+        console.log(parseInt(duration));
+        changeTimer(this.state.raceID,[['order_duration',parseInt(duration)]]);
+        this.changeRace();
     }
       // end save change
 

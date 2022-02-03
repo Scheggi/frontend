@@ -324,7 +324,28 @@ async function sendStatusRequest(accesstoken,setid,status) {
         })
 }
 
-
+function changeTimer( raceID, liste){
+            timeoutPromise(2000, fetch(
+            'https://api.race24.cloud/timer/change_times', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    raceID: raceID,
+                    liste:liste,
+                })
+            })
+            ).then(response => response.json()).then(data => {
+                if (data[1]==200) {
+                    console.log("Timer changes")
+                }
+                else {console.log("failed")}
+            }).catch(function (error) {
+                console.log(error);
+            })
+        }
 
 
 
@@ -437,4 +458,4 @@ async function refreshToken() {
 }
 
 
-export {generateAllSets,sendWheelRequest,sendNewSetRequest,sendWheelsRequest,sendStatusRequest,sendBleedRequest,changeSetData}
+export {generateAllSets,sendWheelRequest,sendNewSetRequest,sendWheelsRequest,sendStatusRequest,sendBleedRequest,changeSetData,changeTimer}
