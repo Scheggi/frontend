@@ -217,7 +217,7 @@ export default class WheelScreen extends React.Component {
                      heat_press=element['heat_press_front'];
                      if(hot_air_press!=null&&heat_press!=null){
                          difference=hot_air_press-heat_press;
-                         zahl= difference;}
+                         zahl= parseFloat(difference).toFixed(4);}
                          else {
                          zahl= "";
                      }
@@ -231,7 +231,7 @@ export default class WheelScreen extends React.Component {
                      heat_press=element['heat_press_back'];
                      if(hot_air_press!=null&&heat_press!=null){
                          difference=hot_air_press-heat_press;
-                         zahl= difference;}
+                         zahl= parseFloat(difference).toFixed(4);}
                          else {
                          zahl= "";
                      }
