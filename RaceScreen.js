@@ -116,7 +116,6 @@ export default class RaceScreen extends React.Component {
         if(ttemp == null) {
             return;
         }
-
         let lastDate = (new Date(Date.parse(ttemp.datetime)).getTime() / 1000)
         let nowDate = (new Date().getTime() / 1000)
         let result = 1800 - Math.floor(nowDate - lastDate)
