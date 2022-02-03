@@ -17,7 +17,7 @@ export default class LogoutScreen extends React.Component {
 
     async sendLogoutRequest() {
         console.log("Logout")
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
        timeoutPromise(2000, fetch(
             'https://api.race24.cloud/user/auth/logout', {
                 method: 'POST',
@@ -51,8 +51,8 @@ export default class LogoutScreen extends React.Component {
 
     render() {
         return (
-            <View style={styles.viewStyles}>
-                <Text style={styles.textStyles}> Sie wurden erfolgreich ausgeloggt!</Text>
+            <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
+            <h1 className="display-6" style={{color: '#d0d7de', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto', marginTop: 'auto', marginBottom: 'auto'}}> Sie wurden erfolgreich ausgeloggt! </h1>
             </View>
         );
     }

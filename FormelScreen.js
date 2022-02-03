@@ -53,7 +53,7 @@ export default class FormelScreen extends React.Component {
     }
 
     async getTabularData(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         getFormelList(accesstoken).then(formellistTab => {
             console.log(formellistTab);
             this.setState({list_formel: formellistTab});
@@ -68,7 +68,7 @@ export default class FormelScreen extends React.Component {
 
     /*
     async componentDidMount() {
-      const accesstoken = await AsyncStorage.getItem('acesstoken');
+      const accesstoken = await AsyncStorage.getItem('accesstoken');
       timeoutPromise(2000, fetch("https://api.race24.cloud/formel/get", {
           method: 'POST',
           headers: {

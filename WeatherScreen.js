@@ -11,11 +11,14 @@ import {
     ScrollView,
 } from 'react-native';
 import {styles} from "./styles"
-import {getRaceList, getWeatherTab, timeoutPromise,getWheelsList,getRaceDetails_by_ID} from "./tools"
+import {getRaceList, getWeatherTab, timeoutPromise,getWheelsList,getRaceDetails_by_ID, getHourlyForecastByLocationName} from "./tools"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
 import Table from "./Table";
+import apiData from "./apiAnswer.json"
+import TouchHistoryMath from "react-native/Libraries/Interaction/TouchHistoryMath";
+import RenderApiData from "./RenderApiData";
 
 export default class WeatherScreen extends React.Component {
     constructor(props) {
@@ -27,7 +30,15 @@ export default class WeatherScreen extends React.Component {
             dataWeather: [],
             listWheelStart:[],
             RaceDetails:[],
+
+            apiWeatherData: [],
+            apiWeatherData_Parsed: [], 
+
+            raceLocation: "",
+            raceDate: "",
+
         }
+
     }
 
     // navigate to Main Menue
@@ -36,26 +47,117 @@ export default class WeatherScreen extends React.Component {
         this.props.navigation.goBack();
     }
 
-    async componentDidMount(){
-        this.getWeatherData();
+    sleep = (milliseconds) => {
+        return new Promise(resolve => setTimeout(resolve, milliseconds))
+    }
+
+
+
+    async componentDidMount() {
+        await this.getRaceDetails();
+        console.log(this.state.RaceDetails)
+        await this.getWeatherData();
+        console.log(this.state.dataWeather)
+
+        this.sleep(2000).then(r => {
+            this.getWeatherByWeatherCom();
+        })
+    }
+
+  
+
+    parseApiData() {
+
+
+        if(this.state.RaceDetails[0] != null && this.state.apiWeatherData != null && this.state.apiWeatherData != undefined) {
+
+
+            console.log(this.state.apiWeatherData)
+            const race_date = this.state.RaceDetails[0].date
+            //const itemArray = 
+
+            const dateEntries = []
+
+            itemArray.map(function(item){
+                const date_object = new Date(item.date)
+
+                var day = (date_object.getDate()).toString()
+                if(day.length == 1) {day = `0${day}`}
+
+                var month = ((date_object.getMonth())+1).toString()
+                if(month.length == 1) {month = `0${month}`}
+
+                var year = (date_object.getFullYear()).toString()
+
+                var form_res = `${day}.${month}.${year}`
+
+                if(race_date == form_res) {
+                    var datetime = (date_object).toString();
+                    var weatherText = item.weather.text;
+                    var rainProb = item.prec.probability;
+                    var tempAverage = item.temperature.avg;
+                    var windDirection = item.wind.direction;
+                    var windSpeed = item.wind.avg;
+
+                    dateEntries.push(datetime)
+                    dateEntries.push(weatherText)
+                    dateEntries.push(rainProb)
+                    dateEntries.push(tempAverage)
+                    dateEntries.push(windDirection)
+                    dateEntries.push(windSpeed)
+                        
+                } 
+            });
+
+            return dateEntries;
+        }
+
+    }
+
+
+
+
+    async getWeatherByWeatherCom() {
+        const date = this.state.RaceDetails[0].date
+        const location = this.state.RaceDetails[0].place
+
+        await getHourlyForecastByLocationName(location).then(data => {
+            this.setState({apiWeatherData: data});
+
+        }).catch(function (error) {
+            console.log(error);
+        })
+
+        console.log(this.state.apiWeatherData)
     }
 
 
     //get RaceDetails by RaceID
     async getRaceDetails(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
-        getRaceDetails_by_ID(accesstoken,raceID).then(liste => {
-            console.log(liste);
+        await getRaceDetails_by_ID(accesstoken,raceID).then(liste => {
             this.setState({RaceDetails: liste});
+            console.log(liste)
+            this.setState({
+                raceLocation: liste[0].date,
+                raceDate : liste[0].place,
+            })
         }).catch(function (error) {
             console.log(error);
         })
+
+        console.log(this.state.RaceDetails)
+
+
+
+
     }
 
     //get ReifenData
     async getWheelsStart(){
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceID = await AsyncStorage.getItem('raceID');
         getWheelsList(accesstoken,raceID).then(liste => {
             console.log(liste);
@@ -68,35 +170,16 @@ export default class WeatherScreen extends React.Component {
 
     //get Weather Data, it will be used in getRaceID
     async getWeatherData(){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const accesstoken = await AsyncStorage.getItem('accesstoken');
        const raceID = await AsyncStorage.getItem('raceID');
-       //const raceID = await AsyncStorage.getItem('raceID');
        console.log(raceID)
        getWeatherTab(accesstoken, raceID).then(DataTabular => {
-                console.log(DataTabular);
                 this.setState({dataWeather: DataTabular});
             }).catch(function (error) {
                 console.log(error);
             })
+
     }
-
-
-    /*
-    renderTableData() {
-        console.log(this.state.dataWeather)
-        return this.state.dataWeather.map((dataWeather, index) => {
-            const { temp_ground,temp_air,datetime,weather_des } =dataWeather //destructuring
-            return (
-            <tr key={datetime}>
-               <td>{datetime}</td>
-               <td>{temp_ground}</td>
-                <td>{temp_air}</td>
-                <td>{weather_des}</td>
-            </tr>
-         )
-      })
-   }
-     */
 
     //Tabular Weather Data
     renderTableData() {
@@ -115,30 +198,47 @@ export default class WeatherScreen extends React.Component {
    }
 
     render() {
+
+        console.log("test: ", this.state.apiWeatherData_Parsed)
+
         return (
+
             <View style={viewStyles1}>
-                <div >
-                <h1 style={{fontSize: 30, marginRight: 'auto', marginLeft: 'auto', textAlign: 'center'}} id='title'>Wetterdaten</h1>
-                <table style={{overflowY: 'scroll'}} id='list_formel'>
-                    <tr bgcolor='#808080' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}} >
-                    <th style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}} >Zeitstempel</th>
-                    <th style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}} >Lufttemperatur</th>
-                    <th style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}} >Streckentemperatur</th>
-                    <th style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}} >Streckenverhältnis</th>
-                    </tr>
-                   <tbody>
-                      {this.renderTableData()}
-                   </tbody>
-                </table>
+
+                <div>
+
+                    <h1 style={{fontSize: 30, marginRight: 'auto', marginLeft: 'auto', textAlign: 'center'}} id='title'>Wetterdaten</h1>
+
+                    <table style={{overflowY: 'scroll'}} id='list_formel'>
+
+                        <thead bgcolor='#808080' style={{textAlign: "left", padding: '8px', color: 'white', fontFamily: 'arial'}}>
+                            <tr>
+                                <th style={{border: "solid", borderColor: 'grey', height: 25, width: 150, padding: '8px',textAlign: 'center'}}>Zeitstempel</th>
+                                <th style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}}>Lufttemperatur</th>
+                                <th style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}}>Streckentemperatur</th>
+                                <th style={{border: "solid", borderColor: 'grey', height: 20, width: 150, padding: '8px', textAlign: 'center'}}>Streckenverhältnis</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {this.renderTableData()}
+                        </tbody>
+
+                    </table>
+
                 </div>
-                <View  style={{width: 200}}>
-                <Text style={{height: 20}}></Text>
-                <Button
-                        title="zurück"
-                        onPress={this.changeRace}
-                />
-                    </View>
+
+                <ScrollView style={{left: "550px", top: "-10%"}}>
+                    <RenderApiData list={this.parseApiData()}/>
+                </ScrollView>
+
+                <View style={{width: 200}}>
+                    <Text style={{height: 20}}></Text>
+                    <Button title="zurück" onPress={this.changeRace}/>
+                </View>
+
             </View>
+
         );
     }
 }

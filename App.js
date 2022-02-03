@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/dist/js/bootstrap.bundle';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 
@@ -23,14 +24,23 @@ import TestScreen from "./Testen";
 import NiklasScreen from "./Niklas";
 import MaenScreen from "./Maen";
 import NewFormelScreen  from "./NewFormel";
+import HelperNavigation from "./HelperNavigator";
 
 const IngeniuerNav = createStackNavigator({
     Wetter:{screen: WeatherScreen},
-    Formel:{screen:FormelScreen},
     Logout: {screen: LogoutScreen},
     Nav: {screen: IngenieurNav},
+    NewRace: { screen: NewRaceScreen},
+    Race: {screen: RaceScreen},
+    NewOrder: {screen: NewOrderScreen},
+    Weather: {screen: WeatherScreen},
+    ShowRace : {screen :ShowRaceScreen},
     Wheel: {screen: WheelScreen},
-    /*NewUser: {}*/
+    NewFormel: {screen: NewFormelScreen},
+    Astrid: {screen: AstridScreen},
+    Maen: {screen: MaenScreen},
+    Helper: {screen: NewHelpScreen},
+
     }, {
     initialRouteName: "Nav",
     headerMode: 'none',
@@ -40,8 +50,17 @@ const IngeniuerNav = createStackNavigator({
 const HelperNav = createStackNavigator({
     Helper: {screen:NewHelpScreen },
     Logout: {screen: LogoutScreen},
+    NewRace: { screen: NewRaceScreen},
+    NewOrder: {screen: NewOrderScreen},
+    Weather: {screen: WeatherScreen},
+    ShowRace : {screen :ShowRaceScreen},
+    Wheel: {screen: WheelScreen},
+    Astrid: {screen: AstridScreen},
+    Maen: {screen: MaenScreen},
+    HelperNavigator: {screen: HelperNavigation},
+
     }, {
-    initialRouteName: "Helper",
+    initialRouteName: "HelperNavigator",
     headerMode: 'none',
     headerShown: false,
     });
@@ -50,7 +69,6 @@ const ManagerNav = createStackNavigator({
     NewRace: { screen: NewRaceScreen},
     Race: {screen: RaceScreen},
     NewUser: {screen: NewUserScreen},
-    Formel: {screen: FormelScreen},
     Logout: {screen: LogoutScreen},
     NewOrder: {screen: NewOrderScreen},
     Weather: {screen: WeatherScreen},
@@ -58,9 +76,8 @@ const ManagerNav = createStackNavigator({
     Wheel: {screen: WheelScreen},
     NewFormel: {screen: NewFormelScreen},
     Astrid: {screen: AstridScreen},
-    Niklas: {screen: NiklasScreen},
-    Testen: {screen: TestScreen},
     Maen: {screen: MaenScreen},
+    Helper: {screen: NewHelpScreen},
 
     }, {
     initialRouteName: "Race",

@@ -104,7 +104,7 @@ export default class NewHelpScreen extends React.Component {
 
 
     async getWeatherData(raceID){
-       const accesstoken = await AsyncStorage.getItem('acesstoken');
+       const accesstoken = await AsyncStorage.getItem('accesstoken');
        getWeatherTab(accesstoken, raceID).then(DataTabular => {
                 this.setState({dataWeather: DataTabular});
                 this.setState({lastStemp: this.state.dataWeather[this.state.dataWeather.length-1]})
@@ -121,14 +121,32 @@ export default class NewHelpScreen extends React.Component {
     }
 
     async componentDidMount() {
+
         let timeLeftVar = this.secondsToTime(this.state.seconds);
+
         this.setState({ time: timeLeftVar });
-        const accesstoken = await AsyncStorage.getItem('acesstoken');
+
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
+
         getRaceList(accesstoken).then(racelistDropdown => {
           this.setState({raceList: racelistDropdown});
+          try {
+            this.setState({raceid: racelistDropdown[0].id})
+
+          }catch(e) {
+            console.log(e);
+          }
         }).catch(function (error) {
             console.log(error);
         });
+
+
+        try {
+          this.getWeatherData(1)
+        }catch(e) {
+          console.log("Couldnt get WeatherData for RaceId 1")
+        }
+        
         }
 
 
@@ -137,15 +155,19 @@ export default class NewHelpScreen extends React.Component {
         this.props.navigation.replace('Logout');
     }
 
-
     validateForm() {
         return this.state.weather_des.length > 0 && this.state.raceid != 0 ;
     }
+    
     handleSubmit = event => {
         event.preventDefault();
-        this.sendNewWeatherRequest(this.state.temp_air,this.state.temp_ground,
-            this.state.weather_des);
+        this.sendNewWeatherRequest(this.state.temp_air,this.state.temp_ground,this.state.weather_des);
     }
+
+    sleep = (milliseconds) => {
+      return new Promise(resolve => setTimeout(resolve, milliseconds))
+  }
+
 
 
     async sendNewWeatherRequest(temp_air,temp_ground,weather_des) {
@@ -169,6 +191,11 @@ export default class NewHelpScreen extends React.Component {
                 ).catch(function (error) {
                 console.log(error);
             })
+
+            this.sleep(2500).then(r => {
+              console.log("weather saved!");
+              this.getWeatherData(this.state.raceid);
+      	    })
     }
 
 
@@ -176,17 +203,6 @@ export default class NewHelpScreen extends React.Component {
         let optionTemplate = this.state.raceList.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
     ));
-
-        console.log(this.state.time)
-
-    window.addEventListener('load', function() {
-        setTimeout(function()
-        {
-            let select = document.getElementById('option');
-            select.options.selectedIndex = 0;
-            select.dispatchEvent(new Event('change', {bubbles: true}));
-        }, 1000); // TODO - MÖGLICHST AUF DIESE UMSETZUNGSWEISE VERZICHTEN
-    })
 
     const styles = {
 

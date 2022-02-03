@@ -1,12 +1,11 @@
 import React from "react";
-import {TextInput, Button, View} from "react-native";
+import {TextInput, Button, View, ImageBackground} from "react-native";
 import {styles} from "./styles"
 //import { AsyncStorage } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {timeoutPromise} from "./tools"
 import Text from "react-native-web/dist/vendor/react-native/Animated/components/AnimatedText";
-
-
+ // import image from './images/audi.jpg';
 
 export default class LoginScreen extends React.Component {
     constructor(props) {
@@ -40,7 +39,7 @@ export default class LoginScreen extends React.Component {
             })
             ).then(response => response.json()).then(data => {
                 if (data[1]==200) {
-                    AsyncStorage.setItem('acesstoken', String(data[0].access_token));
+                    AsyncStorage.setItem('accesstoken', String(data[0].access_token));
                     AsyncStorage.setItem('refreshtoken', String(data[0].refresh_token));
                     AsyncStorage.setItem('userid', String(data[0].userid));
                     AsyncStorage.setItem('usergroup',String(data[0].usergroup));
@@ -56,36 +55,37 @@ export default class LoginScreen extends React.Component {
             })
     }
 
+ // <ImageBackground source={image} resizeMode="cover" style={images}> </ImageBackground>
+
     render() {
         return (
-            <View style={styles.viewStyles}>
-                <Text style={styles.textStyles}>  Reifenmanagement</Text>
-                <View >
-                    <Text style={{height: 50}}> </Text>
-                    <table>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white'}}><label> Username eingeben: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}><TextInput value={this.state.type}
-                                   onChangeText={(username) => this.setState({username})} placeholder='Username'/></td>
-                    </tr>
-                     <tr style={{height: 20}}> </tr>
-                    <tr>
-                        <td bgcolor='#696969' style={{textAlign: "left", padding: '8px', color: 'white'}}><label> Passwort eingeben: </label></td>
-                        <td style={{border: "solid", borderColor: 'dimgrey', height: 20, width: 150, padding: '8px'}}> <TextInput value={this.state.place}
-                                    secureTextEntry={true} onChangeText={(password) => this.setState({password})} placeholder='Passwort'/>
-                        </td>
-                    </tr>
-                    </table>
-                    <View style={{marginLeft: 'auto', marginRight: 'auto', width: 200}}>
-                         <text style={{height: 40}}></text>
-                    <Button
-                        disabled={!this.validateForm()}
-                        title="Login"
-                        onPress={this.handleSubmit}
-                    />
-                    </View>
-                </View>
+            <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
+            <div className='container' style={{marginLeft: 'auto', marginRight: 'auto'}}>
+                    <br/>
+                    <br/>
+                    <br/>
+                    <h1 className="display-4" style={{color: '#d0d7de', textAlign: 'center'}}> Reifenmanagement</h1>
+                    <br/>
+                </div>
+                <br/>
+                <div className='input-group' style={{width: 400, marginLeft: 'auto', marginRight: 'auto'}}>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Usernamen eingeben: </label>
+                    <input type='text' className='form-control' aria-label='Server' value={this.state.type}
+                            onChange={(username) => this.setState({username: username.target.value})} placeholder='Username'/>
+                </div>
+                <br/>
+                <div className='input-group' style={{width: 400, marginLeft: 'auto', marginRight: 'auto'}}>
+                    <label className='input-group-text' style={{backgroundColor: '#d0d7de'}}> Passwort eingeben: </label>
+                    <input type='password' className='form-control' aria-label='Server' value={this.state.place}
+                            secureTextEntry={true} onChange={(password) => this.setState({password:password.target.value})} placeholder='Passwort'/>
+                </div>
+                <br/>
+                <br/>
+                <button disabled={!this.validateForm()} type='button' className='btn btn-primary'
+                        onClick={this.handleSubmit} style={{marginLeft: 'auto', marginRight: 'auto'}}> EINLOGGEN
+                </button>
             </View>
+
         );
     }
 }

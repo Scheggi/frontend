@@ -11,9 +11,10 @@ export class SplashScreen extends React.Component {
     }
 
     async checkLogin(){
-            const accesstoken = await AsyncStorage.getItem('acesstoken');
+            const accesstoken = await AsyncStorage.getItem('accesstoken');
             const refreshtoken = await AsyncStorage.getItem('refreshtoken');
             if (accesstoken == null) {
+                console.log(accesstoken)
                 this.props.navigation.replace('Login');
             }
             else {
@@ -38,10 +39,8 @@ export class SplashScreen extends React.Component {
 
     render() {
         return (
-            <View style={styles.viewStyles}>
-                <Text style={styles.textStyles}>
-                    Reifenmanagement
-                </Text>
+            <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
+            <h1 className="display-6" style={{color: '#d0d7de', textAlign: 'center', marginLeft: 'auto', marginRight: 'auto', marginTop: 'auto', marginBottom: 'auto'}}> Reifenmanagement </h1>
             </View>
         );
     }

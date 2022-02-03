@@ -12,6 +12,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         fontFamily: 'arial',
+
     },
     textStyles: {
         fontSize: 30,
@@ -33,4 +34,8 @@ export const styles = StyleSheet.create({
     width: 40,
     borderRadius: 10,
   },
+  view: {
+    overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'
+  }
+
 });
