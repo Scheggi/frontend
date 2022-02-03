@@ -183,11 +183,17 @@ export default class NewFormelScreen extends React.Component {
 
     async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
-        const raceID = await AsyncStorage.getItem('raceID');
-        this.setState({raceID: raceID});
+        const raceid = await AsyncStorage.getItem('raceID');
+        this.setState({raceID: raceid});
         getRaceList(accesstoken).then(racelistDropdown => {
-            console.log(racelistDropdown);
-            this.setState({raceList: racelistDropdown});
+            let raceList=racelistDropdown;
+            let liste = raceList.filter(entry => entry.id == raceid);
+            let name=liste[0].name;
+            var raceListfiltered = raceList.filter(function(value, index, arr){
+            return value.id!=raceid;
+            });
+            raceListfiltered.unshift({'name': name, 'id':raceid});
+            this.setState({raceList: raceListfiltered});
         }).catch(function (error) {
             console.log(error);
         });

@@ -167,6 +167,7 @@ export default class RaceScreen extends React.Component {
                this.getWeatherData(this.state.raceID)
                this.getWheelSetInformation(this.state.raceID)
                this.startTimer()
+               AsyncStorage.setItem("raceID",this.state.raceList[0].id);
 
            }).catch(function (error) {
                console.log(error);
