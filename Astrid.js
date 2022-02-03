@@ -274,7 +274,7 @@ export default class AstridScreen extends React.Component {
         })
 
             getDropdown(accesstoken, event.target.value).then(racelistDropdown => {
-                let dropdown = racelistDropdown[0];
+                let dropdown = racelistDropdown[3];
                 dropdown.unshift({'name': "kein Set ausgewählt", 'id': 0});
                 this.setState({dataDropdown: dropdown});
             }).catch(function (error) {
