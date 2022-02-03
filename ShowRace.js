@@ -43,7 +43,6 @@ export default class ShowRaceScreen extends React.Component {
         }
         this.getRaceID = this.getRaceID.bind(this);
         this.getRaceDetails = this.getRaceDetails.bind(this);
-        this.Action = this.Action.bind(this);
         this.getWheelsStart = this.getWheelsStart.bind(this);
     }
 
@@ -118,26 +117,35 @@ export default class ShowRaceScreen extends React.Component {
 
     async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
+        const raceid = await AsyncStorage.getItem('raceID');
+        this.setState({raceID: raceid});
         getRaceList(accesstoken).then(racelistDropdown => {
-            console.log(racelistDropdown);
-            this.setState({raceList: racelistDropdown})
+            let raceList=racelistDropdown;
+            let liste = raceList.filter(entry => entry.id == raceid);
+            let name=liste[0].name;
+            var raceListfiltered = raceList.filter(function(value, index, arr){
+            return value.id!=raceid;
+            });
+            raceListfiltered.unshift({'name': name, 'id':raceid});
+            this.setState({raceList: raceListfiltered});
         }).catch(function (error) {
             console.log(error);
-        })
+        });
+        this.getWheelsStart();
+        this.getRaceDetails();
     }
 
 
     async getRaceID(event) {
-        AsyncStorage.setItem('raceID', event.target.value);
-        const id = await AsyncStorage.getItem('raceID');
-        this.setState({raceID: id});
+        this.setState({raceID: event.target.value});
+         this.getWheelsStart();
+        this.getRaceDetails();
     }
 
     async getRaceDetails() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
-        AsyncStorage.setItem('raceID', this.state.raceID);
-        const raceID = await AsyncStorage.getItem('raceID');
-        console.log([raceID])
+        const raceID = this.state.raceID;
+        console.log(raceID)
         getRaceDetails_by_ID(accesstoken, raceID).then(liste => {
             console.log(liste);
             console.log(liste[0]["date"]);
@@ -155,8 +163,7 @@ export default class ShowRaceScreen extends React.Component {
     //get ReifenData
     async getWheelsStart() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
-        AsyncStorage.setItem('raceID', this.state.raceID);
-        const raceID = await AsyncStorage.getItem('raceID');
+        const raceID = this.state.raceID;
         console.log(raceID)
         getWheelsList(accesstoken, raceID).then(liste => {
             console.log(liste);
@@ -184,10 +191,6 @@ export default class ShowRaceScreen extends React.Component {
         })
     }
 
-    Action() {
-        this.getWheelsStart();
-        this.getRaceDetails();
-    }
 
     render() {
         let optionTemplate = this.state.raceList.map(v => (
@@ -276,12 +279,7 @@ export default class ShowRaceScreen extends React.Component {
                     </select>
                     </label>
                 </div>
-                <br/>
-                <button type='button' className='btn btn-primary' onClick={this.Action}
-                        style={{marginLeft: 'auto', marginRight: 'auto'}}>
-                    RENNDATEN ANZEIGEN
-                </button>
-                <br/>
+
                 <div>
                     <br/>
                     <h3 className='display-6' style={{color: '#d0d7de', textAlign: 'center'}}> Rennen</h3>
