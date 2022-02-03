@@ -112,6 +112,9 @@ export default class WheelScreen extends React.Component {
     };
 
     handleHeatStart = event => {
+
+        console.log(event.target.id)
+
         event.preventDefault();
         //save to db
         timeoutPromise(1000, fetch(
@@ -253,6 +256,7 @@ export default class WheelScreen extends React.Component {
             console.log(error);
         })
     }
+
     async getRaceID(event){
         const raceID=event.target.value;
         this.setState({raceID: raceID});

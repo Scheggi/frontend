@@ -14,7 +14,7 @@ import {getRaceList, timeoutPromise, getWeatherTab} from "./tools";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";
-import {getWheelSetInformation} from "./tools_get_wheels"
+import {getWheelSetInformation, getWheelInformations} from "./tools_get_wheels"
 import { logToConsole } from "react-native/Libraries/Utilities/RCTLog";
 import image from "./images/logo.png";
 import image7 from "./images/autoblau.jpg";
@@ -50,6 +50,9 @@ export default class HelperNavigator extends React.Component {
             timeWeatherG: '00:00:00',
             timeOrderG: '00:00:00',
             timeHeatingG: '00:00:00',
+
+            timer_info: [],
+            list_formel: [],
         }
 
         this.timer = 0;
@@ -103,12 +106,15 @@ export default class HelperNavigator extends React.Component {
     }
 
     compute_Order_Heating_TimerSeconds(tmp, duration) {
-        let tmpInSeconds = (new Date(Date.parse(tmp)).getTime() / 1000)
+        let tmpInSeconds = (new Date(Date.parse(tmp)).getTime() / 1000) + 3600
         let nowDate = (new Date().getTime() / 1000)
         let result = Math.floor(tmpInSeconds - nowDate)
 
+        console.log(Math.floor(tmpInSeconds - nowDate))
+
         if(result <= 0) {return 0}
-        return Math.floor(tmpInSeconds - nowDate)
+
+        return Math.floor((tmpInSeconds - nowDate))
     }
 
     getSecondsToNextMeasurement(ttemp) {
@@ -137,8 +143,34 @@ export default class HelperNavigator extends React.Component {
             })
     }
 
+    async getTabularData() {
+
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
+        const raceID = this.state.raceID;
+        await getWheelInformations(accesstoken, raceID).then(formellistTab => {
+            this.setState({list_formel: formellistTab});
+ 
+        }).catch(function (error) {
+            console.log(error);
+        })
+
+        if(this.state.list_formel) {
+            try {
+                var timestemp = this.state.list_formel.slice(0,1)[0].heat_start
+                var duration = this.state.list_formel.slice(0,1)[0].heat_duration
+            }catch(e) {
+                console.log(error)
+            }
+
+            this.setState({
+                timeHeating: this.compute_Order_Heating_TimerSeconds(timestemp, duration*60)
+            })
+        }
+        
+    }
+
     async componentDidMount() {
-         const accesstoken = await AsyncStorage.getItem('accesstoken');
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
         const raceid = await AsyncStorage.getItem('raceID');
         this.setState({raceID: raceid});
        if(raceid!=null) {
@@ -154,6 +186,8 @@ export default class HelperNavigator extends React.Component {
                this.setState({raceID: raceid});
                this.getWeatherData(this.state.raceID);
                this.getWheelSetInformation(this.state.raceID);
+               //this.getTimerInformation(this.state.raceID)
+               this.getTabularData(this.state.raceID)
                this.startTimer();
            }).catch(function (error) {
                console.log(error);
@@ -163,10 +197,11 @@ export default class HelperNavigator extends React.Component {
            getRaceList(accesstoken).then(racelistDropdown => {
                this.setState({raceList: racelistDropdown});
                this.setState({raceID: this.state.raceList[0].id})
-
-               this.getWeatherData(this.state.raceID);
-               this.getWheelSetInformation(this.state.raceID);
-               this.startTimer();
+               this.getTabularData(this.state.raceID)
+               this.getWeatherData(this.state.raceID)
+               this.getWheelSetInformation(this.state.raceID)
+               this.getTimerInformation(this.state.raceID)
+               this.startTimer()
                AsyncStorage.setItem("raceID",this.state.raceList[0].id);
 
            }).catch(function (error) {
@@ -264,24 +299,20 @@ export default class HelperNavigator extends React.Component {
 
     async saveRaceIDinState() {
         const id = await AsyncStorage.getItem("raceID");
-
         clearInterval(this.timer);
         this.timer = 0;
-
         this.setState({
-
             timeWeather: 0,
             timeWeatherG: '00:00:00',
             timeHeating: 0,
             timeHeatingG: '00:00:00',
             timeOrder: 0,
             timeOrderG: '00:00:00',
-
         });
-
         this.setState({raceID: id});
         this.getWeatherData(id);
         this.getWheelSetInformation(id);
+        this.getTabularData(id);
         this.startTimer();
     }
 
