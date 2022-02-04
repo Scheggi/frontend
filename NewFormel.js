@@ -3,7 +3,7 @@ import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
 import {styles} from "./styles"
 //import { AsyncStorage } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {timeoutPromise, refreshToken, syncData, getRaceList,getFormelList} from "./tools";
+import {timeoutPromise, refreshToken, getRaceList} from "./tools";
 import image from './logo.png';
 
 export default class NewFormelScreen extends React.Component {

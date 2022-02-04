@@ -3,7 +3,7 @@ import {Button, Text, TextInput, ToastAndroid, View} from "react-native";
 import {styles} from "./styles"
 //import { AsyncStorage } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {timeoutPromise, refreshToken, syncData, getRaceList, getFormelList, getWeatherTab} from "./tools";
+import {timeoutPromise, getRaceList} from "./tools";
 import image from './logo.png';
 import {sendBleedRequest} from "./tools_wheel";
 import {getDropdown,getWheelSetInformation,getReifendruckDetails} from "./tools_get_wheels";

@@ -121,8 +121,6 @@ function getRaceList(token) {
                             }
                         }
               else{
-                  console.log("Return Data");
-                  console.log(data[0].data);
                   return data[0].data;
               }
               return [];
@@ -134,7 +132,6 @@ function getRaceList(token) {
 
 // get RaceDetails od RaceID
 function getRaceDetails_by_ID(accesstoken,raceid) {
-  //const accesstoken = AsyncStorage.getItem('accesstoken');
   return timeoutPromise(2000, fetch("https://api.race24.cloud/user/raceDetails/get", {
       method: 'POST',
       headers: {
@@ -151,11 +148,9 @@ function getRaceDetails_by_ID(accesstoken,raceid) {
                             if (data["msg"] === "Token has expired"){
                                 refreshToken().then( token => {
                                         getRaceDetails_by_ID(token,raceid);
-                                        console.log([token,raceid])
                                     }
                                 ).catch( function (error) {
                                         console.log("Refresh failed");
-                                        console.log(error);
                                     }
                                 );
                                 return [];
@@ -170,7 +165,6 @@ function getRaceDetails_by_ID(accesstoken,raceid) {
             return [];
         })
 }
-
 
 
 
@@ -216,8 +210,6 @@ function getWeatherTab(accesstoken,raceID) {
 
 //get Wheels
 function getWheelsList(accesstoken,raceID) {
-  //const accesstoken = AsyncStorage.getItem('accesstoken');
-    console.log([raceID])
   return timeoutPromise(2000, fetch("https://api.race24.cloud/wheels_start/get", {
       method: 'POST',
       headers: {
@@ -252,43 +244,6 @@ function getWheelsList(accesstoken,raceID) {
         })
 }
 
-
-function getFormelList(accesstoken) {
-  //const accesstoken = AsyncStorage.getItem('accesstoken');
-  return timeoutPromise(2000, fetch("https://api.race24.cloud/formel/get", {
-      method: 'POST',
-      headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          access_token: accesstoken,
-      })
-      })).then(response => response.json()).then(data => {
-              console.log(data);
-              if ("msg" in data){
-                            if (data["msg"] === "Token has expired"){
-                                refreshToken().then( token => {
-                                        getFormelList(token);
-                                    }
-                                ).catch( function (error) {
-                                        console.log("Refresh failed");
-                                    }
-                                );
-                                return [];
-                            }
-                        }
-              else{
-                  return data[0].data;
-              }
-              return [];
-      }).catch(function (error) {
-            return [];
-        })
-}
-
-
-
 async function refreshToken() {
   let accesstoken = await AsyncStorage.getItem('accesstoken');
   let refreshtoken = await AsyncStorage.getItem('refreshtoken');
@@ -313,4 +268,4 @@ async function refreshToken() {
   )
 }
 
-export {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,getWheelsList,getRaceDetails_by_ID,changeWheelSet}
+export {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getWheelsList,getRaceDetails_by_ID,changeWheelSet}

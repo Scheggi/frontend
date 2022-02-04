@@ -174,46 +174,6 @@ async function sendBleedRequest(accesstoken,setid,bleed_initial,bleed_hot) {
         })
 }
 
-// save bleed changes
-async function sendStatusRequest(accesstoken,setid,status) {
-   return await timeoutPromise(2000, fetch(
-        'https://api.race24.cloud/wheel_cont/saveStatus', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                acces_token:accesstoken,
-                setid:setid,
-                status:status
-            })
-        })
-        ).then(response => response.json()).then(data => {
-                if ("msg" in data){
-                            if (data["msg"] === "Token has expired"){
-                                refreshToken().then( token => {
-                                    sendWheelsRequest(accesstoken,setid,status);
-                                    }
-                                ).catch( function (error) {
-                                        console.log("Refresh failed");
-                                        console.log(error);
-                                    }
-                                );
-                                return [];
-                            }
-                        }
-              else{
-                  console.log("Return Data");
-                  console.log(data[0].id);
-                  return data[0].id;
-              }
-              return [];
-      }).catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
 
 function changeTimer( raceID, liste){
             timeoutPromise(2000, fetch(
@@ -315,4 +275,4 @@ async function refreshToken() {
 }
 
 
-export {generateAllSets,sendWheelRequest,sendNewSetRequest,sendWheelsRequest,sendStatusRequest,sendBleedRequest,changeSetData,changeTimer}
+export {generateAllSets,sendWheelRequest,sendNewSetRequest,sendWheelsRequest,sendBleedRequest,changeSetData,changeTimer}

@@ -22,7 +22,6 @@ function getDropdown(accesstoken,raceID) {
                                     }
                                 ).catch( function (error) {
                                         console.log('Refresh failed');
-                                        console.log(error);
                                     }
                                 );
                                 return [];
@@ -88,7 +87,6 @@ function getWheelInformations(accesstoken,raceID) {
             raceID:raceID,
         })
     })).then(response => response.json()).then(data => {
-        console.log(data);
         if ('msg' in data){
             if (data['msg'] === 'Token has expired'){
                 refreshToken().then( token => {
@@ -96,15 +94,12 @@ function getWheelInformations(accesstoken,raceID) {
                     }
                 ).catch( function (error) {
                         console.log('Refresh failed');
-                        console.log(error);
                     }
                 );
                 return [];
             }
         }
         else{
-            console.log('Return Data');
-            console.log(data[0].data);
             return data[0].data;
         }
         return [];
@@ -143,8 +138,6 @@ function getWheelSetInformation(accesstoken,id) {
             }
         }
         else{
-            console.log('Return Data');
-            console.log(data[0].data);
             return data[0].data;
         }
         return [];
@@ -270,42 +263,6 @@ function getTimerInformation(accesstoken,raceID) {
 }
 
 
-//wheel_Set by id
-function get_Dict_WheelOrder(accesstoken,raceID) {
-  return timeoutPromise(2000, fetch('https://api.race24.cloud/wheel_cont/Set/OrderWheelDict', {
-      method: 'POST',
-      headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-          access_token: accesstoken,
-          raceID:raceID,
-      })
-      })).then(response => response.json()).then(data => {
-              console.log(data);
-              if ('msg' in data){
-                            if (data['msg'] === 'Token has expired'){
-                                refreshToken().then( token => {
-                                        get_Dict_WheelOrder(token,raceID);
-                                    }
-                                ).catch( function (error) {
-                                        console.log('Refresh failed');
-                                    }
-                                );
-                                return [];
-                            }
-                        }
-              else{
-                  return data[0].data;
-              }
-              return [];
-      }).catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
 //  ----------------------------------------------------------------------------------------------
 
 function timeoutPromise(ms, promise) {
@@ -352,4 +309,4 @@ async function refreshToken() {
   )
 }
 
-export {getDropdown,getOrderDropdown,get_Dict_WheelOrder,getWheelSetInformation,getWheelInformations,createReifendruckRequest,getReifendruckDetails, getTimerInformation }
+export {getDropdown,getOrderDropdown,getWheelSetInformation,getWheelInformations,createReifendruckRequest,getReifendruckDetails, getTimerInformation }

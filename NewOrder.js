@@ -4,8 +4,7 @@ import {styles} from "./styles"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
-import {timeoutPromise, refreshToken,getRaceList,changeWheelSet} from "./tools";
-import {get_Dict_WheelOrder, getDropdown,getWheelSetInformation,getOrderDropdown,getWheelInformations} from "./tools_get_wheels";
+import {getOrderDropdown,getWheelInformations} from "./tools_get_wheels";
 import {changeSetData,changeTimer} from "./tools_wheel"
 import image from "./logo.png";
 
