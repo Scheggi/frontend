@@ -4,8 +4,8 @@ import {
     Text,
     ScrollView
 } from 'react-native';
-import {getRaceList, getWeatherTab, timeoutPromise, getWheelsList, getRaceDetails_by_ID, getFormelList} from "./tools"
-import {get_Dict_WheelOrder, getDropdown, getWheelSetInformation, getWheelInformations} from "./tools_get_wheels";
+import {getRaceList,  timeoutPromise,} from "./tools"
+import { getWheelInformations} from "./tools_get_wheels";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button} from "react-native-web";

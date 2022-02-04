@@ -51,33 +51,6 @@ function changeWheelSet( id, liste_attribute){
             })
         }
 
-
-// save changes AirPressure
-function changeTimer( raceID, liste_attribute){
-            timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/wheel_cont/change_single_wheel', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    id: raceID,
-                    liste_attribute:liste_attribute,
-                })
-            })
-            ).then(response => response.json()).then(data => {
-                if (data[1]==200) {
-                    console.log("Pressure Changed")
-                    this.getWheelData()
-                }
-                else {console.log("failed")}
-            }).catch(function (error) {
-                console.log(error);
-            })
-        }
-
-
 //  ----------------------------------------------------------------------------------------------
 
 function timeoutPromise(ms, promise) {
@@ -126,4 +99,4 @@ async function refreshToken() {
 
 
 
-export {changeWheelSet,changeSingleWheel,changeTimer}
+export {changeWheelSet,changeSingleWheel}

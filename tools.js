@@ -75,74 +75,6 @@ async function createNewRaceRequest(accesstoken,type,place,date) {
 }
 
 
-
-async function saveChangesOrderSet(accesstoken,type,place,date) {
-    console.log([accesstoken,type,place,date]);
-    return await timeoutPromise(2000, fetch(
-            'https://api.race24.cloud/race/create', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    access_token:accesstoken,
-                    type:type,
-                    place:place,
-                    date:date,
-                })
-            })
-            ).then(response => response.json()).then(data => {
-                console.log(data)
-                if ("msg" in data){
-                            if (data["msg"] === "Token has expired"){
-                                refreshToken().then( token => {
-                                    createNewRaceRequest(token,type,place,date);
-                                    }
-                                ).catch( function (error) {
-                                        console.log("Refresh failed");
-                                        console.log(error);
-                                    }
-                                );
-                                return [];
-                            }
-                        }
-              else{
-                  return data[0].id;
-              }
-              return [];
-      }).catch(function (error) {
-            console.log(error);
-            return [];
-        })
-}
-
-
-
-async function sendNewWeatherRequest(id,temp_air,temp_ground,weather_des) {
-   timeoutPromise(2000, fetch(
-        'https://api.race24.cloud/user/weather/create', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                raceID: AsyncStorage.getItem("raceID"),
-                temp_air:temp_air,
-                temp_ground:temp_ground,
-                weather_des:weather_des,
-            })
-        })
-        ).then(response => response.json()).then(
-            //timer von 30 min neu startem
-            ).catch(function (error) {
-            console.log(error);
-        })
-}
-
-
-
 function timeoutPromise(ms, promise) {
   return new Promise((resolve, reject) => {
     const timeoutId = setTimeout(() => {
@@ -230,8 +162,6 @@ function getRaceDetails_by_ID(accesstoken,raceid) {
                             }
                         }
               else{
-                  console.log("Return Data");
-                  console.log(data[0].data);
                   return data[0].data;
               }
               return [];
@@ -274,8 +204,6 @@ function getWeatherTab(accesstoken,raceID) {
                             }
                         }
               else{
-                  console.log("Return Data");
-                  console.log(data[0].data);
                   return data[0].data;
               }
               return [];
@@ -298,7 +226,7 @@ function getWheelsList(accesstoken,raceID) {
       },
       body: JSON.stringify({
           access_token: accesstoken,
-          raceID: parseInt(raceID)
+          raceID: raceID
       })
       })).then(response => response.json()).then(data => {
               console.log(data);
@@ -309,15 +237,12 @@ function getWheelsList(accesstoken,raceID) {
                                     }
                                 ).catch( function (error) {
                                         console.log("Refresh failed");
-                                        console.log(error);
                                     }
                                 );
                                 return [];
                             }
                         }
               else{
-                  console.log("Return Data");
-                  console.log(data[0].data);
                   return data[0].data;
               }
               return [];
@@ -326,9 +251,6 @@ function getWheelsList(accesstoken,raceID) {
             return [];
         })
 }
-
-
-
 
 
 function getFormelList(accesstoken) {
@@ -351,20 +273,16 @@ function getFormelList(accesstoken) {
                                     }
                                 ).catch( function (error) {
                                         console.log("Refresh failed");
-                                        console.log(error);
                                     }
                                 );
                                 return [];
                             }
                         }
               else{
-                  console.log("Return Data");
-                  console.log(data[0].data);
                   return data[0].data;
               }
               return [];
       }).catch(function (error) {
-            console.log(error);
             return [];
         })
 }
@@ -395,46 +313,4 @@ async function refreshToken() {
   )
 }
 
-function TableNiklas(list) {
-    const colNames = ['Zeitstempel', 'Lufttemperatur', 'Streckentemperatur', 'Streckenverhältnis' ];
-    const number = 920 ;
-    return (
-        <div>
-          {list.length > 0 && (
-            <table
-              cellSpacing='0'
-              style={{
-              	width: width,
-              	height: "auto",
-              	margin: 15,
-              	borderWidth: 1,
-
-              }}>
-
-                <thead >
-                  <tr>
-                    {colNames.map((headerItem, index) => (
-                      <th style={{borderStyle: 'solid',  borderWidth: 1}} key={index}>{headerItem}</th>
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {Object.values(list).map((obj, index) => (
-                    <tr key={index}>
-                      {Object.values(obj).map((value, index2) => (
-                        <td style={{borderStyle: 'solid',  borderWidth: 1}} key={index2}>{value}</td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-            </table>
-          )}
-        </div>
-        )
-    }
-
-
-
-
-export {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,TableNiklas,getWheelsList,getRaceDetails_by_ID,changeWheelSet}
+export {createNewRaceRequest,getWeatherTab,timeoutPromise, refreshToken,getRaceList,getFormelList,getWheelsList,getRaceDetails_by_ID,changeWheelSet}

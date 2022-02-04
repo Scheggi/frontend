@@ -10,12 +10,9 @@ import {
     TouchableOpacity
 } from 'react-native';
 
-import {getRaceList, timeoutPromise, getWeatherTab} from "./tools";
+import {getRaceList, getWeatherTab} from "./tools";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {Button} from "react-native-web";
-import {getWheelSetInformation, getWheelInformations} from "./tools_get_wheels"
-import { logToConsole } from "react-native/Libraries/Utilities/RCTLog";
+
 import image from "./images/logo.png";
 import image7 from "./images/autoblau.jpg";
 import image3 from "./images/autoblau2.jpg";
@@ -147,7 +144,6 @@ export default class HelperNavigator extends React.Component {
                  console.log(error);
              })
         try {
-            console.log(this.state.timer_info)
             if ('order_duration' in this.state.timer_info && this.state.timer_info.order_duration != null) {
                 this.setState({
                     timeOrder: this.compute_Order_Heating_TimerSeconds(this.state.timer_info.order_start, this.state.timer_info.order_duration * 60)

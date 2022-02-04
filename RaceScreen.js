@@ -1,21 +1,12 @@
 import React from "react";
 import {
     View,
-    Text,
-    StyleSheet,
-    Image,
-    TextInput,
-    TouchableHighlight,
-    SectionList,
-    TouchableOpacity, ToastAndroid
 } from 'react-native';
 
-import {getRaceList, timeoutPromise, getWeatherTab} from "./tools";
+import {getRaceList, getWeatherTab} from "./tools";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import {Button} from "react-native-web";
-import {getTimerInformation, getWheelSetInformation, getWheelInformations} from "./tools_get_wheels"
-import { logToConsole } from "react-native/Libraries/Utilities/RCTLog";
+import {getTimerInformation} from "./tools_get_wheels"
+
 import image from "./images/logo.png";
 import image7 from "./images/autoblau.jpg";
 import image3 from "./images/autoblau2.jpg";
@@ -45,7 +36,6 @@ export default class RaceScreen extends React.Component {
             timeWeather: 0,
             timeOrder: 0,
             timeHeating: 0,
-
             timeWeatherG: '00:00:00',
             timeOrderG: '00:00:00',
             timeHeatingG: '00:00:00',
@@ -126,7 +116,6 @@ export default class RaceScreen extends React.Component {
     }
 
     async getWeatherData(raceID){
-        console.log("computed timer!!! weather")
        const accesstoken = await AsyncStorage.getItem('accesstoken');
        getWeatherTab(accesstoken, raceID).then(DataTabular => {
                 this.setState({dataWeather: DataTabular});
@@ -138,20 +127,16 @@ export default class RaceScreen extends React.Component {
 
     async getTimerInformation_do(raceid){
         const accesstoken = await AsyncStorage.getItem('accesstoken');
-        //const raceid = await AsyncStorage.getItem('raceID');
-        console.log(raceid)
         await getTimerInformation(accesstoken, raceid).then(DataTabular => {
                  this.setState({timer_info: DataTabular[0]});
              }).catch(function (error) {
                  console.log('error');
              })
         try {
-            console.log(this.state.timer_info)
             if ('order_duration' in this.state.timer_info && this.state.timer_info.order_duration != null) {
                 this.setState({
                     timeOrder: this.compute_Order_Heating_TimerSeconds(this.state.timer_info.order_start, this.state.timer_info.order_duration * 60)
                 })
-                console.log(this.state.timer_info.order_duration * 60)
             }}catch (e) {
                 console.log('undefined');}
         try{
@@ -159,8 +144,6 @@ export default class RaceScreen extends React.Component {
                 this.setState({
                     timeHeating: this.compute_Order_Heating_TimerSeconds(this.state.timer_info.heat_start, this.state.timer_info.heat_duration * 60)
                 });
-                console.log(this.state.timer_info.heat_duration * 60)
-                console.log(this.state.timeHeating)
             }
         }catch (e) {
                 console.log('undefined');
@@ -187,7 +170,6 @@ export default class RaceScreen extends React.Component {
                this.setState({raceList: raceListfiltered});
                this.setState({raceID: raceid});
                this.getWeatherData(raceid);
-               console.log('component')
                this.getTimerInformation_do(raceid)
                this.startTimer();
            }).catch(function (error) {
@@ -277,10 +259,7 @@ export default class RaceScreen extends React.Component {
             timeOrder: 0,
             timeOrderG: '00:00:00',
         });
-        console.log(['saveRaceID',raceid])
-        //this.setState({raceID: raceid});
         this.getWeatherData(raceid);
-        console.log(raceid)
         this.getTimerInformation_do(raceid)
         this.startTimer();
     }
