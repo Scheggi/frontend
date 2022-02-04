@@ -72,6 +72,10 @@ export default class IngenieurNav extends React.Component {
         if(secondsOrder < 0) {secondsOrder+=1}
         if(secondsHeating < 0) {secondsHeating+=1}
 
+         if(secondsWeather == null){secondsWeather=0}
+        if(secondsHeating == null){secondsHeating=0}
+        if(secondsOrder == null){secondsOrder=0}
+
         this.setState({
 
             timeWeather: secondsWeather,
@@ -102,13 +106,13 @@ export default class IngenieurNav extends React.Component {
         return obj
     }
 
-    compute_Order_Heating_TimerSeconds(tmp, duration) {
-        let tmpInSeconds = (new Date(Date.parse(tmp)).getTime() / 1000)
+   compute_Order_Heating_TimerSeconds(tmp, duration) {
+        let tmpInSeconds = (new Date(Date.parse(tmp)).getTime() / 1000) //+ 3600
         let nowDate = (new Date().getTime() / 1000)
-        let result = Math.floor(tmpInSeconds - nowDate)
-
+        let result = Math.floor(tmpInSeconds - nowDate) + duration
+        console.log(Math.floor(tmpInSeconds - nowDate))
         if(result <= 0) {return 0}
-        return Math.floor(tmpInSeconds - nowDate)
+        return result //Math.floor((tmpInSeconds - nowDate))
     }
 
     getSecondsToNextMeasurement(ttemp) {
@@ -153,7 +157,8 @@ export default class IngenieurNav extends React.Component {
                this.setState({raceList: raceListfiltered});
                this.setState({raceID: raceid});
                this.getWeatherData(this.state.raceID);
-               this.getWheelSetInformation(this.state.raceID);
+               this.getTimerInformation(this.state.raceID)
+               //this.getWheelSetInformation(this.state.raceID);
                this.startTimer();
            }).catch(function (error) {
                console.log(error);
@@ -165,7 +170,7 @@ export default class IngenieurNav extends React.Component {
                this.setState({raceID: this.state.raceList[0].id})
 
                this.getWeatherData(this.state.raceID)
-               this.getWheelSetInformation(this.state.raceID)
+               this.getTimerInformation(this.state.raceID)
                this.startTimer()
                AsyncStorage.setItem("raceID",this.state.raceList[0].id);
 
@@ -176,46 +181,33 @@ export default class IngenieurNav extends React.Component {
 
     }
 
-    async getWheelSetInformation(raceID){
-       const accesstoken = await AsyncStorage.getItem('accesstoken');
-       getWheelSetInformation(accesstoken, raceID).then(DataTabular => {
-            this.setState({ReturnedWheelInformations: DataTabular});
 
-
-            var orderStart;
-            var orderDuration;
-            var heatStart;
-            var heatDuration;
-
-            Object.keys(DataTabular).forEach((key) => {
-                if(key = 'order_start') {orderStart = DataTabular[key]}
-                if(key = 'order_duration') {orderDuration = DataTabular[key]}
-                if(key = 'heat_start') {heatStart = DataTabular[key]}
-                if(key = 'heat_duration') {heatDuration = DataTabular[key]}
-            });
-
-            //heatStart = '27 Jan 2022 20:40:56 GMT'
-            //heatDuration = 1800
-
-            //orderStart = '27 Jan 2022 20:37:46 GMT'
-            //orderDuration = 1800
-
-            if(orderStart != null && orderDuration != null) {
+    async getTimerInformation(raceID){
+        const accesstoken = await AsyncStorage.getItem('accesstoken');
+        getTimerInformation(accesstoken, raceID).then(DataTabular => {
+                 this.setState({timer_info: DataTabular[0]});
+             }).catch(function (error) {
+                 console.log(error);
+             })
+        try {
+            console.log(this.state.timer_info)
+            if ('order_duration' in this.state.timer_info && this.state.timer_info.order_duration != null) {
                 this.setState({
-                    timeOrder: this.compute_Order_Heating_TimerSeconds(orderStart, orderDuration)
-                });
-            }
-
-            if(heatStart != null && heatDuration != null) {
+                    timeOrder: this.compute_Order_Heating_TimerSeconds(this.state.timer_info.order_start, this.state.timer_info.order_duration * 60)
+                })
+            }}catch (e) {
+                console.log('undefined');}
+        try{
+            if ('heat_duration' in this.state.timer_info && this.state.timer_info.heat_duration != null) {
                 this.setState({
-                    timeHeating: this.compute_Order_Heating_TimerSeconds(heatStart, heatDuration)
-                });
+                    timeHeating: this.compute_Order_Heating_TimerSeconds(this.state.timer_info.heat_start, this.state.timer_info.heat_duration * 60)
+                })
             }
+        }catch (e) {
+                console.log('undefined');
+        }
+     }
 
-        }).catch(function (error) {
-            console.log(error);
-        })
-    }
 
     changeLogout = event => {
         event.preventDefault();
@@ -267,8 +259,8 @@ export default class IngenieurNav extends React.Component {
         this.props.navigation.push('Maen');
     }
 
-    async saveRaceIDinState() {
-        const id = await AsyncStorage.getItem("raceID");
+    async saveRaceIDinState(id) {
+        //const id = await AsyncStorage.getItem("raceID");
 
         clearInterval(this.timer);
         this.timer = 0;
@@ -286,14 +278,16 @@ export default class IngenieurNav extends React.Component {
 
         this.setState({raceID: id});
         this.getWeatherData(id);
-        this.getWheelSetInformation(id);
+
+        this.getTimerInformation(id)
+        //this.getWheelSetInformation(id);
         this.startTimer();
     }
 
     getRaceID = event => {
         const id = event.target.value;
         AsyncStorage.setItem("raceID",event.target.value);
-        this.saveRaceIDinState();
+        this.saveRaceIDinState(id);
     }
 
 

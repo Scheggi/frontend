@@ -328,14 +328,14 @@ function getTimerInformation(accesstoken,raceID) {
         },
         body: JSON.stringify({
             access_token: accesstoken,
-            raceID:parseInt(raceID),
+            raceID:raceID,
         })
     })).then(response => response.json()).then(data => {
         console.log(data);
         if ('msg' in data){
             if (data['msg'] === 'Token has expired'){
                 refreshToken().then( token => {
-                    getWheelSetInformation(token,raceID);
+                    getTimerInformation(token,raceID);
                     }
                 ).catch( function (error) {
                         console.log(error);

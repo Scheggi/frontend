@@ -237,8 +237,6 @@ export default class NewHelpScreen extends React.Component {
       return new Promise(resolve => setTimeout(resolve, milliseconds))
   }
 
-
-
     async sendNewWeatherRequest(temp_air,temp_ground,weather_des) {
       const id = await AsyncStorage.getItem("raceIDHelper");
        timeoutPromise(2000, fetch(
@@ -258,7 +256,7 @@ export default class NewHelpScreen extends React.Component {
             ).then(response => response.json()).then(
                 console.log("success")
                 ).catch(function (error) {
-                console.log(error);
+                console.log('error');
             })
 
             this.sleep(2500).then(r => {

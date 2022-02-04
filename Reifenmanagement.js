@@ -140,11 +140,9 @@ export default class WheelScreen extends React.Component {
 
         // save time to timer
         var duration = 0;
-        this.state.list_formel.forEach( function (element,index){if(element[setid]==event.target.id){copyArray[index][event.target.className]=event.target.value}});
-        this.state.setData.forEach( function (element,index){if(element.order_duration != null){duration =element.order_duration}});
+        this.state.list_formel.forEach( function (element,index){if(element.setid==event.target.id){duration=element.heat_duration}});
         console.log(parseInt(duration));
         changeTimer(this.state.raceID,[['heat_duration',parseInt(duration)]]);
-        this.changeRace();
     };
 
 

@@ -7,7 +7,7 @@ import {
     TextInput,
     TouchableHighlight,
     SectionList,
-    TouchableOpacity
+    TouchableOpacity, ToastAndroid
 } from 'react-native';
 
 import {getRaceList, timeoutPromise, getWeatherTab} from "./tools";
@@ -42,7 +42,6 @@ export default class RaceScreen extends React.Component {
             raceList:[],
 
             ReturnedWheelInformations:[],
-
             timeWeather: 0,
             timeOrder: 0,
             timeHeating: 0,
@@ -53,8 +52,6 @@ export default class RaceScreen extends React.Component {
 
             timer_info: [],
             list_formel: [],
-
-
         }
 
         this.timer = 0;
@@ -72,25 +69,25 @@ export default class RaceScreen extends React.Component {
         let secondsWeather = this.state.timeWeather-1;
         let secondsOrder = this.state.timeOrder-1;
         let secondsHeating = this.state.timeHeating-1;
-
         if(secondsWeather < 0) {secondsWeather+=1}
         if(secondsOrder < 0) {secondsOrder+=1}
         if(secondsHeating < 0) {secondsHeating+=1}
 
-        this.setState({
+        if(secondsWeather == null){secondsWeather=0}
+        if(secondsHeating == null){secondsHeating=0}
+        if(secondsOrder == null){secondsOrder=0}
 
+        this.setState({
             timeWeather: secondsWeather,
             timeWeatherG: this.secondsToTime(secondsWeather),
             timeOrder: secondsOrder,
             timeOrderG: this.secondsToTime(secondsOrder),
             timeHeating: secondsHeating,
             timeHeatingG: this.secondsToTime(secondsHeating),
-
             });
     }
 
     secondsToTime(secs){
-
         if(secs <= 0) {return '00:00:00'}
 
         let hours = Math.floor(secs / (60 * 60));
@@ -108,19 +105,14 @@ export default class RaceScreen extends React.Component {
     }
 
     compute_Order_Heating_TimerSeconds(tmp, duration) {
-        let tmpInSeconds = (new Date(Date.parse(tmp)).getTime() / 1000) + 3600
+        let tmpInSeconds = (new Date(Date.parse(tmp)).getTime() / 1000) // + 3600
         let nowDate = (new Date().getTime() / 1000)
-        let result = Math.floor(tmpInSeconds - nowDate)
-
-        console.log(Math.floor(tmpInSeconds - nowDate))
-
+        let result = Math.floor(tmpInSeconds - nowDate) + duration
         if(result <= 0) {return 0}
-
-        return Math.floor((tmpInSeconds - nowDate))
+        return result //Math.floor((tmpInSeconds - nowDate))
     }
 
     getSecondsToNextMeasurement(ttemp) {
-
         if(ttemp == null) {
             return;
         }
@@ -144,47 +136,40 @@ export default class RaceScreen extends React.Component {
             })
     }
 
-    async getTimerInformation(raceID){
+    async getTimerInformation_do(raceid){
         const accesstoken = await AsyncStorage.getItem('accesstoken');
-        getTimerInformation(accesstoken, raceID).then(DataTabular => {
-                 this.setState({timer_info: DataTabular});
+        //const raceid = await AsyncStorage.getItem('raceID');
+        console.log(raceid)
+        await getTimerInformation(accesstoken, raceid).then(DataTabular => {
+                 this.setState({timer_info: DataTabular[0]});
              }).catch(function (error) {
-                 console.log(error);
+                 console.log('error');
              })
-        console.log(this.state.timer_info)
+        try {
+            console.log(this.state.timer_info)
+            if ('order_duration' in this.state.timer_info && this.state.timer_info.order_duration != null) {
+                this.setState({
+                    timeOrder: this.compute_Order_Heating_TimerSeconds(this.state.timer_info.order_start, this.state.timer_info.order_duration * 60)
+                })
+                console.log(this.state.timer_info.order_duration * 60)
+            }}catch (e) {
+                console.log('undefined');}
+        try{
+            if ('heat_duration' in this.state.timer_info && this.state.timer_info.heat_duration != null) {
+                this.setState({
+                    timeHeating: this.compute_Order_Heating_TimerSeconds(this.state.timer_info.heat_start, this.state.timer_info.heat_duration * 60)
+                });
+                console.log(this.state.timer_info.heat_duration * 60)
+                console.log(this.state.timeHeating)
+            }
+        }catch (e) {
+                console.log('undefined');
+        }
      }
-
 
      sleep = (milliseconds) => {
         return new Promise(resolve => setTimeout(resolve, milliseconds))
       }
-
-
-     async getTabularData() {
-
-        const accesstoken = await AsyncStorage.getItem('accesstoken');
-        const raceID = this.state.raceID;
-        await getWheelInformations(accesstoken, raceID).then(formellistTab => {
-            this.setState({list_formel: formellistTab});
- 
-        }).catch(function (error) {
-            console.log(error);
-        })
-
-        if(this.state.list_formel) {
-            try {
-                var timestemp = this.state.list_formel.slice(0,1)[0].heat_start
-                var duration = this.state.list_formel.slice(0,1)[0].heat_duration
-            }catch(e) {
-                console.log('error')
-            }
-
-            this.setState({
-                timeHeating: this.compute_Order_Heating_TimerSeconds(timestemp, duration*60)
-            })
-        }
-        
-    }
 
     async componentDidMount() {
         const accesstoken = await AsyncStorage.getItem('accesstoken');
@@ -201,71 +186,27 @@ export default class RaceScreen extends React.Component {
                raceListfiltered.unshift({'name': name, 'id': raceid});
                this.setState({raceList: raceListfiltered});
                this.setState({raceID: raceid});
-               this.getWeatherData(this.state.raceID);
-               this.getWheelSetInformation(this.state.raceID);
-               this.getTimerInformation(this.state.raceID)
-               this.getTabularData(this.state.raceID)
+               this.getWeatherData(raceid);
+               console.log('component')
+               this.getTimerInformation_do(raceid)
                this.startTimer();
            }).catch(function (error) {
-               console.log(error);
+               console.log('error');
            });
        }
+
        else {
            getRaceList(accesstoken).then(racelistDropdown => {
                this.setState({raceList: racelistDropdown});
                this.setState({raceID: this.state.raceList[0].id})
-               this.getTabularData(this.state.raceID)
                this.getWeatherData(this.state.raceID)
-               this.getWheelSetInformation(this.state.raceID)
-               this.getTimerInformation(this.state.raceID)
+               this.getTimerInformation_do(this.state.raceID)
                this.startTimer()
                AsyncStorage.setItem("raceID",this.state.raceList[0].id);
-
            }).catch(function (error) {
                console.log(error);
            })
        }
-
-    }
-
-    async getWheelSetInformation(raceID){
-       const accesstoken = await AsyncStorage.getItem('accesstoken');
-       getWheelSetInformation(accesstoken, raceID).then(DataTabular => {
-            this.setState({ReturnedWheelInformations: DataTabular});
-
-            var orderStart;
-            var orderDuration;
-            var heatStart;
-            var heatDuration;
-
-            Object.keys(DataTabular).forEach((key) => {
-                if(key = 'order_start') {orderStart = DataTabular[key]}
-                if(key = 'order_duration') {orderDuration = DataTabular[key]}
-                if(key = 'heat_start') {heatStart = DataTabular[key]}
-                if(key = 'heat_duration') {heatDuration = DataTabular[key]}
-            });
-
-            //heatStart = '27 Jan 2022 20:40:56 GMT'
-            //heatDuration = 1800
-
-            //orderStart = '27 Jan 2022 20:37:46 GMT'
-            //orderDuration = 1800
-
-            if(orderStart != null && orderDuration != null) {
-                this.setState({
-                    timeOrder: this.compute_Order_Heating_TimerSeconds(orderStart, orderDuration)
-                });
-            }
-
-            if(heatStart != null && heatDuration != null) {
-                this.setState({
-                    timeHeating: this.compute_Order_Heating_TimerSeconds(heatStart, heatDuration)
-                });
-            }
-
-        }).catch(function (error) {
-            console.log(error);
-        })
     }
 
     changeLogout = event => {
@@ -324,8 +265,8 @@ export default class RaceScreen extends React.Component {
         this.props.navigation.push('Maen');
     }
 
-    async saveRaceIDinState() {
-        const id = await AsyncStorage.getItem("raceID");
+    async saveRaceIDinState(raceid) {
+        //const raceid = await AsyncStorage.getItem("raceID");
         clearInterval(this.timer);
         this.timer = 0;
         this.setState({
@@ -336,17 +277,20 @@ export default class RaceScreen extends React.Component {
             timeOrder: 0,
             timeOrderG: '00:00:00',
         });
-        this.setState({raceID: id});
-        this.getWeatherData(id);
-        this.getWheelSetInformation(id);
-        this.getTabularData(id);
+        console.log(['saveRaceID',raceid])
+        //this.setState({raceID: raceid});
+        this.getWeatherData(raceid);
+        console.log(raceid)
+        this.getTimerInformation_do(raceid)
         this.startTimer();
     }
 
     getRaceID = event => {
         const id = event.target.value;
-        AsyncStorage.setItem("raceID",event.target.value);
-        this.saveRaceIDinState();
+        console.log(id)
+        AsyncStorage.setItem("raceID",id);
+        //this.setState({raceID:id})
+        this.saveRaceIDinState(id);
     }
 
     render() {
