@@ -1,16 +1,10 @@
 import React from "react";
 import {
-    View,
-    Text,
-    StyleSheet,
-    Image,
-    TextInput,
-    TouchableHighlight,
-    SectionList,
-    TouchableOpacity
+    View
 } from 'react-native';
 
 import {getRaceList, getWeatherTab} from "./tools";
+import {getTimerInformation} from "./tools_get_wheels"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import image from "./images/logo.png";
@@ -103,7 +97,7 @@ export default class HelperNavigator extends React.Component {
     }
 
    compute_Order_Heating_TimerSeconds(tmp, duration) {
-        let tmpInSeconds = (new Date(Date.parse(tmp)).getTime() / 1000) + 3600
+        let tmpInSeconds = (new Date(Date.parse(tmp)).getTime() / 1000) //+ 3600
         let nowDate = (new Date().getTime() / 1000)
         let result = Math.floor(tmpInSeconds - nowDate) + duration
         if(result <= 0) {return 0}
@@ -111,11 +105,9 @@ export default class HelperNavigator extends React.Component {
     }
 
     getSecondsToNextMeasurement(ttemp) {
-
         if(ttemp == null) {
             return;
         }
-
         let lastDate = (new Date(Date.parse(ttemp.datetime)).getTime() / 1000)
         let nowDate = (new Date().getTime() / 1000)
         let result = 1800 - Math.floor(nowDate - lastDate)
@@ -130,13 +122,12 @@ export default class HelperNavigator extends React.Component {
        getWeatherTab(accesstoken, raceID).then(DataTabular => {
                 this.setState({dataWeather: DataTabular});
                 this.getSecondsToNextMeasurement(this.state.dataWeather[this.state.dataWeather.length-1])
-
             }).catch(function (error) {
                 console.log(error);
             })
     }
 
-    async getTimerInformation(raceID){
+    async getTimerInformation_do(raceID){
         const accesstoken = await AsyncStorage.getItem('accesstoken');
         getTimerInformation(accesstoken, raceID).then(DataTabular => {
                  this.setState({timer_info: DataTabular[0]});
@@ -177,9 +168,7 @@ export default class HelperNavigator extends React.Component {
                this.setState({raceList: raceListfiltered});
                this.setState({raceID: raceid});
                this.getWeatherData(this.state.raceID);
-               //this.getWheelSetInformation(this.state.raceID);
-               this.getTimerInformation(this.state.raceID)
-               //this.getTabularData(this.state.raceID)
+               this.getTimerInformation_do(this.state.raceID)
                this.startTimer();
            }).catch(function (error) {
                console.log(error);
@@ -189,10 +178,8 @@ export default class HelperNavigator extends React.Component {
            getRaceList(accesstoken).then(racelistDropdown => {
                this.setState({raceList: racelistDropdown});
                this.setState({raceID: this.state.raceList[0].id})
-               //this.getTabularData(this.state.raceID)
                this.getWeatherData(this.state.raceID)
-               //this.getWheelSetInformation(this.state.raceID)
-               this.getTimerInformation(this.state.raceID)
+               this.getTimerInformation_do(this.state.raceID)
                this.startTimer()
                AsyncStorage.setItem("raceID",this.state.raceList[0].id);
 
@@ -200,7 +187,6 @@ export default class HelperNavigator extends React.Component {
                console.log(error);
            })
        }
-
     }
 
 
@@ -263,8 +249,6 @@ export default class HelperNavigator extends React.Component {
         });
         this.setState({raceID: id});
         this.getWeatherData(id);
-        this.getWheelSetInformation(id);
-        this.getTabularData(id);
         this.startTimer();
     }
 
@@ -279,10 +263,6 @@ export default class HelperNavigator extends React.Component {
         let optionTemplate = this.state.raceList.map(v => (
             <option value={v.id} key={v.id}>{v.name}</option>
         ));
-
-        console.log(this.state.timeWeather);
-        console.log(this.state.timeHeating);
-        console.log(this.state.timeOrder);
 
         return (
             <View style={{overflowY: 'scroll', flex: 1, backgroundColor: '#2e3742'}}>
